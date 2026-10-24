@@ -1,0 +1,1467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<style>body{margin:0}[hidden]{display:none!important}img{max-width:100%}</style>
+<title>Japan Day by Day</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Mono:wght@400;500&family=Montserrat:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: a Void Black masthead carrying the woodblock artwork, then one scanning column of place cards grouped by city under a sticky filter bar. GBX PS palette and type. */
+:root {
+  --bg: #f5f7f5;
+  --surface: #ffffff;
+  --ink: #0a0a0a;
+  --muted: #55605b;
+  --line: #d5ddd8;
+  --teal: #2e8b6e;
+  --accent: #1a5c4a;
+  --on-accent: #ffffff;
+  --band: #0a0a0a;
+  --band-ink: #f2f5f3;
+  --band-muted: #a9b8b1;
+  --band-teal: #5cc2a2;
+  --together: #1a5c4a;
+  --turns: #74408c;
+  --takeaway: #8a5a06;
+  --room: #9e2a43;
+  --display: "Cormorant Garamond", "Hiragino Mincho ProN", "Yu Mincho", Georgia, serif;
+  --body: "Montserrat", "Hiragino Kaku Gothic ProN", "Yu Gothic", "Noto Sans JP", system-ui, sans-serif;
+  --mono: "DM Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0a0a0a; --surface: #141816; --ink: #eef2f0; --muted: #9aa8a1; --line: #27302c;
+    --teal: #2e8b6e; --accent: #5cc2a2; --on-accent: #0a0a0a;
+    --together: #5cc2a2; --turns: #c9a0de; --takeaway: #dcb768; --room: #f090a2;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0a0a0a; --surface: #141816; --ink: #eef2f0; --muted: #9aa8a1; --line: #27302c;
+  --teal: #2e8b6e; --accent: #5cc2a2; --on-accent: #0a0a0a;
+  --together: #5cc2a2; --turns: #c9a0de; --takeaway: #dcb768; --room: #f090a2;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 14.5px; line-height: 1.55; }
+.wrap { max-width: 1080px; margin: 0 auto; padding-inline: 16px; padding-block: 0 64px; }
+
+.hero { position: relative; overflow: hidden; background: var(--band); color: var(--band-ink); border-bottom: 3px solid var(--teal); }
+.hero-art { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; opacity: .62; }
+.hero::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(10,10,10,.94) 0%, rgba(10,10,10,.72) 42%, rgba(10,10,10,.12) 100%); }
+.hero-in { position: relative; z-index: 1; max-width: 1080px; margin: 0 auto; padding-inline: 16px; padding-block: 34px 30px; }
+.brand { font-family: var(--mono); font-size: 12px; letter-spacing: .22em; text-transform: uppercase; color: var(--band-teal); margin: 0 0 14px; }
+.hero h1 { font-family: var(--display); font-weight: 600; font-size: clamp(34px, 7vw, 56px); line-height: 1.02; margin: 0 0 8px; text-wrap: balance; }
+.dates { font-family: var(--mono); color: var(--band-muted); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; margin: 0 0 16px; }
+.lead { max-width: 56ch; margin: 0 0 16px; color: var(--band-ink); }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 12.5px; color: var(--band-muted); margin: 0; padding: 0; list-style: none; }
+.legend b { font-weight: 600; color: var(--band-ink); }
+
+.bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); padding-block: 12px; border-bottom: 1px solid var(--line); display: flex; flex-direction: column; gap: 8px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font-family: var(--body); font-size: 12.5px; font-weight: 600; padding: 6px 12px; border-radius: 3px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; }
+.chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.chip:focus-visible, .links a:focus-visible, #q:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
+#q { font: inherit; width: 100%; padding: 9px 12px; border-radius: 3px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); }
+#q::placeholder { color: var(--muted); }
+.count { font-family: var(--mono); font-size: 12px; color: var(--muted); margin: 0; }
+
+section.city { margin-top: 34px; }
+section.city h2 { font-family: var(--display); font-weight: 600; font-size: 32px; line-height: 1.1; margin: 0 0 2px; display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+section.city h2 span { font-family: var(--mono); font-size: 12px; font-weight: 400; letter-spacing: .04em; color: var(--muted); }
+.note { color: var(--muted); max-width: 70ch; margin: 0 0 12px; }
+figure { margin: 0; }
+.art { margin-bottom: 10px; }
+.art img { display: block; width: 100%; aspect-ratio: 21 / 9; object-fit: cover; border-radius: 4px; background: var(--band); }
+.photos { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 10px; margin-bottom: 14px; }
+.photos img { display: block; width: 100%; aspect-ratio: 3 / 2; object-fit: cover; border-radius: 4px; background: var(--line); }
+figcaption { font-size: 11.5px; color: var(--muted); margin-top: 4px; overflow-wrap: anywhere; }
+figcaption a { color: inherit; }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); gap: 10px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-top: 2px solid var(--teal); border-radius: 4px; padding: 14px; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+.name { font-family: var(--display); font-weight: 700; font-size: 21px; line-height: 1.15; margin: 0; overflow-wrap: anywhere; }
+.jp { display: block; font-family: var(--body); font-weight: 400; font-size: 12.5px; color: var(--muted); margin-top: 2px; }
+.score { flex: none; font-family: var(--mono); font-weight: 500; font-size: 13px; padding: 2px 7px; border-radius: 3px; border: 1px solid var(--line); white-space: nowrap; }
+.score.hi { border-color: var(--accent); color: var(--accent); }
+.when { font-family: var(--mono); font-size: 11.5px; letter-spacing: .02em; color: var(--muted); margin: 0; }
+.order { margin: 0; font-weight: 500; }
+.meta { margin: 0; font-size: 13px; color: var(--muted); overflow-wrap: anywhere; }
+.meta b { color: var(--ink); font-weight: 600; }
+.foot { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: auto; padding-top: 8px; }
+.tag { font-family: var(--mono); font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: .06em; padding: 3px 7px; border-radius: 3px; }
+.tag.together { color: var(--together); background: color-mix(in srgb, var(--together) 13%, transparent); }
+.tag.turns { color: var(--turns); background: color-mix(in srgb, var(--turns) 13%, transparent); }
+.tag.takeaway { color: var(--takeaway); background: color-mix(in srgb, var(--takeaway) 15%, transparent); }
+.tag.room { color: var(--room); background: color-mix(in srgb, var(--room) 13%, transparent); }
+.links { display: flex; gap: 8px; margin-left: auto; }
+.links a { font-size: 12.5px; font-weight: 600; text-decoration: none; padding: 6px 10px; border-radius: 3px; }
+.links a.map { background: var(--accent); color: var(--on-accent); }
+.links a.tb { color: var(--accent); border: 1px solid var(--line); }
+.empty { padding: 32px 0; color: var(--muted); }
+footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--line); font-size: 12.5px; color: var(--muted); max-width: 72ch; }
+footer p { margin: 0 0 8px; }
+
+/* ---- views, day plans, sights, video ---- */
+.views .chip { font-size: 13.5px; padding: 8px 14px; }
+.strip { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px; scrollbar-width: thin; }
+.strip button { flex: none; font-family: var(--mono); font-size: 12px; line-height: 1.2; padding: 6px 9px; border-radius: 3px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; text-align: center; }
+.strip button b { display: block; font-family: var(--display); font-size: 19px; font-weight: 700; }
+.strip button:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
+
+.day { margin-top: 30px; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; overflow: hidden; scroll-margin-top: 150px; }
+.day-art { position: relative; background: var(--band); color: var(--band-ink); aspect-ratio: 21 / 9; min-height: 190px; max-height: 420px; width: 100%; display: flex; align-items: flex-end; }
+.day-art img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.day-art::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(10,10,10,0) 35%, rgba(10,10,10,.86) 100%); }
+.day-head { position: relative; z-index: 1; padding: 16px 18px; }
+.day-date { font-family: var(--mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--band-teal); margin: 0 0 4px; }
+.day-head h2 { font-family: var(--display); font-weight: 600; font-size: clamp(26px, 5vw, 40px); line-height: 1.05; margin: 0; text-wrap: balance; }
+.day-body { padding: 16px 18px 20px; display: flex; flex-direction: column; gap: 16px; }
+.sum { margin: 0; max-width: 68ch; font-size: 15.5px; }
+.label { font-family: var(--mono); font-size: 11.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin: 0 0 8px; }
+
+.tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 200px), 1fr)); gap: 10px; }
+.tile { border: 1px solid var(--line); border-radius: 4px; overflow: hidden; background: var(--bg); display: flex; flex-direction: column; min-width: 0; }
+.tile img, .sight img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; background: var(--line); }
+.tile-in { padding: 9px 10px 10px; display: flex; flex-direction: column; gap: 3px; flex: 1; }
+.tile h4, .sight h3 { font-family: var(--display); font-weight: 700; font-size: 18px; line-height: 1.15; margin: 0; overflow-wrap: anywhere; }
+.tile .jp, .sight .jp { margin-top: 1px; }
+.carry { font-size: 12.5px; color: var(--muted); margin: 0; }
+.credit { font-size: 10.5px; color: var(--muted); margin: 0; overflow-wrap: anywhere; }
+.credit a { color: inherit; }
+.tile .links, .sight .links { margin-left: 0; margin-top: auto; padding-top: 6px; }
+
+.combos { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 12px; }
+.combo { border: 1px solid var(--line); border-radius: 4px; padding: 12px 14px 14px; min-width: 0; }
+.combo-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+.combo-top h3 { font-family: var(--display); font-weight: 700; font-size: 21px; line-height: 1.1; margin: 0; }
+.tag.food { color: var(--takeaway); background: color-mix(in srgb, var(--takeaway) 15%, transparent); }
+.tag.walk { color: var(--together); background: color-mix(in srgb, var(--together) 13%, transparent); }
+.tag.easy { color: var(--turns); background: color-mix(in srgb, var(--turns) 13%, transparent); }
+.steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.steps li { display: grid; grid-template-columns: 74px 1fr; gap: 10px; align-items: start; }
+.steps time, .steps .t { font-family: var(--mono); font-size: 12.5px; color: var(--accent); padding-top: 2px; }
+.steps p { margin: 0; }
+.refs { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 5px; }
+.ref { font-size: 12px; font-weight: 600; text-decoration: none; color: var(--accent); border: 1px solid var(--line); border-radius: 3px; padding: 3px 8px; background: var(--surface); }
+.ref:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
+.roomline { margin: 0; font-size: 13.5px; color: var(--muted); border-left: 3px solid var(--teal); padding-left: 10px; max-width: 72ch; }
+.art2 img { display: block; width: 100%; aspect-ratio: 21 / 9; object-fit: cover; border-radius: 4px; background: var(--band); }
+
+.vids { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 12px; }
+.vids { grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 480px)); }
+.vid video { display: block; width: 100%; aspect-ratio: 16 / 9; background: var(--band); border-radius: 4px; }
+
+.sights-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); gap: 12px; margin-bottom: 14px; }
+.sight { background: var(--surface); border: 1px solid var(--line); border-radius: 4px; overflow: hidden; display: flex; flex-direction: column; min-width: 0; }
+.sight-in { padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+.sight p { margin: 0; }
+.eat-city { margin-top: 28px; }
+
+.bar { padding-block: 8px; gap: 6px; }
+.viewrow { display: flex; align-items: center; gap: 10px; }
+.viewrow .label { margin: 0; }
+.seg { gap: 0; flex-wrap: nowrap; }
+.seg .chip { border-radius: 0; margin-left: -1px; padding: 6px 16px; font-size: 13px; }
+.seg .chip:first-child { border-radius: 3px 0 0 3px; margin-left: 0; }
+.seg .chip:last-child { border-radius: 0 3px 3px 0; }
+.seg .chip[aria-pressed="true"] { position: relative; z-index: 1; }
+.cityview { margin-top: 18px; }
+.eatbar { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+.day { scroll-margin-top: 120px; }
+
+.card { padding: 0; gap: 0; overflow: hidden; }
+.card-in { padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 6px; flex: 1; min-width: 0; }
+.dish img { display: block; width: 100%; aspect-ratio: 16 / 10; object-fit: cover; background: var(--line); }
+.dish figcaption { font-size: 10.5px; line-height: 1.35; padding: 5px 14px 0; margin: 0; }
+.music { margin-left: auto; font-family: var(--mono); font-weight: 500; font-size: 12px; }
+
+.hero-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+.hero-top .brand { margin: 0; }
+.hero-music { font-family: var(--mono); font-size: 12px; letter-spacing: .04em; padding: 7px 12px; border-radius: 3px; border: 1px solid var(--band-teal); background: rgba(10,10,10,.55); color: var(--band-ink); cursor: pointer; white-space: nowrap; }
+.hero-music[aria-pressed="true"] { background: var(--band-teal); color: var(--band); }
+.hero-music:focus-visible { outline: 2px solid var(--band-ink); outline-offset: 2px; }
+
+/* ---- navigation ---- */
+.viewrow { flex-wrap: wrap; }
+.near { font-family: var(--mono); font-weight: 500; font-size: 12px; }
+.near[disabled] { opacity: .6; cursor: progress; }
+.links a.nav { background: var(--teal); color: #fff; }
+.links a.map + a.map { margin-left: -2px; }
+.combo-top .route { margin-left: auto; font-size: 12px; font-weight: 600; text-decoration: none; padding: 5px 10px; border-radius: 3px; background: var(--teal); color: #fff; }
+.dist { margin: 0; font-family: var(--mono); font-size: 12px; color: var(--teal); }
+.meta.small { font-size: 12px; color: var(--muted); }
+.flash { animation: flash 1.6s ease-out; }
+@keyframes flash { 0% { box-shadow: 0 0 0 4px var(--teal); } 100% { box-shadow: 0 0 0 0 rgba(46,139,110,0); } }
+.nearbox { border: 1px solid var(--teal); border-radius: 4px; padding: 12px 14px; background: color-mix(in srgb, var(--teal) 7%, var(--surface)); }
+.nearlist { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.nearlist li { display: grid; grid-template-columns: 1fr auto auto; grid-template-areas: "n d go" "k d go"; gap: 2px 10px; align-items: center; padding: 6px 0; border-top: 1px solid var(--line); }
+.nearlist li:first-child { border-top: 0; }
+.nearname { grid-area: n; text-align: left; background: none; border: 0; padding: 0; font: inherit; font-weight: 700; color: var(--ink); cursor: pointer; text-decoration: underline; text-decoration-color: var(--line); }
+.nearkind { grid-area: k; font-size: 12px; color: var(--muted); }
+.neard { grid-area: d; font-family: var(--mono); font-size: 12.5px; color: var(--teal); white-space: nowrap; }
+.nearlist a.nav { grid-area: go; font-size: 12px; font-weight: 600; text-decoration: none; padding: 6px 10px; border-radius: 3px; background: var(--teal); color: #fff; }
+.plot { display: block; width: 100%; height: auto; border: 1px solid var(--line); border-radius: 6px; margin-bottom: 8px; font-family: var(--body); }
+.plot-bg { fill: var(--surface); }
+.plot-grid { stroke: var(--line); stroke-width: 1; }
+.plot .pt { cursor: pointer; }
+.plot .pt:focus-visible circle { stroke: var(--ink); stroke-width: 3; }
+.plot .eat circle { fill: var(--accent); stroke: var(--surface); stroke-width: 2; }
+.plot .sight circle { fill: var(--teal); stroke: var(--surface); stroke-width: 2.5; }
+.plot .sight text { font-size: 17px; font-weight: 600; fill: var(--ink); paint-order: stroke; stroke: var(--surface); stroke-width: 5px; stroke-linejoin: round; }
+.plot .you circle { fill: #1e6fd9; stroke: #fff; stroke-width: 2.5; }
+.plot .you .you-ring { fill: rgba(30,111,217,.18); stroke: none; animation: ring 2s ease-out infinite; transform-box: fill-box; transform-origin: center; }
+@keyframes ring { 0% { transform: scale(.6); opacity: .9; } 100% { transform: scale(1.6); opacity: 0; } }
+.plot .you text { font-size: 16px; font-weight: 700; fill: #1e6fd9; paint-order: stroke; stroke: var(--surface); stroke-width: 5px; }
+.plot-scale line { stroke: var(--ink); stroke-width: 2; }
+.plot-scale text, .plot-key text, .plot-north { font-family: var(--mono); font-size: 14px; fill: var(--muted); }
+.plot-key .k-s { fill: var(--teal); } .plot-key .k-p { fill: var(--accent); }
+.plot.narrow .sight text { font-size: 21px; } .plot.narrow .plot-scale text, .plot.narrow .plot-key text, .plot.narrow .plot-north { font-size: 17px; } .plot.narrow .sight circle { r: 11; } .plot.narrow .eat circle { r: 9; }
+.plot-title { font-family: var(--display); font-size: 24px; font-weight: 600; fill: var(--ink); }
+.plot-leader { stroke: var(--muted); stroke-width: 1.5; stroke-dasharray: 3 3; }
+.plot-zoom { fill: none; stroke: var(--teal); stroke-width: 2; stroke-dasharray: 8 6; }
+.plot-zoomtxt { font-family: var(--mono); font-size: 14px; fill: var(--teal); }
+.plot + .plot { margin-top: 10px; }
+.plot.narrow .plot-title { font-size: 27px; } .plot.narrow .plot-zoomtxt { font-size: 16px; } .plot.narrow .you text { font-size: 19px; }
+.plot .eatlab { font-size: 14px; font-weight: 500; fill: var(--muted); paint-order: stroke; stroke: var(--surface); stroke-width: 4px; cursor: pointer; }
+.plot.narrow .eatlab { font-size: 17px; }
+.refpair { display: inline-flex; gap: 4px; }
+.ref.go { background: var(--teal); color: #fff; border-color: var(--teal); }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <img class="hero-art" data-art="fuji" referrerpolicy="no-referrer" alt="">
+  <div class="hero-in">
+    <div class="hero-top"><p class="brand">GBX PS</p><button type="button" class="hero-music" data-music aria-pressed="false">♪ Play music</button></div>
+    <h1>Japan, day by day</h1>
+    <p class="dates">17 Feb to 3 Mar 2027 · Tokyo · Kanazawa · Kyoto</p>
+    <p class="lead">Fifteen days of sights and food. Browse a city to see everything there at once, or switch to the suggested plan for each day. Every stop has a Pin and a Navigate button that open the Google Maps app on the exact spot, so they work with the offline maps you downloaded.</p>
+    <ul class="legend">
+      <li><b>By city</b> everything in one place, in any order</li>
+      <li><b>Suggested day</b> a plan for each date</li>
+      <li><b>Food-led</b> the day built around the best meals</li>
+      <li><b>Walk-led</b> the day built around the best walking</li>
+      <li><b>Together</b> seats all three</li>
+      <li><b>Turns</b> counter only, one eats while one walks</li>
+      <li><b>Near me</b> reads the phone's GPS and sorts everything by distance</li>
+    </ul>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="bar">
+    <div class="viewrow"><span class="label">View</span><div class="chips seg" id="viewChips" role="group" aria-label="View by city or by suggested day"></div><button type="button" class="chip near" data-near aria-pressed="false">◎ Near me</button><button type="button" class="chip music" data-music aria-pressed="false">♪ Play music</button></div>
+    <div class="strip" id="dayStrip" role="group" aria-label="Jump to a day"></div>
+    <div class="chips" id="cityChips" role="group" aria-label="City"></div>
+  </div>
+
+  <main id="list"></main>
+
+  <footer>
+    <p>Pin opens the stop in the Google Maps app by its exact coordinates and place ID; Navigate asks Maps for walking directions to it; Open as a route strings a whole day plan together in order. All three use the offline maps you downloaded for the pin and the map itself, though Google only gives driving directions without a signal, so for walking use the pin together with the plotted map in each city. Near me uses the phone's GPS, which also works offline. Restaurant hours and scores were read from Tabelog on 11 Oct 2026. Sight opening days are from general knowledge, so recheck them along with closing days in early February.</p>
+    <p>Woodblock-style artwork was generated with OpenArt. Photographs are from Wikimedia Commons under the licence shown beside each one. Dish photos marked as typical examples show the kind of dish, not that restaurant's own plate. Images load from the web, so they need a connection. The music is generated in your browser and works offline.</p>
+  </footer>
+</div>
+
+<script>
+var A = "https://cdn.openart.ai/openart-ai/production/2026-10/create-image/nN90WiPr5Ngn0IWrVHQd/";
+var TB = "https://cdn.openart.ai/openart/thumbnail/production/2026-10/create-image/nN90WiPr5Ngn0IWrVHQd/";
+// key: [shared prefix, full-size tail, preview tail]
+var ART = {
+  fuji:["021791677703279e0570d30189b68d5608c0b11774ff85bdae773","1791677755347_3c1b8bcc","1791677761533_844e0c9f"],
+  tokyo:["0217916777314084498c7002523dcce63b4e4e02dd9ae9c2abcb3","1791677784500_e1bef962","1791677788211_04fc05f4"],
+  kenrokuen:["02179167773440850b1c418616fd9b5f78a16c5c9d34162e429d0","1791677789289_cd72fbf3","1791677792829_ad0aa1b5"],
+  kyoto:["0217916777375438547934892c4038781a87d514f9a9196285057","1791677788156_671f4ec0","1791677792923_96c1f672"],
+  osaka:["0217916777790108b571bdff213a087fe7b071b496c86899f9994","1791677846164_194be006","1791677849757_cb6b0db0"],
+  nara:["0217916778047079cf4adffd4482a40b9bfd1b5a653f234fca4fd","1791677864295_32b5caa8","1791677867897_16c7e90f"],
+  hamarikyu:["021791679528977023ef2751affb9822ae18449966cb6b9e37cba","1791679586721_5834d898","1791679590129_c7f0f4cc"],
+  meiji:["021791679531984085ce2a5b85bafc715e5d42a46d045519e8ddb","1791679595286_067cd214","1791679598151_e809aeb6"],
+  yanaka:["02179167953410211300f35b2a874e35aceb4d35afb57b8e05a58","1791679598251_9506c6c1","1791679601922_79b31c91"],
+  shinkansen:["021791679536595651bcb683a664fec8e1b815c68d8e2dec83ac2","1791679600285_d1a5798c","1791679604556_e620c1f6"],
+  higashi:["021791679540039aaaf13501739a5ff290af8d9343e27fc1c1d4b","1791679593311_b1aa1588","1791679595550_0d2478b0"],
+  bamboo:["021791679543962ceb2efb7fea58c55155fc9fb92515dcd71ca5f","1791679595219_7daafe59","1791679598764_ce0e88e4"],
+  plum:["021791679545159f99996bc9b27db5cda0ac6dd5ae68eda3d1644","1791679606937_e087413d","1791679609154_3cd03f64"],
+  path:["02179167954799699b13dab45b2d10982c2cf34f4d4639dd4cd75","1791679596707_8475054c","1791679601444_f67c0c59"],
+  inari:["021791679550744c195b830dbec85207d05ecc18a972ce6b2b749","1791679626496_2a78f677","1791679630074_a087e07a"],
+  sake:["021791679553900b1e926b94f741badb049b6681cf829b8c30592","1791679608165_823b56a0","1791679610781_032d27b9"],
+  sensoji:["02179167955717712014becacfaf8a37949eaec3c8139754d1260","1791679611450_16c374a7","1791679615003_efe4dcdc"],
+  plane:["021791679560508c1826595e581f7a440f247fe98485b57a439f3","1791679619598_57de7738","1791679622531_43702316"],
+  yakiniku:["0217916809880863cb8a93f7287826a4278aac7f0d089f9df6956","1791681046067_edd8b112","1791681049452_bf5c0200"],
+  mizutaki:["021791680990971d82d61e1341a38f1d55b18f5893f198b17b486","1791681062212_828b0873","1791681066002_b36d3583"]
+};
+
+var CITY_NAMES = {tokyo:"Tokyo", kanazawa:"Kanazawa", kyoto:"Kyoto", osaka:"Osaka", nara:"Nara"};
+
+// Sights. w = how to carry the baby, t = time to allow.
+var SIGHTS = [
+{id:"tsukiji",c:"tokyo",n:"Tsukiji Outer Market",j:"築地場外市場",q:"築地場外市場",t:"1 to 1.5 hours",w:"Carrier. Narrow, crowded lanes.",b:"Hundreds of stalls and tiny eateries. Best before 10:00, and many stalls shut Sunday and Wednesday.",f:"Tsukiji Outer Market 2.jpg",by:"Aw1805",lic:"CC BY-SA 3.0"},
+{id:"hamarikyu",c:"tokyo",n:"Hamarikyu Gardens",j:"浜離宮恩賜庭園",q:"浜離宮恩賜庭園",t:"1 to 1.5 hours",w:"Pram works on the flat gravel paths.",b:"A former shogun's tidal garden with a teahouse on the pond, ten minutes' walk from Tsukiji. Plum blossom in late February.",f:"Hamarikyu garden 110925 1.jpg",by:"Ulf Klingström",lic:"CC0"},
+{id:"meiji",c:"tokyo",n:"Meiji Shrine",j:"明治神宮",q:"明治神宮",t:"1 hour",w:"Carrier is easier. The wide paths are deep gravel.",b:"A ten-minute forest walk under giant wooden gates to the shrine. Opens at sunrise and is calmest before 10:00.",f:"Meiji Shrine Minami-sando-torii 2023-01-26.jpg",by:"Asanagi",lic:"CC0"},
+{id:"yoyogi",c:"tokyo",n:"Yoyogi Park",j:"代々木公園",q:"代々木公園",t:"45 minutes",w:"Pram friendly, paved loops.",b:"Open lawns and ponds beside Meiji Shrine. A good pram-nap circuit.",f:"Yoyogi Park @ Tokyo (13406878405).jpg",by:"Guilhem Vellut",lic:"CC BY 2.0"},
+{id:"omotesando",c:"tokyo",n:"Omotesando",j:"表参道",q:"表参道 ケヤキ並木",t:"45 minutes",w:"Pram friendly, wide footpaths.",b:"A zelkova-lined avenue of flagship architecture, with quieter lanes behind it.",f:"Omotesando Avenue at sunset from pedestrian bridge, Jingumae, Shibuya, Tokyo.jpg",by:"gog.creator",lic:"CC BY 4.0"},
+{id:"yanaka",c:"tokyo",n:"Yanaka Ginza",j:"谷中銀座",q:"谷中銀座商店街",t:"1 hour",w:"Pram friendly, one flight of steps at the top end.",b:"An old-Tokyo shopping lane where the walk is the meal. The steps at the top are the classic sunset view.",f:"Yanaka Ginza, Yanaka (53417016334).jpg",by:"Stephen Kelly",lic:"CC BY 2.0"},
+{id:"ueno",c:"tokyo",n:"Ueno Park and Shinobazu Pond",j:"上野恩賜公園",q:"上野恩賜公園 不忍池",t:"1 hour",w:"Pram friendly, paved.",b:"Broad paths, a lotus pond with a temple on an island, and museums if it rains.",f:"Shinobazu pond @ Ueno Park (14273619522).jpg",by:"Guilhem Vellut",lic:"CC BY 2.0"},
+{id:"yushima",c:"tokyo",n:"Yushima Tenjin",j:"湯島天満宮",q:"湯島天満宮",t:"30 minutes",w:"Carrier. Steps on most approaches.",b:"Tokyo's best-known plum blossom shrine. Its plum festival runs through late February.",f:"Yushima Tenjin Shrine, Tokyo.jpg",by:"Manish Prabhune",lic:"CC BY 4.0"},
+{id:"sensoji",c:"tokyo",n:"Senso-ji, Asakusa",j:"浅草寺",q:"浅草寺 雷門",t:"1 to 1.5 hours",w:"Pram possible but crowded. Carrier is easier on the market street.",b:"Tokyo's oldest temple, reached through the Thunder Gate and a street of snack stalls. Go before 10:00.",f:"Asakusa Sensoji Kaminarimon 2012.JPG",by:"Kakidai",lic:"CC BY-SA 3.0"},
+{id:"gyoen",c:"tokyo",n:"Shinjuku Gyoen",j:"新宿御苑",q:"新宿御苑",t:"1.5 hours",w:"Pram friendly. The easiest garden of the trip.",b:"A big, calm garden with early cherry and plum in late February. Usually closed Mondays, so go on Tuesday 2 March.",f:"Wooden footbridge in Shinjuku Gyoen National Garden, Tokyo, Japan, a sunny day with blue sky.jpg",by:"Basile Morin",lic:"CC BY-SA 4.0"},
+{id:"tokyostation",c:"tokyo",n:"Tokyo Station, Marunouchi side",j:"東京駅 丸の内駅舎",q:"東京駅 丸の内駅舎",t:"20 minutes",w:"Pram friendly, lifts throughout.",b:"The restored red-brick station building. Worth five minutes on the plaza before or after a bullet train.",f:"Tokyo Station (Marunouchi Building).jpg",by:"Alexandr3126",lic:"CC BY-SA 4.0"},
+{id:"higashi",c:"kanazawa",n:"Higashi Chaya District",j:"ひがし茶屋街",q:"ひがし茶屋街",t:"1 hour",w:"Pram friendly, flat stone paving.",b:"A preserved street of wooden teahouses, with gold-leaf shops and sweet shops. Prettiest near dusk.",f:"Higashi Chaya district, Kanazawa (3810720612).jpg",by:"Andrea Schaffer",lic:"CC BY 2.0"},
+{id:"omicho",c:"kanazawa",n:"Omicho Market",j:"近江町市場",q:"近江町市場",t:"1 hour",w:"Pram possible early. Carrier once it is busy.",b:"Kanazawa's covered seafood market. Winter crab, yellowtail and oysters eaten at the stall.",f:"Omicho covered market western entrance, Kanazawa, 2016.jpg",by:"DimiTalen",lic:"CC0"},
+{id:"kenrokuen",c:"kanazawa",n:"Kenrokuen Garden",j:"兼六園",q:"兼六園",t:"1.5 hours",w:"Pram works on the main paths. Some slopes, and gravel that is slow in snow.",b:"One of Japan's three great gardens. In February the pines wear rope cones against the snow.",f:"Kenroku-en-winter-lantern.jpg",by:"tab2_dawa",lic:"CC BY 2.0"},
+{id:"castle",c:"kanazawa",n:"Kanazawa Castle Park",j:"金沢城公園",q:"金沢城公園 石川門",t:"45 minutes",w:"Pram friendly, wide open paths.",b:"White-walled gates and huge lawns between Omicho and Kenrokuen. It is the natural walking route to the garden.",f:"View of Ishikawa Gate of Kanazawa Castle.JPG",by:"そらみみ",lic:"CC BY-SA 4.0"},
+{id:"nagamachi",c:"kanazawa",n:"Nagamachi Samurai District",j:"長町武家屋敷跡",q:"長町武家屋敷跡",t:"45 minutes",w:"Pram friendly, flat lanes.",b:"Earthen walls, canals and old samurai houses, ten minutes from Korinbo. In winter the walls are wrapped in straw mats.",f:"Nagamachi samurai district.jpg",by:"sergejf",lic:"CC BY 2.0"},
+{id:"nishiki",c:"kyoto",n:"Nishiki Market",j:"錦市場",q:"錦市場",t:"1 hour",w:"Carrier. One narrow, busy arcade.",b:"Kyoto's kitchen: pickles, omelette, tofu doughnuts and skewers. Most stalls close by 17:00 or 18:00.",f:"Tsukemono shop by collinox in Nishiki Ichiba, Kyoto.jpg",by:"collinox",lic:"CC BY 2.0"},
+{id:"kamo",c:"kyoto",n:"Kamo River path",j:"鴨川",q:"鴨川 四条大橋",t:"30 to 60 minutes",w:"Pram friendly along the riverbank.",b:"A flat riverside path through the middle of the city. The easy evening walk from the hotel.",f:"Kamo River in Kyoto, 20240820 1748 5192.jpg",by:"Jakub Hałun",lic:"CC BY 4.0"},
+{id:"shirakawa",c:"kyoto",n:"Gion Shirakawa",j:"祇園白川",q:"祇園白川 巽橋",t:"30 minutes",w:"Pram friendly, flat stone lane.",b:"A willow-lined canal with old teahouses, far quieter than Gion's main street. Best at dusk.",f:"Shirakara Canal, Gion, Kyoto.jpg",by:"MichaelMaggs",lic:"CC BY-SA 2.5"},
+{id:"yasaka",c:"kyoto",n:"Yasaka Pagoda and Ninenzaka",j:"八坂の塔",q:"八坂の塔 法観寺",t:"45 minutes",w:"Carrier. Slopes and steps.",b:"The postcard lane up to the five-storey pagoda. Go after 17:00 when the day crowds leave.",f:"Yasaka-dori early morning with street lanterns and the Tower of Yasaka (Hokan-ji Temple), Kyoto, Japan.jpg",by:"Basile Morin",lic:"CC BY-SA 4.0"},
+{id:"bamboo",c:"kyoto",n:"Arashiyama Bamboo Grove",j:"嵐山 竹林の小径",q:"嵐山 竹林の小径",t:"30 minutes",w:"Pram friendly, paved and gently uphill.",b:"The famous bamboo path. Be there by 8:30 and you will have it nearly to yourselves.",f:"Arashiyama Bamboo Grove.jpg",by:"Mitchwandrew",lic:"CC BY 4.0"},
+{id:"tenryuji",c:"kyoto",n:"Tenryu-ji garden",j:"天龍寺",q:"天龍寺",t:"45 minutes",w:"Pram possible on gravel. Carrier is easier.",b:"A 14th-century pond garden that borrows the Arashiyama hills as its backdrop. Its north gate opens onto the bamboo grove.",f:"Tenryu-ji garden, May 2017.jpg",by:"Celuici",lic:"CC BY-SA 3.0"},
+{id:"togetsukyo",c:"kyoto",n:"Togetsukyo Bridge and river path",j:"渡月橋",q:"渡月橋",t:"30 to 45 minutes",w:"Pram friendly, flat riverbank.",b:"The long wooden bridge over the Katsura River, with a quiet path upstream along the water.",f:"View of the Katsura River and the Arashiyama mountains from Togetsukyo Bridge, Kyoto, 2016.jpg",by:"DimiTalen",lic:"CC0"},
+{id:"toriimoto",c:"kyoto",n:"Saga-Toriimoto preserved street",j:"嵯峨鳥居本",q:"嵯峨鳥居本 伝統的建造物群保存地区",t:"1 hour including the walk",w:"Pram friendly on quiet lanes, gently uphill.",b:"Thatched and tiled farmhouses on the old pilgrim road, 30 minutes' walk north of the bamboo grove. Hardly anyone goes.",f:"鳥居本町並み - panoramio.jpg",by:"alonfloc",lic:"CC BY 3.0"},
+{id:"kitano",c:"kyoto",n:"Kitano Tenmangu",j:"北野天満宮",q:"北野天満宮",t:"1.5 hours",w:"Carrier on the 25th. The market fills the approach.",b:"Kyoto's plum blossom shrine. On the 25th of each month a flea and food market surrounds it, and 25 February is the plum festival.",f:"Plum in Kitano Tenman-gū 20140302-2.jpg",by:"Suicasmo",lic:"CC BY-SA 4.0"},
+{id:"kamishichiken",c:"kyoto",n:"Kamishichiken",j:"上七軒",q:"上七軒",t:"20 minutes",w:"Pram friendly, flat lane.",b:"Kyoto's oldest geisha district, a single quiet lane of teahouses beside the shrine.",f:"KamiShichiken.jpg",by:"PlusMinus",lic:"CC BY-SA 3.0"},
+{id:"ginkakuji",c:"kyoto",n:"Ginkaku-ji",j:"銀閣寺",q:"銀閣寺 慈照寺",t:"45 minutes",w:"Carrier. Steps on the garden loop.",b:"The Silver Pavilion, a moss garden and a raked sand cone. It sits at the top of the Philosopher's Path.",f:"Sunlight through clouds and view of Ginkaku-ji Temple from above, Kyoto, Japan.jpg",by:"Basile Morin",lic:"CC BY-SA 4.0"},
+{id:"philosopher",c:"kyoto",n:"Philosopher's Path",j:"哲学の道",q:"哲学の道",t:"45 minutes one way",w:"Pram friendly. Flat stone path, narrow in places.",b:"Two kilometres beside a canal from Ginkaku-ji down to Nanzen-ji, lined with small temples and cafes.",f:"Philosopher’s Walk and Biwako Canal from Ginkakujibashi Bridge.JPG",by:"そらみみ",lic:"CC BY-SA 3.0"},
+{id:"nanzenji",c:"kyoto",n:"Nanzen-ji and the aqueduct",j:"南禅寺 水路閣",q:"南禅寺 水路閣",t:"45 minutes",w:"Pram works in the grounds. A few steps at the aqueduct.",b:"A huge temple gate and a red-brick Meiji aqueduct running through the trees. The grounds are free to walk.",f:"251213 Nanzen-ji Suirokaku Kyoto Japan05s3.jpg",by:"663highland",lic:"CC BY-SA 4.0"},
+{id:"heian",c:"kyoto",n:"Heian Shrine and Okazaki",j:"平安神宮",q:"平安神宮",t:"45 minutes",w:"Pram friendly, wide gravel court and paved park.",b:"A giant vermilion gate, a vast courtyard and a pond garden behind. The park around it is a good nap circuit.",f:"Heian Shrine Garden, Kyoto, Japan, 20240820 0946 4928.jpg",by:"Jakub Hałun",lic:"CC BY 4.0"},
+{id:"inari",c:"kyoto",n:"Fushimi Inari Shrine",j:"伏見稲荷大社",q:"伏見稲荷大社",t:"1 hour for the lower loop, 2 to 3 for the mountain",w:"Carrier only. It is all steps.",b:"Thousands of gates climbing a wooded mountain. Open all hours, and close to empty before 8:30.",f:"Torii path with lantern at Fushimi Inari Taisha Shrine, Kyoto, Japan.jpg",by:"Basile Morin",lic:"CC BY-SA 4.0"},
+{id:"sakedistrict",c:"kyoto",n:"Fushimi sake district",j:"伏見 月桂冠大倉記念館",q:"月桂冠大倉記念館",t:"1.5 hours",w:"Pram friendly, flat canal paths.",b:"Old brewery warehouses along a willow canal. The Gekkeikan museum includes a tasting, and both restaurants here are in old breweries.",f:"Gekkeikan Okura Sake Museum01nt3200.jpg",by:"663highland",lic:"CC BY 2.5"},
+{id:"dotonbori",c:"osaka",n:"Dotonbori",j:"道頓堀",q:"道頓堀 戎橋",t:"1 hour",w:"Pram possible by day. Carrier once it is busy.",b:"Osaka's canal-side food street: giant signs, takoyaki stands and okonomiyaki counters.",f:"Osaka Dotonbori yoru.jpg",by:"Sakai Yayoi",lic:"CC0"},
+{id:"shinsekai",c:"osaka",n:"Shinsekai",j:"新世界",q:"新世界 通天閣",t:"45 minutes",w:"Pram friendly, flat streets.",b:"A retro district under the Tsutenkaku tower. The home of fried skewers.",f:"Shinsekai and Tsutenkaku Tower.jpg",by:"Sakai Yayoi",lic:"CC0"},
+{id:"osakacastle",c:"osaka",n:"Osaka Castle Park",j:"大阪城公園",q:"大阪城公園",t:"1 hour",w:"Pram friendly, wide paved paths.",b:"Moats, massive stone walls and a plum grove of about 1,200 trees that peaks in late February.",f:"Osaka Castle 02bs3200.jpg",by:"663highland",lic:"CC BY 2.5"},
+{id:"narapark",c:"nara",n:"Nara Park",j:"奈良公園",q:"奈良公園",t:"1 to 2 hours",w:"Pram friendly, flat and open.",b:"Lawns and old pines with about a thousand free-roaming deer. Keep snacks zipped away.",f:"003 Nara deer in Japan - deer of Nara Park under autumn leaves.jpg",by:"Marek Ślusarczyk (Tupungato)",lic:"CC BY 3.0"},
+{id:"todaiji",c:"nara",n:"Todai-ji",j:"東大寺",q:"東大寺 大仏殿",t:"45 minutes",w:"Pram friendly, ramps into the hall.",b:"One of the world's largest wooden buildings, housing a 15-metre bronze Buddha.",f:"Tōdai-ji Daibutsuden, June 2019.jpg",by:"Cun Cun",lic:"CC BY-SA 4.0"},
+{id:"kasuga",c:"nara",n:"Kasuga Taisha",j:"春日大社",q:"春日大社",t:"45 minutes",w:"Pram works on the forest approach. Gravel.",b:"A forest path lined with about two thousand stone lanterns leading to a vermilion shrine.",f:"Lanterns Kasuga-taisha Nara.jpg",by:"Gzzz",lic:"CC BY-SA 4.0"},
+{id:"naramachi",c:"nara",n:"Naramachi",j:"ならまち",q:"ならまち 奈良",t:"45 minutes",w:"Pram friendly, flat lanes.",b:"The old merchant quarter south of the park: narrow lanes of townhouses, craft shops and small restaurants.",f:"Street in Naramachi area (6156072416).jpg",by:"Maarten Heerlien",lic:"CC BY 2.0"}
+];
+
+// Day plans. Steps: [time, text, refs]. A ref is "p:<place name>" or "s:<sight id>".
+var DAYS = [
+{d:"17",m:"Feb",w:"Wed",c:"tokyo",art:"tokyo",title:"Land in Tokyo",sum:"Nothing booked. Get to the hotel, stretch your legs and eat something easy.",sights:[],videos:[],
+ combos:[
+  {k:"Easy",name:"Soft landing",steps:[
+   ["Afternoon","Check in around Ginza or Tsukiji and let the baby reset.",[]],
+   ["16:30","Short walk along Ginza's main street to get some daylight.",[]],
+   ["17:30","Pick up bento, sushi and sweets from the basement food hall and eat in the room.",["p:Ginza Mitsukoshi food hall"]]]},
+  {k:"Food-led",name:"If you still have energy",steps:[
+   ["17:00","Take turns at the creamy chicken ramen counter, ten minutes apart.",["p:Ginza Kagari"]],
+   ["18:00","Dessert from the food hall on the way back.",["p:Ginza Mitsukoshi food hall"]]]}]},
+{d:"18",m:"Feb",w:"Thu",c:"tokyo",art:"hamarikyu",title:"Tsukiji and Hamarikyu",sum:"Market breakfast, then a shogun's garden ten minutes away. Everything is walkable from the hotel.",sights:["tsukiji","hamarikyu"],videos:["v_tsukiji"],
+ combos:[
+  {k:"Food-led",name:"Market first",steps:[
+   ["8:30","Graze the outer market: rolled omelette, grilled scallops, tuna skewers.",["s:tsukiji"]],
+   ["9:30","Take turns at the five-stool offal and beef bowl stand.",["p:Kitsuneya"]],
+   ["11:00","Loop the gardens and stop for matcha at the teahouse on the pond.",["s:hamarikyu"]],
+   ["13:00","Nap at the hotel.",[]],
+   ["17:30","Early fish dinner at a table together.",["p:Takeno"]]]},
+  {k:"Walk-led",name:"Garden first",steps:[
+   ["9:00","Be at the garden when it opens, while it is empty.",["s:hamarikyu"]],
+   ["10:45","Market snacks once the breakfast rush has gone.",["s:tsukiji"]],
+   ["11:30","Sashimi or grilled fish lunch together.",["p:Takeno"]],
+   ["13:00","Nap at the hotel.",[]],
+   ["16:30","Ginza stroll, then take turns at ramen or bring the food hall home.",["p:Ginza Kagari","p:Ginza Mitsukoshi food hall"]]]}],
+ room:"Private-room swap: eel lunch at Unagi no Miyau, or a lunch set at Ginza Kitcho."},
+{d:"19",m:"Feb",w:"Fri",c:"tokyo",art:"meiji",title:"Meiji Shrine and Omotesando",sum:"A forest in the middle of the city, then Tokyo's best-looking avenue. One train each way.",sights:["meiji","yoyogi","omotesando"],videos:[],
+ combos:[
+  {k:"Food-led",name:"Daifuku, shrine, udon",steps:[
+   ["9:00","Bean daifuku the moment the shop opens. It sells out.",["p:Mizuho"]],
+   ["9:30","Forest walk to the shrine and back.",["s:meiji"]],
+   ["11:30","Take turns at handmade udon with chicken tempura. It opens at 11:30.",["p:Menchirashi"]],
+   ["13:00","Pram-nap stroll down the avenue.",["s:omotesando"]],
+   ["18:00","Wagyu at the table in your own enclosed room.",["p:Ginza Chikamitsu"]]]},
+  {k:"Walk-led",name:"Shrine and park loop",steps:[
+   ["9:30","Forest walk to the shrine.",["s:meiji"]],
+   ["10:45","Carry on into the park for a loop of the ponds.",["s:yoyogi"]],
+   ["12:00","Cutlet lunch together, with high chairs and a changing room.",["p:Maisen Aoyama"]],
+   ["13:30","Walk the avenue and the lanes behind it.",["s:omotesando"]],
+   ["15:00","Optional solo turn for top-rated soba while the other walks.",["p:Tamawarai"]]]}]},
+{d:"20",m:"Feb",w:"Sat",c:"tokyo",art:"yanaka",title:"Yanaka, Nezu and Ueno",sum:"Old Tokyo on foot: a snack street, the best all-three lunch of the Tokyo leg, and plum blossom.",sights:["yanaka","ueno","yushima"],videos:[],
+ combos:[
+  {k:"Food-led",name:"Snack street to udon",steps:[
+   ["10:30","Fried mince cutlets and shaved ice along the shopping lane.",["s:yanaka","p:Niku no Suzuki","p:Himitsudo"]],
+   ["11:30","Udon and small plates in a tatami room. Lunch is walk-in from 11:30.",["p:Nezu Kamachiku"]],
+   ["13:30","Pram-nap loop of the pond.",["s:ueno"]],
+   ["15:00","Plum blossom at the shrine.",["s:yushima"]],
+   ["16:30","Early cutlet dinner when the evening service opens.",["p:Isen Honten"]]]},
+  {k:"Walk-led",name:"Park to sunset steps",steps:[
+   ["9:30","Start with the park and pond while it is quiet.",["s:ueno"]],
+   ["11:00","Plum festival at the shrine.",["s:yushima"]],
+   ["11:45","Cutlet lunch together.",["p:Isen Honten"]],
+   ["13:30","Walk north through Nezu's backstreets while the baby naps.",[]],
+   ["15:30","Snacks on the lane, then the view from the steps as the light goes.",["s:yanaka","p:Himitsudo"]]]}],
+ room:"Private-room swap: Saturday lunch at Tsukiji Jisaku, the riverside garden restaurant."},
+{d:"21",m:"Feb",w:"Sun",c:"kanazawa",art:"shinkansen",title:"Bullet train to Kanazawa",sum:"About two and a half to three hours by train, then a teahouse street at dusk and oden for dinner.",sights:["tokyostation","higashi"],videos:["v_shinkansen"],
+ combos:[
+  {k:"Food-led",name:"Sushi, sweets, oden",steps:[
+   ["10:00","Choose bento from the food floors, then five minutes at the red-brick station front.",["p:Daimaru Tokyo food floors","s:tokyostation"]],
+   ["10:30","Hokuriku bullet train to Kanazawa. Forward your big bags the day before.",[]],
+   ["14:00","Drop bags near the market and have a late conveyor sushi lunch. It runs until 16:30.",["p:Mori Mori Sushi"]],
+   ["15:30","Teahouse street, with fresh sweets and matcha in a tatami room.",["s:higashi","p:Kureha"]],
+   ["18:00","Kanazawa oden. It is shut on Mondays, so tonight is the night.",["p:Akadama Honten"]]]},
+  {k:"Easy",name:"Slower version",steps:[
+   ["10:30","Eat the bento on the train and skip the late lunch.",["p:Daimaru Tokyo food floors"]],
+   ["14:30","Check in and rest.",[]],
+   ["16:00","Teahouse street at dusk.",["s:higashi"]],
+   ["17:30","Seafood dinner inside the market, where babies and prams are welcome.",["p:Omicho Shokudo"]]]}],
+ room:"Private-room swap: a seafood izakaya course at Genzaemon."},
+{d:"22",m:"Feb",w:"Mon",c:"kanazawa",art:"kenrokuen",title:"Omicho Market and Kenrokuen",sum:"Seafood breakfast, a walk through the castle park to one of Japan's great gardens, and the second oden house.",sights:["omicho","castle","kenrokuen","nagamachi"],videos:["v_kenrokuen","v_snow"],
+ combos:[
+  {k:"Food-led",name:"Bowl, garden, sushi",steps:[
+   ["7:30","Take turns at the ten-seat seafood bowl counter. It opens at 7:00.",["p:Iki-iki Tei","s:omicho"]],
+   ["9:00","Walk through the castle park.",["s:castle"]],
+   ["9:45","Garden loop: rope-cone pines and the two-legged stone lantern.",["s:kenrokuen"]],
+   ["12:00","Sushi lunch. Otome if you booked it, or take turns at Daikoku by the market.",["p:Otome Sushi","p:Daikoku Sushi"]],
+   ["14:00","Arrowroot noodles and matcha.",["p:Tsubomi"]],
+   ["18:00","Oden, booked ahead.",["p:Oden Takasago"]]]},
+  {k:"Walk-led",name:"Castle, garden, samurai lanes",steps:[
+   ["8:30","Market graze and a crab croquette.",["s:omicho","p:Omicho Croquette"]],
+   ["9:15","Castle park.",["s:castle"]],
+   ["10:00","Full garden loop.",["s:kenrokuen"]],
+   ["11:45","Samurai district lanes and canals.",["s:nagamachi"]],
+   ["12:45","Sweets stop on the way back.",["p:Tsubomi"]],
+   ["13:45","Late seafood lunch together. Lunch service runs to 15:00.",["p:Omicho Shokudo"]],
+   ["18:00","Seafood izakaya, booked ahead.",["p:Itaru Honten"]]]}],
+ room:"Private-room swap: kaiseki lunch at Kanazawa Chaya, or dinner at Tsubajin. The contemporary art museum is usually closed on Mondays."},
+{d:"23",m:"Feb",w:"Tue",c:"kyoto",art:"kyoto",title:"Train to Kyoto and Nishiki Market",sum:"A public holiday, so reserve train seats early. Bullet train to Tsuruga, a cross-platform change, and you are in Kyoto after lunch.",sights:["nishiki","kamo","shirakawa"],videos:[],
+ combos:[
+  {k:"Food-led",name:"Market and gyoza",steps:[
+   ["9:00","Seafood bowl breakfast at a tatami table. Confirm it opens on the holiday.",["p:Yamasan Sushi"]],
+   ["10:30","Train to Kyoto, a bit over two hours with one change.",[]],
+   ["15:00","Market graze. Get the rolled omelette before the shop shuts at 17:00.",["s:nishiki","p:Miki Keiran"]],
+   ["16:30","Riverbank stroll.",["s:kamo"]],
+   ["18:00","Gyoza at a table, or take turns at dashi ramen.",["p:Gyoza Ryosho","p:Menya Inoichi"]]]},
+  {k:"Walk-led",name:"Canal at dusk",steps:[
+   ["11:00","Oden and local dishes inside the station when it opens, then a midday train.",["p:Kuroyuri"]],
+   ["15:30","Quick market pass for snacks.",["s:nishiki"]],
+   ["16:30","Walk the river north, then cross to the willow canal as the lanterns come on.",["s:kamo","s:shirakawa"]],
+   ["18:00","Wagyu grill in a private room, three minutes from Shijo.",["p:Yakiniku Yazawa"]]]}]},
+{d:"24",m:"Feb",w:"Wed",c:"kyoto",art:"bamboo",title:"Arashiyama",sum:"Go early. The bamboo grove is a different place at 8:30, and the best eel lunch of the trip is opposite the temple.",sights:["bamboo","tenryuji","togetsukyo","toriimoto"],videos:[],
+ combos:[
+  {k:"Food-led",name:"Bamboo, garden, eel",steps:[
+   ["8:30","Bamboo grove before the crowds.",["s:bamboo"]],
+   ["9:15","Temple pond garden.",["s:tenryuji"]],
+   ["10:30","Bridge and the river path.",["s:togetsukyo"]],
+   ["11:00","Grilled eel on rice in a tatami room. Reservation only.",["p:Unagi-ya Hirokawa"]],
+   ["13:00","Pram-nap walk north along quiet lanes to the preserved street.",["s:toriimoto"]],
+   ["14:30","Rice dumplings and matcha in a thatched teahouse, then a taxi back to the station.",["p:Hiranoya"]]]},
+  {k:"Walk-led",name:"The long loop",steps:[
+   ["8:30","Bamboo grove.",["s:bamboo"]],
+   ["9:00","Walk north through the Sagano lanes, about 35 minutes.",["s:toriimoto"]],
+   ["10:30","Tea and dumplings at the top of the street.",["p:Hiranoya"]],
+   ["12:30","Walk back down for a later eel lunch booking.",["p:Unagi-ya Hirokawa"]],
+   ["14:00","Temple garden, then the bridge and river.",["s:tenryuji","s:togetsukyo"]]]}],
+ room:"Evening: Tuzuri for dinner (book), or take turns at a ramen counter. Several private-room places close on Wednesdays."},
+{d:"25",m:"Feb",w:"Thu",c:"kyoto",art:"plum",title:"Plum blossom and the Tenjin market",sum:"The day the trip is built around. The monthly market falls on the 25th, right as the plum grove peaks.",sights:["kitano","kamishichiken","kamo"],videos:[],
+ combos:[
+  {k:"Food-led",name:"Stalls, tofu, Kyoto-Chinese",steps:[
+   ["9:30","Eat your way through the market stalls. Use the carrier.",["s:kitano"]],
+   ["10:30","Plum grove.",["s:kitano"]],
+   ["11:00","Tofu-skin or wheat-gluten rice bowl facing the shrine. Phone ahead to confirm it opens.",["p:Toyouke Chaya"]],
+   ["13:00","Teahouse lane, then back for a nap.",["s:kamishichiken"]],
+   ["17:30","Return for Kyoto-style Chinese in the geisha district, booked ahead.",["p:Itosen"]]]},
+  {k:"Walk-led",name:"Market, mochi, river",steps:[
+   ["9:00","Market early, then the plum grove.",["s:kitano"]],
+   ["11:00","Thick-noodle udon before it sells out around 13:00.",["p:Tawaraya"]],
+   ["12:30","Teahouse lane.",["s:kamishichiken"]],
+   ["13:30","Bus east for the original bean mochi, then walk the river south toward the hotel.",["p:Demachi Futaba","s:kamo"]],
+   ["18:00","Izakaya dinner downtown, booked ahead.",["p:Tuzuri"]]]}]},
+{d:"26",m:"Feb",w:"Fri",c:"osaka",art:"osaka",art2:"nara",title:"Day trip: Osaka or Nara",sum:"Pick one. Osaka is the stronger food day and Nara the gentler walk. Both are under an hour from Kyoto.",sights:["dotonbori","shinsekai","osakacastle","narapark","todaiji","kasuga","naramachi"],videos:["v_takoyaki","v_nara"],
+ combos:[
+  {k:"Food-led",name:"Osaka",steps:[
+   ["10:00","Train to Osaka, then the subway to Namba.",[]],
+   ["10:45","Beef and egg broth with egg on rice. Go early, it shuts at 14:30.",["p:Chitose"]],
+   ["11:45","Canal walk with octopus balls and hot pork buns in hand.",["s:dotonbori","p:Takoyaki Wanaka","p:551 Horai"]],
+   ["12:45","Okonomiyaki at a booked table, or udon on tatami.",["p:Ajinoya","p:Dotonbori Imai"]],
+   ["14:30","Either take turns at fried skewers under the tower, or a pram walk through the castle plum grove.",["s:shinsekai","p:Yaekatsu","s:osakacastle"]],
+   ["17:00","Train back to Kyoto.",[]]]},
+  {k:"Walk-led",name:"Nara",steps:[
+   ["9:30","Kintetsu train to Nara, about 45 minutes.",[]],
+   ["10:15","Fresh-pounded mugwort mochi, eaten warm.",["p:Nakatanidou"]],
+   ["10:45","Old merchant lanes.",["s:naramachi"]],
+   ["11:30","Heirloom vegetable lunch in a tatami room. Reservation only.",["p:Awa Naramachi"]],
+   ["13:15","Deer park while the baby naps, then the Great Buddha.",["s:narapark","s:todaiji"]],
+   ["15:00","Lantern path to the shrine, with rice porridge or tea until 16:00.",["s:kasuga","p:Kasuga Ninaijaya"]],
+   ["16:30","Persimmon-leaf sushi box for the train.",["p:Tanaka"]]]}]},
+{d:"27",m:"Feb",w:"Sat",c:"kyoto",art:"path",title:"Philosopher's Path and Nanzen-ji",sum:"The flattest, loveliest walk in Kyoto, with the highest-rated family-friendly lunch of the trip at the end of it.",sights:["ginkakuji","philosopher","nanzenji","heian","yasaka"],videos:[],
+ combos:[
+  {k:"Food-led",name:"Walk to the udon",steps:[
+   ["9:00","Grab a same-day slot online the moment bookings open.",["p:Yamamoto Menzo"]],
+   ["9:30","Silver Pavilion and its moss garden.",["s:ginkakuji"]],
+   ["10:30","Walk the canal path south.",["s:philosopher"]],
+   ["11:45","Temple gate and the brick aqueduct.",["s:nanzenji"]],
+   ["12:30","Cold udon with burdock tempura, with a bowl for the baby.",["p:Yamamoto Menzo"]],
+   ["14:00","Pram-nap loop of the shrine and park.",["s:heian"]],
+   ["18:00","Wagyu sukiyaki in a private tatami room.",["p:Mishima-tei"]]]},
+  {k:"Walk-led",name:"Udon, path, tofu, pagoda",steps:[
+   ["9:15","Silver Pavilion.",["s:ginkakuji"]],
+   ["10:30","Early dipping udon at the top of the path. It opens 10:30 on weekends.",["p:Omen Ginkakuji"]],
+   ["11:30","Canal path south.",["s:philosopher"]],
+   ["12:30","Aqueduct, then a simmered tofu course in a garden.",["s:nanzenji","p:Nanzenji Junsei"]],
+   ["14:30","Shrine garden.",["s:heian"]],
+   ["17:00","Pagoda lane at dusk with the carrier, then izakaya dinner.",["s:yasaka","p:Tuzuri"]]]}],
+ room:"Private-room swap: kaiseki lunch at Minokichi Takeshigero, five minutes from Nanzen-ji."},
+{d:"28",m:"Feb",w:"Sun",c:"kyoto",art:"inari",art2:"sake",title:"Fushimi Inari and the sake district",sum:"Gates before breakfast, then south along one train line to udon and old breweries.",sights:["inari","sakedistrict"],videos:["v_inari"],
+ combos:[
+  {k:"Food-led",name:"Gates, mochi, udon, sake",steps:[
+   ["8:00","Lower loop of the gates with the carrier.",["s:inari"]],
+   ["9:15","Bean mochi when the shop opens at 9:00.",["p:Inari Futaba"]],
+   ["11:00","Cold udon with tempura. High chairs, and it opens at 11:00.",["p:Udon Taiga"]],
+   ["12:30","Canal walk and the brewery museum with its tasting.",["s:sakedistrict"]],
+   ["14:00","Chicken skewers and sake from the tank in an old brewery.",["p:Torisei Honten"]]]},
+  {k:"Walk-led",name:"The whole mountain",steps:[
+   ["7:30","Full mountain loop, two to three hours with the carrier.",["s:inari"]],
+   ["10:30","Bean mochi at the bottom.",["p:Inari Futaba"]],
+   ["11:30","Basket lunch in a private tatami room, booked ahead.",["p:Uosaburo"]],
+   ["13:00","Canal paths and the brewery museum.",["s:sakedistrict"]],
+   ["14:30","Fresh tofu and a sake flight.",["p:Tsuki no Kurabito"]]]}],
+ room:"Evening: Tuzuri is closed on Sundays. Use Yakiniku Yazawa or the Daimaru food hall."},
+{d:"1",m:"Mar",w:"Mon",c:"tokyo",art:"fuji",title:"Bullet train back to Tokyo",sum:"Two and a quarter hours. Book window seat E on the two-seat side for Mount Fuji, about 45 minutes before Tokyo.",sights:["nishiki","tokyostation"],videos:[],
+ combos:[
+  {k:"Easy",name:"Last Kyoto bites, then Fuji",steps:[
+   ["9:00","Final pass through the market for the omelette.",["s:nishiki","p:Miki Keiran"]],
+   ["10:00","Train bento and bean mochi from the food hall when it opens.",["p:Daimaru Kyoto food hall"]],
+   ["11:00","Bullet train to Tokyo.",[]],
+   ["13:30","Arrive and check in near Tokyo Station or Ginza.",["s:tokyostation"]],
+   ["17:00","Conger eel on rice, or tempura on rice, both in Nihonbashi.",["p:Nihonbashi Tamai","p:Kaneko Hannosuke"]]]}],
+ room:"Private-room swap: sukiyaki at Nihonbashi Iseju or eel at Unagi no Miyau. Shinjuku Gyoen is usually closed on Mondays."},
+{d:"2",m:"Mar",w:"Tue",c:"tokyo",art:"sensoji",title:"Asakusa or Shinjuku Gyoen",sum:"One last full day. Temple and soba for the eater, or the trip's easiest garden for the walker.",sights:["sensoji","gyoen"],videos:[],
+ combos:[
+  {k:"Food-led",name:"Asakusa",steps:[
+   ["9:30","Through the Thunder Gate and up the snack street to the temple.",["s:sensoji"]],
+   ["11:00","Edo-style soba when it opens.",["p:Namiki Yabu Soba"]],
+   ["12:30","Pram-nap walk along the river park.",[]],
+   ["15:00","Last food hall run for gifts.",["p:Ginza Mitsukoshi food hall"]],
+   ["18:00","Farewell wagyu in a private room.",["p:Ginza Chikamitsu"]]]},
+  {k:"Walk-led",name:"Shinjuku Gyoen",steps:[
+   ["9:30","Garden loop with the pram: early cherry, plum and the greenhouse.",["s:gyoen"]],
+   ["11:15","Take turns at dipping ramen, ten minutes' walk away.",["p:Fuunji"]],
+   ["13:00","Nap, then last shopping.",[]],
+   ["17:00","Conger eel on rice in Nihonbashi.",["p:Nihonbashi Tamai"]]]}]},
+{d:"3",m:"Mar",w:"Wed",c:"tokyo",art:"plane",title:"Fly home",sum:"Keep it simple and leave more time than you think you need.",sights:[],videos:[],
+ combos:[
+  {k:"Easy",name:"Out the door",steps:[
+   ["Morning","Send any forwarded bags to the airport the day before.",[]],
+   ["10:00","Bento and sweets for the flight when the food hall opens.",["p:Ginza Mitsukoshi food hall"]],
+   ["Then","Train or taxi to the airport.",[]]]}]}
+];
+
+var TYPES = [
+  {id:"together", name:"Together"},
+  {id:"turns", name:"Turns"},
+  {id:"takeaway", name:"Takeaway"},
+  {id:"room", name:"Private room"}
+];
+var T = "https://tabelog.com/";
+var P = [
+// ---------- TOKYO ----------
+{c:"tokyo",n:"Kitsuneya",j:"きつねや",q:"きつねや 築地場外市場",d:"Thu 18 · Tsukiji",o:"Offal or beef on rice",s:"3.49",x:"Wed, Sun",t:"turns",m:"5 stools plus standing. Open 6:30 to 13:00. Cash.",u:T+"en/tokyo/A1313/A131301/13007656/"},
+{c:"tokyo",n:"Takeno",j:"多け乃",q:"多け乃 築地",d:"Thu 18 · Tsukiji",o:"Sashimi set, grilled or simmered fish",s:"3.67",a:"Top-100 izakaya",x:"Sun, holidays",t:"together",m:"Tables over two floors, bookable. No prices on the menu.",u:T+"en/tokyo/A1313/A131301/13007634/"},
+{c:"tokyo",n:"Ginza Kagari",j:"銀座 篝 本店",q:"銀座 篝 本店",d:"Thu 18 · Ginza",o:"Creamy chicken ramen",s:"3.66",x:"None listed",t:"turns",m:"18 counter seats, queue.",u:T+"en/tokyo/A1301/A130101/13230021/"},
+{c:"tokyo",n:"Mugi to Olive",j:"むぎとオリーブ",q:"むぎとオリーブ 銀座",d:"Any day · Ginza",o:"Ramen",s:"3.76",x:"Wed",t:"turns",m:"Seating format not checked."},
+{c:"tokyo",n:"Ginza Mitsukoshi food hall",j:"銀座三越",q:"銀座三越",d:"Any evening · Ginza",o:"Bento, sushi and sweets for the hotel",s:"",x:"Irregular",t:"takeaway",m:"Nursing rooms and pram hire in the store."},
+{c:"tokyo",n:"Menchirashi",j:"麺散",q:"麺散 原宿",d:"Fri 19 · Harajuku",o:"Handmade udon with chicken tempura",s:"3.58",x:"None",t:"turns",m:"All counter, queue, cashless only.",u:T+"en/tokyo/A1306/A130601/13225567/"},
+{c:"tokyo",n:"Maisen Aoyama",j:"とんかつ まい泉 青山本店",q:"とんかつ まい泉 青山本店",d:"Fri 19 · Omotesando",o:"Black pork cutlet set",s:"3.43",x:"None",t:"together",m:"High chairs and changing space. The easy option, not the best cutlet in town.",u:T+"en/tokyo/A1306/A130602/13001850/"},
+{c:"tokyo",n:"Mizuho",j:"瑞穂",q:"瑞穂 原宿 豆大福",d:"Fri 19 · Harajuku",o:"Bean daifuku",s:"3.79",a:"Top-100 sweets",x:"Sun, Mon",t:"takeaway",m:"Opens 9:00 and sells out. Cash.",u:T+"en/tokyo/A1306/A130601/13001154/"},
+{c:"tokyo",n:"Tamawarai",j:"玉笑",q:"玉笑 原宿 蕎麦",d:"Fri 19 · Harajuku",o:"Soba",s:"3.90",a:"Tabelog Bronze",x:"Sun to Tue",t:"turns",m:"Not suitable for young children, so strictly one at a time. Cash.",u:T+"en/tokyo/A1306/A130601/13129390/"},
+{c:"tokyo",n:"Nezu Kamachiku",j:"根津 釜竹",q:"根津 釜竹",d:"Sat 20 · Nezu",o:"Kama-age udon and small plates",s:"3.65",a:"Top-100 udon",x:"Confirm",t:"together",m:"Tatami tables, babies and prams welcome. Lunch is walk-in from 11:30.",u:T+"en/tokyo/A1311/A131106/13020252"},
+{c:"tokyo",n:"Isen Honten",j:"井泉 本店",q:"井泉 本店 湯島",d:"Sat 20 · Yushima",o:"Fillet cutlet, cutlet sandwich",s:"3.53",a:"Top-100 tonkatsu",x:"Wed",t:"together",m:"Counter, tables and tatami. Cash.",u:T+"en/tokyo/A1311/A131101/13003619/"},
+{c:"tokyo",n:"Ponta Honke",j:"ぽん多本家",q:"ぽん多本家 上野",d:"Sat 20 · Ueno",o:"Cutlet",s:"3.77",x:"Not checked",t:"turns",m:"No preschool children admitted, so one at a time only.",u:T+"en/tokyo/A1311/A131101/13003587/"},
+{c:"tokyo",n:"Himitsudo",j:"ひみつ堂",q:"ひみつ堂 谷中",d:"Sat 20 · Yanaka",o:"Shaved ice",s:"3.77",a:"Top-100 sweets",x:"Not checked",t:"turns",m:"Counter seats. Children welcome. Cash.",u:T+"en/tokyo/A1311/A131106/13126796/"},
+{c:"tokyo",n:"Niku no Suzuki",j:"肉のすずき",q:"肉のすずき 谷中銀座",d:"Sat 20 · Yanaka",o:"Fried mince cutlet",s:"3.29",x:"Mon, Tue",t:"takeaway",m:"Fine in passing, not a destination.",u:T+"tokyo/A1311/A131106/13277794/"},
+{c:"tokyo",n:"Nihonbashi Tamai",j:"日本橋 玉ゐ 本店",q:"日本橋 玉ゐ 本店",d:"Mon 1 or Tue 2 Mar · Nihonbashi",o:"Conger eel on rice",s:"3.60",x:"None",t:"together",m:"Lunch is a queue, dinner bookable.",u:T+"en/tokyo/A1302/A130202/13019904/"},
+{c:"tokyo",n:"Kaneko Hannosuke",j:"金子半之助 本店",q:"金子半之助 本店 日本橋",d:"Mon 1 or Tue 2 Mar · Nihonbashi",o:"Tempura on rice",s:"3.51",x:"Not checked",t:"together",m:"A few tables, or takeaway bento. Queue.",u:T+"en/tokyo/A1302/A130202/13118694/"},
+{c:"tokyo",n:"Daimaru Tokyo food floors",j:"大丸東京店",q:"大丸東京店",d:"Mon 1 Mar · Tokyo Station",o:"Bento street on B1",s:"",x:"None",t:"takeaway",m:"Good on arrival from Kyoto."},
+{c:"tokyo",n:"Namiki Yabu Soba",j:"並木藪蕎麦",q:"並木藪蕎麦 浅草",d:"Tue 2 Mar · Asakusa",o:"Edo-style soba",s:"3.66",a:"Top-100 soba",x:"Wed, Thu",t:"together",m:"Tables and tatami, queue.",u:T+"en/tokyo/A1311/A131102/13003650/"},
+{c:"tokyo",n:"Fuunji",j:"風雲児 新宿本店",q:"風雲児 新宿本店",d:"Tue 2 Mar · Shinjuku",o:"Dipping ramen",s:"3.76",a:"Top-100 ramen",x:"None",t:"turns",m:"15 counter seats in a basement, queue.",u:T+"en/tokyo/A1304/A130401/13044091/"},
+{c:"tokyo",n:"Ginza Kitcho",j:"銀座 吉兆",q:"銀座吉兆 銀座2丁目",d:"Any day · Ginza",o:"Kaiseki. Lunch sets are the value pick",s:"3.57",x:"Open daily",t:"room",p:"Lunch sets 6,600 or 8,800 yen. Dinner 40,000+. Families pay a flat 11,000 for the room.",m:"Rooms for two. Prams allowed, changing table. 03-3535-1177",u:T+"tokyo/A1301/A130101/13200923/"},
+{c:"tokyo",n:"Ginza Chikamitsu",j:"銀座 ちかみつ 六丁目",q:"銀座 ちかみつ 六丁目",d:"Any day · Ginza",o:"Wagyu grilled at the table",s:"3.70",a:"Top-100 yakiniku",x:"Open daily",t:"room",p:"Lunch from 7,000 yen. Dinner 10,000 to 20,000. No room charge.",m:"Every table is an enclosed room. Kids' plate. 03-6264-2917",u:T+"tokyo/A1301/A130101/13259532/"},
+{c:"tokyo",n:"Tsukiji Jisaku",j:"つきじ治作",q:"つきじ治作",d:"Lunch on Sat 20 or Sun 21 only · Tsukiji",o:"Chicken hotpot within a kaiseki course, in a riverside garden",s:"3.51",x:"Irregular",t:"room",p:"Lunch 15,000+ yen. Dinner 30,000+. Room charge from 12,000.",m:"Every party gets its own tatami room. Prams allowed. 03-3541-2391",u:T+"tokyo/A1313/A131301/13002307/"},
+{c:"tokyo",n:"Chisou Kouryu",j:"馳創吼龍",q:"馳創吼龍 銀座",d:"Lunch only with a baby · Ginza",o:"Small chef-led seasonal courses",s:"3.62",a:"Top-100 Japanese",x:"Irregular",t:"room",p:"Lunch 5,000 to 6,000 yen. No room charge.",m:"Enclosed rooms from two people. 03-6876-3389",u:T+"tokyo/A1301/A130101/13225838/"},
+{c:"tokyo",n:"Unagi no Miyau",j:"銀座うなぎノ宮宇",q:"銀座うなぎノ宮宇",d:"Thu 18, Fri 19, Mon 1 or Tue 2 · Ginza",o:"Eel courses",s:"3.53",x:"Sat, Sun",t:"room",p:"Lunch 6,000 to 8,000 yen. Dinner 10,000 to 15,000.",m:"Rooms for two. 03-6264-0828",u:T+"tokyo/A1301/A130101/13304052/"},
+{c:"tokyo",n:"Nihonbashi Iseju",j:"日本橋 伊勢重",q:"伊勢重 日本橋小伝馬町",d:"Mon 1 or Tue 2 Mar · Nihonbashi",o:"Sukiyaki",s:"3.55",a:"Top-100 sukiyaki",x:"Sun, holidays",t:"room",p:"Lunch 3,000 to 4,000 yen. Dinner 8,000 to 10,000.",m:"All rooms private, tatami. Infants not explicitly listed, so phone first. Stairs, pram stays at the door.",u:T+"tokyo/A1302/A130204/13008056/"},
+// ---------- KANAZAWA ----------
+{c:"kanazawa",n:"Kureha",j:"久連波",q:"久連波 金沢 東山",d:"Sun 21 afternoon · Higashi Chaya",o:"Fresh sweets with matcha",s:"3.60",a:"Top-100 cafe",x:"Wed",t:"together",m:"Tables downstairs, tatami upstairs.",u:T+"ishikawa/A1701/A170101/17000663/"},
+{c:"kanazawa",n:"Akadama Honten",j:"赤玉 本店",q:"赤玉 本店 金沢 片町",d:"Sun 21 dinner · Katamachi",o:"Kanazawa oden, six-piece set",s:"3.49",x:"Mon",t:"together",m:"Two floors with tatami, bookable.",u:T+"ishikawa/A1701/A170101/17000401/"},
+{c:"kanazawa",n:"Omicho Shokudo",j:"近江町食堂",q:"近江町食堂 金沢",d:"Any dinner · Omicho Market",o:"Seafood sets",s:"3.47",x:"New Year only",t:"together",m:"Babies and prams explicitly welcome. Easiest dinner near the hotel.",u:T+"ishikawa/A1701/A170101/17000046/"},
+{c:"kanazawa",n:"Iki-iki Tei",j:"いきいき亭 近江町店",q:"いきいき亭 近江町店",d:"Mon 22 breakfast · Omicho Market",o:"Seafood rice bowl",s:"3.65",x:"Tue",t:"turns",m:"10 counter seats, opens 7:00, queue. Cash.",u:T+"ishikawa/A1701/A170101/17001392/"},
+{c:"kanazawa",n:"Daikoku Sushi",j:"大國鮨",q:"大國鮨 金沢 西町",d:"Mon 22 lunch · beside Omicho",o:"Seasonal chef's-choice sushi, about 3,000 to 4,000 yen",s:"3.56",x:"Wed",t:"turns",m:"10 counter seats, bookable on 076-222-6211. Cash.",u:T+"ishikawa/A1701/A170101/17002412/"},
+{c:"kanazawa",n:"Otome Sushi",j:"乙女寿司",q:"乙女寿司 金沢",d:"Mon 22 lunch · Korinbo",o:"Chef's-choice sushi, 20,000 yen or more a head",s:"4.05",a:"Tabelog Bronze",x:"Wed, Sun, holidays",t:"together",m:"Counter plus a tatami room. Bookings open 2 months ahead, phone around 22 Dec on 076-231-7447. Confirm they will take a baby.",u:T+"ishikawa/A1701/A170101/17000107/"},
+{c:"kanazawa",n:"Tsubomi",j:"つぼみ",q:"つぼみ 金沢 柿木畠 甘味",d:"Mon 22 afternoon · after Kenrokuen",o:"Arrowroot noodles, matcha sweet bean soup",s:"3.66",a:"Top-100 sweets",x:"Wed",t:"together",m:"Shared table. Lap babies and prams fine. Cash.",u:T+"ishikawa/A1701/A170101/17000008/"},
+{c:"kanazawa",n:"Oden Takasago",j:"おでん 高砂",q:"おでん 高砂 金沢 片町",d:"Mon 22 dinner · Katamachi",o:"Wheat-gluten rounds, daikon, beef tendon, whelk",s:"3.59",x:"Sun",t:"together",m:"Counter with a few tables. Book on 076-231-1018. Cash.",u:T+"ishikawa/A1701/A170101/17000407/"},
+{c:"kanazawa",n:"Itaru Honten",j:"いたる 本店",q:"いたる 本店 金沢",d:"Mon 22 dinner, alternative · Korinbo",o:"Seafood izakaya",s:"3.62",a:"Top-100 izakaya",x:"Sun",t:"together",m:"Counter plus tatami. Book on 076-221-4194.",u:T+"ishikawa/A1701/A170101/17000009/"},
+{c:"kanazawa",n:"Menya Taiga",j:"麺屋大河",q:"麺屋大河 金沢",d:"Any day · near the station",o:"Miso ramen",s:"3.73",a:"Top-100 ramen",x:"Irregular",t:"turns",m:"12 counter seats, queue.",u:T+"ishikawa/A1701/A170101/17007507/"},
+{c:"kanazawa",n:"Yamasan Sushi",j:"山さん寿司 本店",q:"山さん寿司 本店 近江町市場",d:"Tue 23 breakfast · Omicho Market",o:"Piled-high seafood bowl",s:"3.65",x:"Irregular, confirm for the holiday",t:"together",m:"Tatami tables. Opens 9:00. A few reservations a day on 076-221-0055.",u:T+"ishikawa/A1701/A170101/17000196/"},
+{c:"kanazawa",n:"Mori Mori Sushi",j:"もりもり寿し 近江町店",q:"もりもり寿し 近江町店",d:"Sun 21 late lunch · Omicho Market",o:"Local five-piece plate, seared seaperch",s:"3.49",x:"Tuesday unclear",t:"turns",m:"Conveyor counter, queue. A local chain, but a good one.",u:T+"ishikawa/A1701/A170101/17000911/"},
+{c:"kanazawa",n:"Omicho Croquette",j:"近江町コロッケ",q:"近江町コロッケ 金沢",d:"Any day · Omicho Market",o:"Crab or sweet shrimp croquette",s:"3.45",x:"Irregular",t:"takeaway",m:"Open 8:00 to 17:00.",u:T+"ishikawa/A1701/A170101/17003147/"},
+{c:"kanazawa",n:"Kuroyuri",j:"黒百合",q:"黒百合 金沢駅 おでん",d:"Tue 23 · inside Kanazawa Station",o:"Oden and local dishes",s:"3.49",a:"Top-100 izakaya",x:"None",t:"together",m:"Booths. Good before the train.",u:T+"ishikawa/A1701/A170101/17000022/"},
+{c:"kanazawa",n:"Kanazawa Chaya",j:"料理旅館 金沢茶屋",q:"料理旅館 金沢茶屋",d:"Mon 22 lunch · near the station",o:"Inn-style kaiseki, 15 minutes' walk from Omicho",s:"3.61",x:"Open daily",t:"room",p:"Lunch course 6,600 yen. Others 8,800 to 13,200.",m:"Rooms exist but the smallest size is not stated, so ask. 076-231-2225",u:T+"ishikawa/A1701/A170101/17006925/"},
+{c:"kanazawa",n:"Tsubajin",j:"つば甚",q:"つば甚 金沢",d:"Sun 21 dinner or Mon 22 · Teramachi",o:"Local kaiseki at Kanazawa's best-known traditional restaurant",s:"3.73",x:"Open daily",t:"room",p:"Lunch 20,000 yen. Dinner 27,500 or 38,500, room included.",m:"Every party gets its own room, chairs or tatami. Tell them about the baby in advance. 076-241-2181",u:T+"ishikawa/A1701/A170101/17000031/"},
+{c:"kanazawa",n:"Yamanoo",j:"山乃尾",q:"山乃尾 金沢 東山",d:"Sun 21 dinner or Mon 22 · above Higashi Chaya",o:"Kaiseki in detached rooms. Crab courses in winter",s:"3.75",x:"Open daily",t:"room",p:"From 30,000 yen. Crab courses 50,000 to 70,000. Room fee 5,000.",m:"Tatami rooms for two. Baby futon on request. Book 7 or more days ahead. 076-252-5171",u:T+"ishikawa/A1701/A170101/17000062/"},
+{c:"kanazawa",n:"Shogyotei",j:"松魚亭",q:"松魚亭 金沢",d:"Any of your three meals · above Higashi Chaya",o:"Fish and local dishes on the hill",s:"3.52",x:"Wed",t:"room",p:"Courses 7,500 or 9,500 yen.",m:"Ask for a full private room, not semi-private. Prams allowed, child chairs. Taxi there. 050-3155-1010",u:T+"ishikawa/A1701/A170101/17000064/"},
+{c:"kanazawa",n:"Genzaemon",j:"源左ェ門 木倉町店",q:"源左ェ門 木倉町店 金沢",d:"Sun 21 dinner · Katamachi",o:"Seafood izakaya. Course with grilled seaperch 7,000 yen",s:"3.59",x:"Wed. Dinner only",t:"room",p:"4,000 to 8,000 yen.",m:"Rooms exist but the smallest size is not stated, so ask. 076-232-7110",u:T+"ishikawa/A1701/A170101/17000109/"},
+// ---------- KYOTO ----------
+{c:"kyoto",n:"Menya Inoichi",j:"麺屋 猪一",q:"麺屋 猪一 京都 寺町",d:"Any evening · downtown",o:"Dashi ramen, white or dark soy",s:"3.71",a:"Top-100 ramen",x:"Irregular",t:"together",m:"Counter plus two tables. Babies and prams allowed. Numbered tickets before service.",u:T+"kyoto/A2601/A260201/26032368/"},
+{c:"kyoto",n:"Sugari",j:"和醸良麺 すがり",q:"和醸良麺 すがり 京都",d:"Any evening · downtown",o:"Offal dipping ramen",s:"3.67",a:"Top-100 ramen",x:"None listed",t:"turns",m:"10 counter seats. Primary-school age and up.",u:T+"kyoto/A2601/A260201/26006820/"},
+{c:"kyoto",n:"Gyoza Ryosho",j:"ぎょうざ処 高辻 亮昌 本店",q:"ぎょうざ処 高辻 亮昌 本店",d:"Any evening, incl. Tue 23 · downtown",o:"Gyoza set",s:"3.51",a:"Top-100 gyoza",x:"None",t:"together",m:"Mostly tables, walk-in. Smoking area is separated, not banned.",u:T+"kyoto/A2601/A260201/26017170/"},
+{c:"kyoto",n:"Tuzuri",j:"綴 つづり",q:"つづり 京都市下京区因幡堂町",d:"Wed 24, Thu 25 or Sat 27 dinner · downtown",o:"Simmered pork belly, potato salad, clam ramen to finish",s:"3.52",x:"Sun, holidays",t:"together",m:"Counter and tatami. Book on 075-341-0808. Not open Tue 23 or Sun 28.",u:T+"kyoto/A2601/A260201/26003488/"},
+{c:"kyoto",n:"Mishima-tei",j:"三嶋亭 本店",q:"三嶋亭 本店 京都",d:"Any evening, the splurge · Teramachi",o:"Wagyu sukiyaki, 15,000 to 20,000 yen at dinner",s:"3.66",a:"Top-100 sukiyaki",x:"Confirm",t:"together",m:"Private tatami rooms. Lunch course about 8,600 yen. Book a few weeks ahead.",u:T+"kyoto/A2601/A260201/26000646/"},
+{c:"kyoto",n:"Kyogoku Kaneyo",j:"京極かねよ",q:"京極かねよ",d:"Any day but Wed · downtown",o:"Eel rice under a thick omelette",s:"3.49",x:"Wed",t:"together",m:"Families go to the upstairs tatami room. Confirm Tuesday dinner.",u:T+"kyoto/A2601/A260201/26001330/"},
+{c:"kyoto",n:"Miki Keiran",j:"三木鶏卵",q:"三木鶏卵 錦市場",d:"Any day · Nishiki Market",o:"Rolled dashi omelette",s:"3.45",x:"None",t:"takeaway",m:"Cash.",u:T+"kyoto/A2601/A260201/26004870/"},
+{c:"kyoto",n:"Daimaru Kyoto food hall",j:"大丸京都店",q:"大丸京都店",d:"Any evening · Shijo-Karasuma",o:"Bento, plus a Demachi Futaba bean mochi counter",s:"",x:"None",t:"takeaway",m:"Mochi sells out by evening."},
+{c:"kyoto",n:"Maruki Bakery",j:"まるき製パン所",q:"まるき製パン所 京都",d:"Any morning · Matsubara-Horikawa",o:"Ham roll, filled soft rolls",s:"3.73",a:"Top-100 bakery",x:"Mon",t:"takeaway",m:"From 6:30. Shuts at 14:00 on Sundays and holidays. Cash.",u:T+"kyoto/A2601/A260203/26003237/"},
+{c:"kyoto",n:"Unagi-ya Hirokawa",j:"うなぎ屋 廣川",q:"うなぎ屋 廣川 嵐山",d:"Wed 24 lunch · Arashiyama",o:"Grilled eel on rice",s:"3.72",a:"Top-100 eel",x:"Mon",t:"together",m:"Tatami and private rooms. Reservation only, book early on 075-871-5226.",u:T+"kyoto/A2601/A260403/26000921/"},
+{c:"kyoto",n:"Hiranoya",j:"平野屋",q:"平野屋 嵯峨鳥居本",d:"Wed 24 afternoon · Saga-Toriimoto",o:"Rice dumplings with matcha",s:"3.72",x:"Not stated",t:"together",m:"Tatami in a thatched teahouse at the end of the walk. Tea set looks to be walk-in.",u:T+"kyoto/A2601/A260403/26000808/"},
+{c:"kyoto",n:"Toyouke Chaya",j:"とようけ茶屋",q:"とようけ茶屋 北野天満宮",d:"Thu 25 lunch · facing Kitano Tenmangu",o:"Fresh wheat-gluten or tofu-skin rice bowl",s:"3.48",x:"Thu, Fri (may open on the 25th)",t:"together",m:"Queue. Cash. Phone 075-462-3662 to confirm.",u:T+"kyoto/A2601/A260501/26001508/"},
+{c:"kyoto",n:"Tawaraya",j:"たわらや",q:"たわらや 北野天満宮 うどん",d:"Thu 25 lunch, backup · Kitano",o:"Single thick-noodle udon",s:"3.47",x:"Irregular",t:"together",m:"Tables and tatami. Sells out after about 13:00.",u:T+"kyoto/A2601/A260501/26002560/"},
+{c:"kyoto",n:"Itosen",j:"糸仙",q:"糸仙 上七軒",d:"Thu 25 dinner · Kamishichiken",o:"Kyoto-style Chinese: spring rolls, sweet and sour pork",s:"3.64",a:"Top-100 Chinese",x:"Tue, Wed",t:"together",m:"Tables and tatami, bookable. Cash.",u:T+"kyoto/A2601/A260501/26000006/"},
+{c:"kyoto",n:"Yamamoto Menzo",j:"山元麺蔵",q:"山元麺蔵 京都 岡崎",d:"Sat 27 lunch · Okazaki",o:"Cold udon with burdock or chicken tempura",s:"3.98",a:"Top-100 udon",x:"Thu",t:"together",m:"Counter plus two tables. Child bowls. Same-day slots open at 09:00. Cash.",u:T+"kyoto/A2601/A260301/26002504/"},
+{c:"kyoto",n:"Omen Ginkakuji",j:"おめん 銀閣寺本店",q:"おめん 銀閣寺本店",d:"Sat 27 lunch · top of the Philosopher's Path",o:"Dipping udon with vegetables and sesame",s:"3.57",x:"Thu",t:"together",m:"77 seats, bookable.",u:T+"kyoto/A2601/A260302/26001803/"},
+{c:"kyoto",n:"Nanzenji Junsei",j:"南禅寺 順正",q:"南禅寺 順正",d:"Sat 27 lunch · Nanzen-ji",o:"Simmered tofu course",s:"3.50",x:"Wed",t:"together",m:"Garden setting. Babies and prams explicitly allowed.",u:T+"kyoto/A2601/A260301/26001013/"},
+{c:"kyoto",n:"Hinode Udon",j:"日の出うどん",q:"日の出うどん 京都",d:"Sat 27 lunch, cheaper option · near Nanzen-ji",o:"Curry udon",s:"3.53",a:"Top-100 udon",x:"Sun",t:"together",m:"Tatami. Cash, queue.",u:T+"kyoto/A2601/A260301/26000815/"},
+{c:"kyoto",n:"Inari Futaba",j:"いなりふたば",q:"いなりふたば 伏見稲荷",d:"Sun 28 morning · Fushimi Inari",o:"Bean mochi",s:"3.65",a:"Top-100 sweets",x:"Wed, Thu",t:"takeaway",m:"Cash.",u:T+"kyoto/A2601/A260601/26007559/"},
+{c:"kyoto",n:"Udon Taiga",j:"本格手打うどん 大河",q:"本格手打うどん 大河 京都 藤森",d:"Sun 28 lunch · between Inari and the sake district",o:"Cold udon with vegetable tempura",s:"3.73",a:"Top-100 udon",x:"Tue",t:"together",m:"High chairs and baby seats. Open 11:00 to 14:00. Cash.",u:T+"kyoto/A2601/A260601/26020260/"},
+{c:"kyoto",n:"Torisei Honten",j:"鳥せい 本店",q:"鳥せい 本店 伏見",d:"Sun 28 afternoon · Fushimi",o:"Grilled chicken skewers, sake from the tank",s:"3.41",x:"Mon",t:"together",m:"In an old brewery. Prams fine.",u:T+"kyoto/A2601/A260601/26001213/"},
+{c:"kyoto",n:"Tsuki no Kurabito",j:"月の蔵人",q:"月の蔵人 伏見",d:"Sun 28 afternoon · Fushimi",o:"Fresh tofu, sake hotpot",s:"3.48",x:"None",t:"together",m:"Run by the Gekkeikan brewery.",u:T+"kyoto/A2601/A260601/26002346/"},
+{c:"kyoto",n:"Demachi Futaba",j:"出町ふたば",q:"出町ふたば",d:"Thu 25, Sat 27 or Sun 28 · Demachiyanagi",o:"The original bean mochi",s:"3.84",a:"Top-100 sweets",x:"Tue, 4th Wed",t:"takeaway",m:"Queue. Cash.",u:T+"kyoto/A2601/A260302/26001520/"},
+{c:"kyoto",n:"Kinobu",j:"京料理 木乃婦",q:"京料理 木乃婦",d:"Most days · 5 minutes from Shijo",o:"Classic Kyoto kaiseki",s:"3.60",x:"Possibly Wed 24",t:"room",p:"Lunch 6,000 to 8,000 yen. Dinner 15,000 to 30,000. No room charge.",m:"Sunken-floor room for 2 to 6. Prams allowed, you may bring baby food. 075-352-0001",u:T+"kyoto/A2601/A260201/26000824/"},
+{c:"kyoto",n:"Kaji",j:"京料理 かじ",q:"京料理 かじ 丸太町",d:"Any day but Wed 24 · Marutamachi",o:"Kaiseki in a townhouse. Winter hotpot courses",s:"3.53",x:"Wed",t:"room",p:"Lunch 5,000 yen. Courses 6,000 to 20,000. 15% surcharge for a room for two.",m:"Tables and chairs on tatami. Used to hosting baby celebrations. 075-231-3801",u:T+"kyoto/A2601/A260202/26001007/"},
+{c:"kyoto",n:"Yakiniku Yazawa",j:"焼肉矢澤 京都",q:"焼肉矢澤 京都",d:"Any dinner. Lunch on 23, 27, 28 Feb · 3 minutes from Shijo",o:"Wagyu grilled at the table",s:"3.75",a:"Top-100 yakiniku",x:"Open daily",t:"room",p:"Dinner 10,000 to 15,000 yen.",m:"Book the room by phone only. Prams allowed in rooms. 075-352-2914",u:T+"kyoto/A2601/A260201/26028368/"},
+{c:"kyoto",n:"Muromachi Wakuden",j:"室町 和久傳",q:"室町 和久傳",d:"Lunch Mon, Fri, Sat, Sun · Karasuma-Oike",o:"Modern kaiseki. The top score on this list",s:"4.13",a:"Tabelog Bronze",x:"Wed",t:"room",p:"Lunch from 13,000 yen. Dinner 25,000 or 35,000.",m:"Rooms are sized for 4 or more, so ask if they will give one to two. 075-223-3200",u:T+"kyoto/A2601/A260202/26000621/"},
+{c:"kyoto",n:"Tempura Yoshikawa",j:"京・富小路 天ぷら吉川",q:"天ぷら吉川 京都 富小路",d:"Thu 25 onward · Tominokoji-Oike",o:"Tempura kaiseki in garden-view inn rooms",s:"3.62",a:"Top-100 tempura",x:"Tue, Wed",t:"room",p:"From 22,000 yen.",m:"Each room has its own toilet. Vaping is allowed in rooms, so ask for a smoke-free one. 075-221-5544",u:T+"kyoto/A2601/A260202/26001150/"},
+{c:"kyoto",n:"Sanjo Haku",j:"京都三条 箔",q:"京都三条 箔",d:"Lunch Sat 27 or Sun 28 · Kiyamachi-Sanjo",o:"Sukiyaki and shabu-shabu",s:"3.62",x:"Tue",t:"room",p:"Lunch from 12,100 yen. Dinner from 30,000.",m:"Book a private-room plan. Confirm the room is non-smoking. 075-254-8717",u:T+"kyoto/A2601/A260202/26030697/"},
+{c:"kyoto",n:"Minokichi Takeshigero",j:"美濃吉本店 竹茂楼",q:"美濃吉本店 竹茂楼",d:"Sat 27 lunch · near Nanzen-ji",o:"Kaiseki known for river fish and eel",s:"3.63",x:"Open daily",t:"room",p:"Lunch 13,200 or 16,500 yen. Dinner from 22,000.",m:"Tatami or sunken floor. Confirm a non-smoking room. 075-771-4185",u:T+"kyoto/A2601/A260301/26001001/"},
+{c:"kyoto",n:"Uosaburo",j:"魚三楼",q:"魚三楼 伏見",d:"Sun 28 lunch · Fushimi sake district",o:"Kaiseki from a house founded in 1764",s:"3.50",x:"Tue",t:"room",p:"Basket lunch 6,000 yen. Kaiseki from 19,000.",m:"Offers families a large tatami room. Ask for a private room when booking. 075-601-0061",u:T+"kyoto/A2601/A260601/26001211/"},
+{c:"kyoto",n:"Arashiyama Kumahiko",j:"嵐山熊彦",q:"嵐山熊彦",d:"Not Wed 24 · Arashiyama",o:"Riverside kaiseki",s:"3.50",x:"Tue, Wed",t:"room",p:"Private-room lunch 14,410 or 16,830 yen, all in.",m:"Upstairs tatami. Misses your Arashiyama day unless you swap days. 075-861-0004",u:T+"kyoto/A2601/A260403/26001010/"},
+// ---------- OSAKA ----------
+{c:"osaka",n:"Chitose",j:"千とせ 本店",q:"千とせ 本店 難波 肉吸い",d:"Fri 26 · Namba",o:"Beef and egg broth with egg on rice",s:"3.72",a:"Top-100 udon",x:"Tue",t:"together",m:"18 seats at shared tables. Open 10:30 to 14:30, go early. Cash.",u:T+"osaka/A2701/A270202/27002763/"},
+{c:"osaka",n:"Dotonbori Imai",j:"道頓堀 今井 本店",q:"道頓堀 今井 本店",d:"Fri 26 · Dotonbori",o:"Fried-tofu udon, famous for its broth",s:"3.58",x:"Wed",t:"together",m:"Tatami, prams can enter. The easiest sit-down in Osaka.",u:T+"osaka/A2701/A270202/27001289/"},
+{c:"osaka",n:"Ajinoya",j:"味乃家 本店",q:"味乃家 本店 難波",d:"Fri 26 · Namba",o:"Mixed okonomiyaki, or the noodle-layered version",s:"3.59",a:"Top-100 okonomiyaki",x:"Mon",t:"together",m:"Children's tableware. Book to skip the queue. Cash.",u:T+"osaka/A2701/A270202/27001439/"},
+{c:"osaka",n:"Mizuno",j:"美津の",q:"美津の 道頓堀 お好み焼",d:"Fri 26 · Dotonbori",o:"Okonomiyaki made with all-yam batter",s:"3.56",a:"Top-100 okonomiyaki",x:"None",t:"turns",m:"12 counter seats, queue.",u:T+"osaka/A2701/A270202/27001278/"},
+{c:"osaka",n:"Okaru",j:"おかる",q:"おかる 千日前 お好み焼",d:"Fri 26 · Sennichimae",o:"Pork okonomiyaki cooked at your table",s:"3.48",x:"Thu",t:"together",m:"All tables. Lunch is 12:00 to 14:30 only. Cash.",u:T+"osaka/A2701/A270202/27001276/"},
+{c:"osaka",n:"Takoyaki Wanaka",j:"たこ焼道楽 わなか 千日前本店",q:"たこ焼道楽 わなか 千日前本店",d:"Fri 26 · Sennichimae",o:"Octopus balls, mixed tray",s:"3.49",x:"None",t:"takeaway",m:"Takeaway window with seating behind. Cash.",u:T+"osaka/A2701/A270202/27002320/"},
+{c:"osaka",n:"Yaekatsu",j:"八重勝",q:"八重勝 新世界",d:"Fri 26 · Shinsekai",o:"Fried skewers, miso-stewed beef tendon",s:"3.49",x:"Thu",t:"turns",m:"Counter only, queue, takeaway possible. Cash.",u:T+"osaka/A2701/A270206/27000443/"},
+{c:"osaka",n:"551 Horai",j:"551蓬莱 本店",q:"551蓬莱 本店 難波",d:"Fri 26 · Namba",o:"Pork buns, eaten hot",s:"3.47",x:"Tue",t:"takeaway",m:"Fast queue at the street counter. Restaurant upstairs.",u:T+"osaka/A2701/A270202/27001312/"},
+{c:"osaka",n:"Okonomiyaki Kiji",j:"お好み焼 きじ 本店",q:"お好み焼 きじ 本店 新梅田食道街",d:"Fri 26 · Umeda",o:"Okonomiyaki",s:"3.66",a:"Top-100 okonomiyaki",x:"Sun",t:"together",m:"23 seats, queue from opening. Cash. Handy if you come through Osaka Station.",u:T+"osaka/A2701/A270101/27000297/"},
+{c:"osaka",n:"Hanshin Ikayaki",j:"阪神名物 いか焼き",q:"阪神名物 いか焼き 阪神梅田本店",d:"Fri 26 · Umeda, Hanshin store basement",o:"Pressed squid pancake",s:"3.49",x:"None",t:"takeaway",m:"Standing or takeaway.",u:T+"osaka/A2701/A270101/27105269/"},
+// ---------- NARA ----------
+{c:"nara",n:"Nakatanidou",j:"中谷堂",q:"中谷堂 奈良",d:"Fri 26 · near Kintetsu Nara",o:"Fresh-pounded mugwort mochi",s:"3.72",a:"Top-100 sweets",x:"Tue",t:"takeaway",m:"Prams fine. Cash.",u:T+"nara/A2901/A290101/29000222/"},
+{c:"nara",n:"Awa Naramachi",j:"粟 ならまち店",q:"粟 ならまち店 奈良",d:"Fri 26 lunch · Naramachi",o:"Set lunch of heirloom vegetables and local beef, about 3,000 to 4,000 yen",s:"3.66",x:"Tue",t:"together",m:"Tatami and private rooms. Reservation only, by the day before.",u:T+"nara/A2901/A290101/29001643/"},
+{c:"nara",n:"Sobakiri Momoyozuki",j:"そば切り 百夜月",q:"そば切り 百夜月 奈良",d:"Fri 26 lunch · near Kintetsu Nara",o:"Pure buckwheat soba",s:"3.54",a:"Top-100 soba",x:"Tue, Wed",t:"turns",m:"14 seats, queue before opening. Cash.",u:T+"nara/A2901/A290101/29000692/"},
+{c:"nara",n:"Soba Kitahara",j:"そば処 喜多原",q:"そば処 喜多原 奈良",d:"Fri 26 lunch · near Todai-ji",o:"Soba",s:"3.62",x:"Unclear",t:"together",m:"Tatami tables.",u:T+"nara/A2901/A290101/29000690/"},
+{c:"nara",n:"Kasuga Ninaijaya",j:"春日荷茶屋",q:"春日荷茶屋 奈良",d:"Fri 26 · Kasuga Taisha approach",o:"Seasonal rice porridge",s:"3.54",x:"Mon in February",t:"together",m:"50 seats, some in the garden.",u:T+"nara/A2901/A290101/29000715/"},
+{c:"nara",n:"Kamameshi Shizuka",j:"志津香 公園店",q:"釜めし 志津香 公園店 奈良",d:"Fri 26 lunch · Nara Park",o:"Seven-ingredient pot rice",s:"3.42",x:"Tue",t:"together",m:"Tatami. Long queue plus cooking time.",u:T+"nara/A2901/A290101/29000714/"},
+{c:"nara",n:"Tanaka",j:"柿の葉すし本舗 たなか",q:"柿の葉すし本舗 たなか なら本店",d:"Fri 26 · Higashimuki arcade",o:"Persimmon-leaf sushi",s:"3.25",x:"None",t:"takeaway",m:"A box for the park. Better bought than eaten in.",u:T+"nara/A2901/A290101/29006750/"}
+];
+
+// Dish photos from Wikimedia Commons: [file, author, licence]
+var DISH = {
+  kagari:["銀座篝拉麵 (49304369108).jpg","Wei-Te Wong","CC BY-SA 2.0"],
+  maisen:["まい泉 ロースかつ弁当 (31328601074).jpg","Craig Wyzik","CC BY 2.0"],
+  futaba:["Mamemochi futaba.jpg","Kykk wiki","CC0"],
+  horai:["Hourai butaman.jpg","アイス","CC BY-SA 4.0"],
+  nakatanidou:["Nakatanido 07.jpg","Reggaeman","CC BY-SA 3.0"],
+  imai:["道頓堀今井のきつねうどん (3739321692).jpg","Kiyonobu Ito","CC BY 2.0"],
+  kaneyo:["KinshiDonburi Kyogoku Kaneyo.jpg","Kykk wiki","CC0"],
+  isen:["Isen honten Tonkatsu - Yushima, Bunkyo.jpg","Tokorokoko","Attribution"],
+  hannosuke:["江戸前天丼, 金子半之助, 日本橋天丼, 日本橋, 東京, 日本, Lunch, Nihonbashi, Tokyo, Japan (13743918075).jpg","bryan...","CC BY-SA 2.0"],
+  namiki:["Namiki Yabusoba5.JPG","Edomura no Tokuzo","CC BY-SA 4.0"],
+  mishima:["Sukiyaki restaurant by macglee in Shinkyogoku, Kyoto.jpg","macglee","CC BY-SA 2.0"],
+  miki:["Tamagoyaki (33210964396).jpg","bangdoll","CC BY-SA 2.0"],
+  maruki:["Salada-role.jpg","Kykk wiki","CC0"],
+  tawaraya:["Tawaraya Udon.jpg","Kykk wiki","CC0"],
+  hinode:["CurryUdon HinodeUdon.jpg","Kykk wiki","CC0"],
+  wanaka:["Takoyaki cooked by Wanaka Sennichimae Main Shop.jpg","Miyuki Meinaka","CC BY-SA 4.0"],
+  ikayaki:["阪神百貨店のいか焼きIMG 20211230 113552.jpg","経済特区","CC BY-SA 4.0"],
+  motsu:["Motsu-nikomi 001.jpg","Ocdp","CC0"],
+  sashimi:["Sashimi teishoku (6923601699).jpg","Monica Kaneko","CC BY-SA 2.0"],
+  ramen:["Shoyu Ramen.jpg","Guilhem Vellut","CC BY 2.0"],
+  misoramen:["Miso ramen (M) - Goemon Ramen Bar 2025-12-10.jpg","Andy Li","CC0"],
+  tsukemen:["Tsukemen at a Tokyo restaurant.jpg","City Foodsters","CC BY 2.0"],
+  udon:["Bukkake Udon with えび天.jpg","Immanuelle","CC BY 4.0"],
+  kamaage:["Kama-age Udon.jpg","Lombroso","Public domain"],
+  daifuku:["Daifuku close-up.jpg","Hajime NAKANO","CC BY 2.0"],
+  soba:["Zaru soba by spinachdip.jpg","spinachdip","CC BY-SA 2.0"],
+  tonkatsu:["Tonkatsu teishoku of Katsuraku.jpg","ノボホショコロトソ","CC BY 4.0"],
+  kakigori:["Matcha Espuma Shaved IIe 01.jpg","Naokijp","CC BY-SA 4.0"],
+  menchi:["Croquette and Ground Meat Cutlet.jpg","Kykk wiki","CC0"],
+  croquette:["Croquette-1.jpg","Nagahito Yuki","CC BY-SA 2.0"],
+  anago:["Anago-meshi あなごめし.jpg","ノボホショコロトソ","CC BY 4.0"],
+  depachika:["Depachika.jpg","ayustety","CC BY-SA 2.0"],
+  depabento:["高島屋 デパ地下弁当 2009 (3645261461).jpg","Yuya Tamai","CC BY 2.0"],
+  kaiseki:["Kaiseki Kai Tsugaru Owani Onsen Aomori pref Japan02s.jpg","663highland","CC BY 2.5"],
+  jibuni:["Jibuni 01.jpg","Asacyan","CC BY-SA 4.0"],
+  crab:["松葉ガニ (2067396639).jpg","ketou-daisuki","CC BY-SA 2.0"],
+  unaju:["Unaju by Kawatoyo Honten.jpg","Miyuki Meinaka","CC BY-SA 4.0"],
+  sukiyaki:["Sukiyaki002.jpg","Kumiko Korezumi","CC0"],
+  wagashi:["Matcha and wagashi.jpg","Matsue","CC BY-SA 4.0"],
+  kaisendon:["20260204 175142 Taichung Kaisendon closer.jpg","Saimmx","CC0"],
+  nigiri:["Sushi (4489474866).jpg","Yukihito Ikoma","CC BY-SA 2.0"],
+  kaiten:["Kaitenzushi! (5253575569).jpg","Travis Sanders","CC BY 2.0"],
+  oden:["金沢おでん勝一20241030 04.jpg","経済特区","CC0"],
+  kuzukiri:["Japanese cuisine; Kuzukiri くずきり.jpg","Conveyor belt sushi","CC BY 2.0"],
+  gyoza:["2018-07-29 Yaki Gyoza of Hidakaya.jpg","Shinji","CC BY 2.0"],
+  kakuni:["Kakuni by Kanko.jpg","Kanko","CC BY 2.0"],
+  dango:["Mitarashi Dango at Kyoto.jpg","Kykk wiki","CC0"],
+  yuba:["Yuba for sale by sunday driver in Kyoto.jpg","sunday driver","CC BY 2.0"],
+  harumaki:["Spring roll 002.jpg","Ocdp","CC0"],
+  yudofu:["Yudōfu 001.jpg","cobacco (hiro kobashi)","CC BY 2.0"],
+  yakitori:["Cooking yakitori.jpg","Searobin","CC BY-SA 3.0"],
+  tofu:["Japanese SilkyTofu (Kinugoshi Tofu).JPG","DryPot","CC BY-SA 3.0"],
+  tempura:["天ぷらの盛り合わせ---2023-11-15.jpg","RuinDig/Yuki Uchida","CC BY 4.0"],
+  okonomiyaki:["Okonomiyaki cooking on teppan Osaka.jpg","Lianguanlun","CC BY 4.0"],
+  kushikatsu:["Kushikatsu - Shinsekai (28289215848).jpg","Ajay Suresh","CC BY 2.0"],
+  nikusui:["Nikusui with Syoutama.JPG","Naocchi","CC BY-SA 3.0"],
+  kamameshi:["Gomoku kamameshi (Kamameshi-Haru).jpg","妖精書士","CC0"],
+  kakinoha:["Kakinoha (persimmon leaf) sushi in Nara.jpg","ZhengZhou","CC BY-SA 4.0"],
+  chagayu:["Cha Gayu 20141001.jpg","Degueulasse","CC BY 3.0"]
+};
+// place name: [dish key, 1 if the photo is from that restaurant, short label of what is shown]
+var PD = {
+"Kitsuneya":["motsu",0,"Simmered offal"],"Takeno":["sashimi",0,"Sashimi set"],"Ginza Kagari":["kagari",1,"Chicken ramen"],"Mugi to Olive":["ramen",0,"Soy ramen"],
+"Ginza Mitsukoshi food hall":["depachika",0,"Department store food hall"],"Menchirashi":["udon",0,"Cold udon with tempura"],"Maisen Aoyama":["maisen",1,"Pork cutlet box"],
+"Mizuho":["daifuku",0,"Daifuku"],"Tamawarai":["soba",0,"Cold soba"],"Nezu Kamachiku":["kamaage",0,"Kama-age udon"],"Isen Honten":["isen",1,"Pork cutlet"],
+"Ponta Honke":["tonkatsu",0,"Pork cutlet set"],"Himitsudo":["kakigori",0,"Shaved ice"],"Niku no Suzuki":["menchi",0,"Mince cutlet and croquette"],
+"Nihonbashi Tamai":["anago",0,"Conger eel on rice"],"Kaneko Hannosuke":["hannosuke",1,"Tempura on rice"],"Daimaru Tokyo food floors":["depabento",0,"Food hall bento"],
+"Namiki Yabu Soba":["namiki",1,"At Namiki Yabu Soba"],"Fuunji":["tsukemen",0,"Dipping ramen"],"Ginza Kitcho":["kaiseki",0,"Kaiseki course"],
+"Ginza Chikamitsu":["art:yakiniku",0,"Wagyu on the grill"],"Tsukiji Jisaku":["art:mizutaki",0,"Chicken hotpot"],"Chisou Kouryu":["kaiseki",0,"Kaiseki course"],
+"Unagi no Miyau":["unaju",0,"Grilled eel on rice"],"Nihonbashi Iseju":["sukiyaki",0,"Sukiyaki"],
+"Kureha":["wagashi",0,"Sweets with matcha"],"Akadama Honten":["oden",0,"Kanazawa oden"],"Omicho Shokudo":["kaisendon",0,"Seafood rice bowl"],"Iki-iki Tei":["kaisendon",0,"Seafood rice bowl"],
+"Daikoku Sushi":["nigiri",0,"Nigiri sushi"],"Otome Sushi":["nigiri",0,"Nigiri sushi"],"Tsubomi":["kuzukiri",0,"Arrowroot noodles"],"Oden Takasago":["oden",0,"Kanazawa oden"],
+"Itaru Honten":["sashimi",0,"Sashimi"],"Menya Taiga":["misoramen",0,"Miso ramen"],"Yamasan Sushi":["kaisendon",0,"Seafood rice bowl"],"Mori Mori Sushi":["kaiten",0,"Conveyor sushi"],
+"Omicho Croquette":["croquette",0,"Croquette"],"Kuroyuri":["oden",0,"Kanazawa oden"],"Kanazawa Chaya":["kaiseki",0,"Kaiseki course"],"Tsubajin":["jibuni",0,"Jibuni duck stew"],
+"Yamanoo":["crab",0,"Snow crab"],"Shogyotei":["crab",0,"Snow crab"],"Genzaemon":["sashimi",0,"Sashimi"],
+"Menya Inoichi":["ramen",0,"Soy ramen"],"Sugari":["tsukemen",0,"Dipping ramen"],"Gyoza Ryosho":["gyoza",0,"Pan-fried gyoza"],"Tuzuri":["kakuni",0,"Simmered pork belly"],
+"Mishima-tei":["mishima",1,"Sukiyaki"],"Kyogoku Kaneyo":["kaneyo",1,"Eel rice under omelette"],"Miki Keiran":["miki",1,"Rolled omelette"],"Daimaru Kyoto food hall":["futaba",1,"Futaba bean mochi"],
+"Maruki Bakery":["maruki",1,"Filled soft roll"],"Unagi-ya Hirokawa":["unaju",0,"Grilled eel on rice"],"Hiranoya":["dango",0,"Rice dumplings"],"Toyouke Chaya":["yuba",0,"Tofu skin"],
+"Tawaraya":["tawaraya",1,"Thick-noodle udon"],"Itosen":["harumaki",0,"Spring rolls"],"Yamamoto Menzo":["udon",0,"Cold udon with tempura"],"Omen Ginkakuji":["udon",0,"Udon"],
+"Nanzenji Junsei":["yudofu",0,"Simmered tofu"],"Hinode Udon":["hinode",1,"Curry udon"],"Inari Futaba":["futaba",0,"Bean mochi"],"Udon Taiga":["udon",0,"Cold udon with tempura"],
+"Torisei Honten":["yakitori",0,"Chicken skewers"],"Tsuki no Kurabito":["tofu",0,"Fresh tofu"],"Demachi Futaba":["futaba",1,"Bean mochi"],"Kinobu":["kaiseki",0,"Kaiseki course"],
+"Kaji":["kaiseki",0,"Kaiseki course"],"Yakiniku Yazawa":["art:yakiniku",0,"Wagyu on the grill"],"Muromachi Wakuden":["kaiseki",0,"Kaiseki course"],"Tempura Yoshikawa":["tempura",0,"Tempura"],
+"Sanjo Haku":["sukiyaki",0,"Sukiyaki"],"Minokichi Takeshigero":["kaiseki",0,"Kaiseki course"],"Uosaburo":["kaiseki",0,"Kaiseki course"],"Arashiyama Kumahiko":["kaiseki",0,"Kaiseki course"],
+"Chitose":["nikusui",0,"Beef broth with egg on rice"],"Dotonbori Imai":["imai",1,"Fried-tofu udon"],"Ajinoya":["okonomiyaki",0,"Okonomiyaki"],"Mizuno":["okonomiyaki",0,"Okonomiyaki"],
+"Okaru":["okonomiyaki",0,"Okonomiyaki"],"Takoyaki Wanaka":["wanaka",1,"Takoyaki"],"Yaekatsu":["kushikatsu",0,"Fried skewers"],"551 Horai":["horai",1,"Pork buns"],
+"Okonomiyaki Kiji":["okonomiyaki",0,"Okonomiyaki"],"Hanshin Ikayaki":["ikayaki",1,"Squid pancake"],
+"Nakatanidou":["nakatanidou",1,"At Nakatanidou"],"Awa Naramachi":["kaiseki",0,"Kaiseki-style course"],"Sobakiri Momoyozuki":["soba",0,"Cold soba"],"Soba Kitahara":["soba",0,"Cold soba"],
+"Kasuga Ninaijaya":["chagayu",0,"Rice porridge"],"Kamameshi Shizuka":["kamameshi",0,"Pot rice"],"Tanaka":["kakinoha",0,"Persimmon-leaf sushi"]
+};
+
+// Coordinates and Google place IDs for every stop, keyed by the map query. Read from Google Places on 24 Oct 2026.
+var GEO = {
+"きつねや 築地場外市場":[35.665771,139.769948,"ChIJP0yI3d6LGGARAvFhG-bnXJU"],
+"多け乃 築地":[35.664593,139.772231,"ChIJhUJWu9iLGGARy7cSUitanfk"],
+"銀座 篝 本店":[35.671202,139.761332,"ChIJjykJZCCLGGARMx5vYqRsWYI"],
+"むぎとオリーブ 銀座":[35.669004,139.76436,"ChIJSRvys-eLGGARzwqQ4I3g03o"],
+"銀座三越":[35.671286,139.765738,"ChIJX9MhjuaLGGARvoMvduRK-5E"],
+"麺散 原宿":[35.666499,139.705091,"ChIJ651p-W-NGGARi41d0DEi2l8"],
+"とんかつ まい泉 青山本店":[35.667925,139.711536,"ChIJa2mnui2NGGAR7z4tvWkl7HM"],
+"瑞穂 原宿 豆大福":[35.666979,139.705599,"ChIJ90hZEKSMGGARqCabAkb5_gA"],
+"玉笑 原宿 蕎麦":[35.664441,139.704675,"ChIJ1X1k7qaMGGARGOc-4AZclSg"],
+"根津 釜竹":[35.718083,139.766965,"ChIJcRRPoS6MGGARe-LEXkndq_s"],
+"井泉 本店 湯島":[35.70747,139.772196,"ChIJJWLzDyCMGGARHxwrKMoBzGg"],
+"ぽん多本家 上野":[35.706342,139.773003,"ChIJTYnOCaCOGGARjM8rCZP-tsA"],
+"ひみつ堂 谷中":[35.727336,139.766597,"ChIJ2-df4NONGGARslLOZGRmWZ8"],
+"肉のすずき 谷中銀座":[35.727621,139.765424,"ChIJo0fEb9GNGGARWwIAcLo4asg"],
+"日本橋 玉ゐ 本店":[35.68123,139.774694,"ChIJDyNll1eJGGARSoyno4Tk-QI"],
+"金子半之助 本店 日本橋":[35.685378,139.775266,"ChIJo06D01WJGGARsG8wm7KW0Rw"],
+"大丸東京店":[35.681474,139.768929,"ChIJtxODuv6LGGARGHePjyb8m-0"],
+"並木藪蕎麦 浅草":[35.709677,139.795945,"ChIJq6oF_saOGGARikXRyPA55vI"],
+"風雲児 新宿本店":[35.686834,139.696639,"ChIJ508frs-MGGARnIKrb_tkai0"],
+"銀座吉兆 銀座2丁目":[35.673232,139.766707,"ChIJyfvrFuSLGGARFZYRu8hB55c"],
+"銀座 ちかみつ 六丁目":[35.668838,139.764577,"ChIJg6_4hj-LGGAR6dfnLAQzXq0"],
+"つきじ治作":[35.66516,139.777136,"ChIJ_9qJnWOJGGARiOIXMijrB1I"],
+"馳創吼龍 銀座":[35.668575,139.766905,"ChIJw_Xr9OWLGGARayBf3llL94U"],
+"銀座うなぎノ宮宇":[35.669478,139.765452,"ChIJA9IBKUKLGGARniaqBZHVNm4"],
+"伊勢重 日本橋小伝馬町":[35.691765,139.780666,"ChIJk9Yi1VKJGGAR0ToqvwvWqz8"],
+"久連波 金沢 東山":[36.572369,136.667376,"ChIJjwNPuXQz-F8RpQ8bGKcNe48"],
+"赤玉 本店 金沢 片町":[36.559671,136.651761,"ChIJOysDUX40-F8RbZAlcJCsun0"],
+"近江町食堂 金沢":[36.571111,136.655802,"ChIJBQVbQXAz-F8RvenWM1Em6Y4"],
+"いきいき亭 近江町店":[36.571869,136.656385,"ChIJh9CWN3Az-F8RNVCyCT8xvxA"],
+"大國鮨 金沢 西町":[36.570285,136.656114,"ChIJCQi1iXAz-F8RqXApjvq_yvk"],
+"乙女寿司 金沢":[36.561437,136.651693,"ChIJY8-U4X80-F8RhQBJV0MLEUw"],
+"つぼみ 金沢 柿木畠 甘味":[36.560367,136.656521,"ChIJcTqamIAz-F8RueSyHu0eul8"],
+"おでん 高砂 金沢 片町":[36.561726,136.653881,"ChIJmW8kDIAz-F8RNhhBuOdAUZw"],
+"いたる 本店 金沢":[36.560873,136.655951,"ChIJH0dij4Az-F8RX9W0FHnAhJY"],
+"麺屋大河 金沢":[36.578818,136.6523,"ChIJC57BjGoz-F8Rp62XKDFihg4"],
+"山さん寿司 本店 近江町市場":[36.571737,136.65691,"ChIJKVl-tnEz-F8RCPPlrOUAMS8"],
+"もりもり寿し 近江町店":[36.571719,136.656182,"ChIJh9CWN3Az-F8RstcmUpAlsBc"],
+"近江町コロッケ 金沢":[36.571422,136.655994,"ChIJuW5tS3Az-F8RQG9f41KboIQ"],
+"黒百合 金沢駅 おでん":[36.577717,136.647334,"ChIJ45woUnkz-F8Ro-NLttC9jeo"],
+"料理旅館 金沢茶屋":[36.576692,136.650184,"ChIJubyPgmkz-F8RqU0P9nvL630"],
+"つば甚 金沢":[36.555233,136.651382,"ChIJkTzxBXs0-F8R8rwzSMo5bpM"],
+"山乃尾 金沢 東山":[36.572242,136.668734,"ChIJxXTWzXQz-F8RVbch7RPbYJs"],
+"松魚亭 金沢":[36.570296,136.669568,"ChIJzbc6cHUz-F8RR_AjLHYqOFg"],
+"源左ェ門 木倉町店 金沢":[36.561835,136.65153,"ChIJS5zKCIA0-F8R_1avomFsgmA"],
+"麺屋 猪一 京都 寺町":[35.001328,135.766964,"ChIJufyODr4IAWARNVu7xBbRG2w"],
+"和醸良麺 すがり 京都":[35.00427,135.757302,"ChIJAQA0epsIAWAR26BrvH8O_iI"],
+"ぎょうざ処 高辻 亮昌 本店":[35.000196,135.755587,"ChIJs3s4lp4IAWARVxWQ4ABbHrU"],
+"つづり 京都市下京区因幡堂町":[34.999204,135.76039,"ChIJn6SZa5gIAWARpAFi8UeNbm8"],
+"三嶋亭 本店 京都":[35.008541,135.767051,"ChIJrUy7vpMIAWARciV2lMassEo"],
+"京極かねよ":[35.007592,135.767949,"ChIJWUGtl5MIAWAROzQ6eOmGNH8"],
+"三木鶏卵 錦市場":[35.005046,135.764707,"ChIJXwAmM5EIAWAR4nSOo3Q-aCM"],
+"大丸京都店":[35.004309,135.762111,"ChIJISb-rpAIAWARX9Z2o_x8G8c"],
+"まるき製パン所 京都":[34.998693,135.750305,"ChIJyemhLScGAWARuUMj53Cw0-k"],
+"うなぎ屋 廣川 嵐山":[35.016959,135.677242,"ChIJpZPza_-pAWARHEYIbyUB8Es"],
+"平野屋 嵯峨鳥居本":[35.02849,135.662368,"ChIJzc04HDyqAWARQq64Zb269eI"],
+"とようけ茶屋 北野天満宮":[35.027811,135.7356,"ChIJ85wTfewHAWARmNQxSnpWZ9Q"],
+"たわらや 北野天満宮 うどん":[35.02764,135.73576,"ChIJR2a7fuwHAWARAUC_RGR6SUE"],
+"糸仙 上七軒":[35.029668,135.738115,"ChIJLTo_n-4HAWARYLjkVlnHekY"],
+"山元麺蔵 京都 岡崎":[35.014265,135.784808,"ChIJAQDFqeYIAWARErPxiBriOF8"],
+"おめん 銀閣寺本店":[35.026256,135.795009,"ChIJY7s4dwQJAWARzmwCifyYeVo"],
+"南禅寺 順正":[35.011445,135.790108,"ChIJ__9PCCAJAWARo5c_VBQgxUo"],
+"日の出うどん 京都":[35.016382,135.793641,"ChIJGxJ03h4JAWARgCBOZamBxME"],
+"いなりふたば 伏見稲荷":[34.968432,135.770882,"ChIJ3_IaBkAPAWARcQNT2GL3hks"],
+"本格手打うどん 大河 京都 藤森":[34.957957,135.764669,"ChIJnc77Wm4PAWARxOLbf3P0ov0"],
+"鳥せい 本店 伏見":[34.931086,135.762015,"ChIJdfnUY5IPAWARH0gKwi4GYAM"],
+"月の蔵人 伏見":[34.930602,135.761757,"ChIJpbbufpIPAWARnzgiwxloHt0"],
+"出町ふたば":[35.0301,135.769618,"ChIJI6b_cWgIAWARZ8VqZO5UWFs"],
+"京料理 木乃婦":[35.000966,135.756518,"ChIJG1KGrp4IAWARwp2d7lmI5lw"],
+"京料理 かじ 丸太町":[35.017261,135.754489,"ChIJS9aD334IAWAR2VmTKPDap7w"],
+"焼肉矢澤 京都":[35.002265,135.761588,"ChIJkVEaYpcIAWARLGYsohcOk4Q"],
+"室町 和久傳":[35.01016,135.763284,"ChIJqxQuuI8IAWAR-TM9RzwBeIY"],
+"天ぷら吉川 京都 富小路":[35.010343,135.764787,"ChIJN1qUO44IAWARNQDH9V39Wf4"],
+"京都三条 箔":[35.0096,135.770975,"ChIJ17MPzewIAWARLweYzdW10YY"],
+"美濃吉本店 竹茂楼":[35.010053,135.785168,"ChIJAQBwVecIAWAR2Uc4maKJl0E"],
+"魚三楼 伏見":[34.932327,135.764743,"ChIJE1F2oPGGHWARw76ww1TD7P4"],
+"嵐山熊彦":[35.013503,135.675964,"ChIJPfXNBQCqAWARNWsXq4GYPwg"],
+"千とせ 本店 難波 肉吸い":[34.664079,135.504001,"ChIJ6xZfy2vnAGARvTMXr0hZzkE"],
+"道頓堀 今井 本店":[34.668633,135.502714,"ChIJBYsUkxTnAGARg1G8qmcdWf8"],
+"味乃家 本店 難波":[34.668065,135.500976,"ChIJvRX1cBPnAGARzhcHALQCKbw"],
+"美津の 道頓堀 お好み焼":[34.668355,135.503223,"ChIJp6r1whTnAGARQi9RHXsUEtA"],
+"おかる 千日前 お好み焼":[34.667611,135.503419,"ChIJpUiG0hTnAGARuXdG_sMz5Ks"],
+"たこ焼道楽 わなか 千日前本店":[34.665217,135.503363,"ChIJY971B2vnAGAR9orLBLBsj8Y"],
+"八重勝 新世界":[34.649697,135.506015,"ChIJve4ZtordAGARBOe37AfMfUg"],
+"551蓬莱 本店 難波":[34.666405,135.501346,"ChIJdZFNUxPnAGARewk2xIG6bR0"],
+"お好み焼 きじ 本店 新梅田食道街":[34.70349,135.497803,"ChIJgwKKQpLmAGAR8gTfdMBDo9g"],
+"阪神名物 いか焼き 阪神梅田本店":[34.700896,135.499094,"ChIJAQAAuZLmAGARvDuWiY67g6c"],
+"中谷堂 奈良":[34.681943,135.8289,"ChIJmzwHEog5AWARiML9vXtSFso"],
+"粟 ならまち店 奈良":[34.67864,135.83055,"ChIJ43Ko1os5AWARsPj5HgvhE6I"],
+"そば切り 百夜月 奈良":[34.684846,135.827501,"ChIJ2YQa2yk6AWARYgXHFtf9Mz8"],
+"そば処 喜多原 奈良":[34.686791,135.836678,"ChIJ8ds4RIU5AWARXxQBksWnzJ0"],
+"春日荷茶屋 奈良":[34.682321,135.843424,"ChIJ1Wqwa8A5AWAR2k8-UH6ZPUk"],
+"釜めし 志津香 公園店 奈良":[34.684345,135.836939,"ChIJfxW-0Y85AWARgYpZZjfh330"],
+"柿の葉すし本舗 たなか なら本店":[34.684015,135.829017,"ChIJDQdiloc5AWARUa8gcEII5JM"],
+"築地場外市場":[35.66477,139.770252,"ChIJW2cLzSGLGGARXAKXv6EkbqI"],
+"浜離宮恩賜庭園":[35.659656,139.763409,"ChIJwfegutyLGGARGjiY-L2eSps"],
+"明治神宮":[35.676398,139.699326,"ChIJ5SZMmreMGGARcz8QSTiJyo8"],
+"代々木公園":[35.670065,139.694966,"ChIJMwpiebSMGGARPr_454zHvDQ"],
+"表参道 ケヤキ並木":[35.6661,139.7085,""],
+"谷中銀座商店街":[35.727697,139.765723,"ChIJPYwFnNGNGGARYEeXwiYQPe8"],
+"上野恩賜公園 不忍池":[35.712245,139.770828,"ChIJo8VKlCCMGGARarjlIsaLY1g"],
+"湯島天満宮":[35.707741,139.768219,"ChIJkyl5eSGMGGAR1eFeLND64bo"],
+"浅草寺 雷門":[35.711116,139.796366,"ChIJ0YwG28aOGGARvRKAXIBWqNk"],
+"新宿御苑":[35.685176,139.710052,"ChIJPyOTG8KMGGARh_IXobWxHmo"],
+"東京駅 丸の内駅舎":[35.681425,139.765994,"ChIJE9qjZ0-LGGARQiAs8hULJsg"],
+"ひがし茶屋街":[36.572583,136.66656,"ChIJsfC6oXQz-F8RdA1qXiF6jLs"],
+"近江町市場":[36.571734,136.655865,"ChIJ0xPT93Az-F8RpTSlbHwo9L8"],
+"兼六園":[36.562128,136.662652,"ChIJBVmy-YMz-F8R5PID8D17Cpc"],
+"金沢城公園 石川門":[36.565356,136.661346,"ChIJPet-w4Iz-F8RxVviBOYM3UM"],
+"長町武家屋敷跡":[36.563752,136.651015,"ChIJhycOJtYz-F8RO54LaTG6_p0"],
+"錦市場":[35.005026,135.764723,"ChIJT8uMzZwIAWARnGzsARCjnrY"],
+"鴨川 四条大橋":[35.003839,135.771533,"ChIJqVyPcwAJAWARQmJKVMUdtFA"],
+"祇園白川 巽橋":[35.005575,135.774513,"ChIJq_lDMQ4JAWARKKF3f4LIttc"],
+"八坂の塔 法観寺":[34.998559,135.779178,"ChIJIcT4YMUIAWARSTUi4EEky7E"],
+"嵐山 竹林の小径":[35.016819,135.671301,"ChIJrYtcv-urAWAR3XzWvXv8n_s"],
+"天龍寺":[35.015838,135.673765,"ChIJk54PuAGqAWARwEgz_9o-nM0"],
+"渡月橋":[35.012877,135.677775,"ChIJd2mRAFMHAWARPSiWJOj4FOw"],
+"嵯峨鳥居本 伝統的建造物群保存地区":[35.025766,135.667776,"ChIJI443HRiqAWARdDvT7yb5yEs"],
+"北野天満宮":[35.031174,135.735123,"ChIJbeDwe-0HAWARGu4ubMH-Jls"],
+"上七軒":[35.03035,135.737626,""],
+"銀閣寺 慈照寺":[35.027021,135.798206,"ChIJ4W9CCwUJAWARyauI6BzKiiU"],
+"哲学の道":[35.021453,135.794295,""],
+"南禅寺 水路閣":[35.010582,135.793946,"ChIJMbbaPUUJAWARUegV-1t_MUA"],
+"平安神宮":[35.015982,135.782426,"ChIJjch8GOUIAWART0WX2JLZvnU"],
+"伏見稲荷大社":[34.967695,135.779188,"ChIJIW0uPRUPAWAR6eI6dRzKGns"],
+"月桂冠大倉記念館":[34.929136,135.76161,"ChIJLZRyoJIPAWAR0xnG_CrMzn4"],
+"道頓堀 戎橋":[34.669052,135.501299,"ChIJdyYZhBPnAGARPF9WeVTYbZM"],
+"新世界 通天閣":[34.652499,135.506306,"ChIJ_0Lgd2DnAGARV0X03lbPy-U"],
+"大阪城公園":[34.68648,135.526211,"ChIJVVVld8ngAGARi9mE-a6e9mc"],
+"奈良公園":[34.685047,135.843012,"ChIJYWCMvZY5AWARVnREV_OsbPk"],
+"東大寺 大仏殿":[34.688865,135.839818,"ChIJ05CPWJo5AWARJ31urWvbmR0"],
+"春日大社":[34.681545,135.848472,"ChIJ1Wqwa8A5AWARlpXjgoPnl0w"],
+"ならまち 奈良":[34.676001,135.834834,"ChIJI2QoZ4s5AWARyT7_h6JrcIg"]
+};
+
+// Navigation helpers. Every link opens the Google Maps app with exact coordinates and the place ID,
+// so the pin lands on the right spot even on the downloaded offline maps.
+function geo(o){ return o && GEO[o.q]; }
+function ll(g){ return g[0] + "," + g[1]; }
+function pinUrl(o){
+  var g = geo(o);
+  if (!g) return "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(o.q);
+  return "https://www.google.com/maps/search/?api=1&query=" + ll(g) + (g[2] ? "&query_place_id=" + g[2] : "");
+}
+function navUrl(o){
+  var g = geo(o);
+  if (!g) return "https://www.google.com/maps/dir/?api=1&destination=" + encodeURIComponent(o.q) + "&travelmode=walking";
+  return "https://www.google.com/maps/dir/?api=1&destination=" + ll(g) + (g[2] ? "&destination_place_id=" + g[2] : "") + "&travelmode=walking";
+}
+function refObj(r){ var kind = r.slice(0,1), key = r.slice(2); return kind === "p" ? PN[key] : SI[key]; }
+// Route for a day plan: first stop to last stop with the rest as waypoints, in the order of the plan
+function routeUrl(steps){
+  var seen = {}, stops = [];
+  steps.forEach(function(st){ st[2].forEach(function(r){ var o = refObj(r); if (o && geo(o) && !seen[o.q]) { seen[o.q] = 1; stops.push(o); } }); });
+  if (stops.length < 2) return stops.length ? navUrl(stops[0]) : "";
+  if (stops.length > 11) stops = stops.slice(0, 11);
+  var mid = stops.slice(1, -1).map(function(o){ return ll(geo(o)); });
+  return "https://www.google.com/maps/dir/?api=1&origin=" + ll(geo(stops[0])) + "&destination=" + ll(geo(stops[stops.length - 1]))
+    + (mid.length ? "&waypoints=" + encodeURIComponent(mid.join("|")) : "") + "&travelmode=walking";
+}
+function navLinks(o, extraClass){
+  return '<a class="map" href="'+pinUrl(o)+'" target="_blank" rel="noopener">Pin</a>'
+    + '<a class="map nav" href="'+navUrl(o)+'" target="_blank" rel="noopener">Navigate</a>';
+}
+// distance in metres between two [lat,lng]
+function distM(a, b){
+  var R = 6371000, toR = Math.PI / 180, dLat = (b[0] - a[0]) * toR, dLng = (b[1] - a[1]) * toR;
+  var x = Math.sin(dLat / 2), y = Math.sin(dLng / 2);
+  var h = x * x + Math.cos(a[0] * toR) * Math.cos(b[0] * toR) * y * y;
+  return 2 * R * Math.asin(Math.sqrt(h));
+}
+function fmtDist(m){
+  if (m < 950) return Math.round(m / 10) * 10 + " m";
+  if (m < 10000) return (m / 1000).toFixed(1) + " km";
+  return Math.round(m / 1000) + " km";
+}
+function walkMins(m){ return Math.max(1, Math.round(m / 80)); } // about 4.8 km/h
+function fromYou(o){
+  if (!state.pos) return "";
+  var g = geo(o); if (!g) return "";
+  var m = distM(state.pos, g);
+  return '<p class="dist">◎ '+fmtDist(m)+' from you'+(m < 4000 ? ', about '+walkMins(m)+' min on foot' : '')+'</p>';
+}
+function stopDist(o){ var g = geo(o); return (state.pos && g) ? distM(state.pos, g) : Infinity; }
+
+// Plotted map of one city: no tiles, just the stops in their true relative positions, so it works with no signal.
+function cityPts(id){
+  var pts = [];
+  SIGHTS.forEach(function(s){ var g = geo(s); if (s.c === id && g) pts.push({o:s, g:g, kind:"s", id:"s-"+s.id}); });
+  P.forEach(function(p, i){ var g = geo(p); if (p.c === id && g) pts.push({o:p, g:g, kind:"p", id:"p-"+i}); });
+  return pts;
+}
+function bbox(pts){
+  var lats = pts.map(function(x){ return x.g[0]; }), lngs = pts.map(function(x){ return x.g[1]; });
+  return {minLat: Math.min.apply(null, lats), maxLat: Math.max.apply(null, lats), minLng: Math.min.apply(null, lngs), maxLng: Math.max.apply(null, lngs)};
+}
+function plot(pts, title, zoomBox){
+  if (pts.length < 2) return "";
+  var bb = bbox(pts), you = state.pos, showYou = false;
+  if (you && pts.some(function(x){ return distM(you, x.g) < 5000; })) {
+    showYou = true; bb.minLat = Math.min(bb.minLat, you[0]); bb.maxLat = Math.max(bb.maxLat, you[0]); bb.minLng = Math.min(bb.minLng, you[1]); bb.maxLng = Math.max(bb.maxLng, you[1]);
+  }
+  var cosL = Math.cos((bb.minLat + bb.maxLat) / 2 * Math.PI / 180);
+  var spanX = Math.max((bb.maxLng - bb.minLng) * cosL, 0.004), spanY = Math.max(bb.maxLat - bb.minLat, 0.003);
+  var narrow = isNarrow(), W = narrow ? 600 : 1000, pad = narrow ? 58 : 80, innerW = W - 2 * pad;
+  var H = Math.round(Math.min(narrow ? 860 : 780, Math.max(narrow ? 500 : 460, innerW * spanY / spanX + 2 * pad)));
+  var innerH = H - 2 * pad;
+  var scale = Math.min(innerW / spanX, innerH / spanY);
+  var ox = pad + (innerW - spanX * scale) / 2, oy = pad + (innerH - spanY * scale) / 2;
+  function X(g){ return ox + ((g[1] - bb.minLng) * cosL) * scale; }
+  function Y(g){ return oy + (bb.maxLat - g[0]) * scale; }
+  var mPerUnit = 111320 / scale;
+  var barM = [100, 200, 500, 1000, 2000, 5000].filter(function(m){ return m / mPerUnit < innerW * 0.4; }).pop() || 100;
+  var barW = barM / mPerUnit;
+  pts.forEach(function(x){ x.x = X(x.g); x.y = Y(x.g); });
+  var h = '<svg class="plot'+(narrow ? ' narrow' : '')+'" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+esc(title)+'">';
+  h += '<rect class="plot-bg" x="0" y="0" width="'+W+'" height="'+H+'" rx="6"/>';
+  for (var gx = ox % barW; gx < W; gx += barW) h += '<line class="plot-grid" x1="'+gx.toFixed(1)+'" y1="0" x2="'+gx.toFixed(1)+'" y2="'+H+'"/>';
+  for (var gy = oy % barW; gy < H; gy += barW) h += '<line class="plot-grid" x1="0" y1="'+gy.toFixed(1)+'" x2="'+W+'" y2="'+gy.toFixed(1)+'"/>';
+  if (zoomBox) {
+    var zx1 = X([0, zoomBox.minLng]), zx2 = X([0, zoomBox.maxLng]), zy1 = Y([zoomBox.maxLat, 0]), zy2 = Y([zoomBox.minLat, 0]);
+    h += '<rect class="plot-zoom" x="'+(zx1 - 14).toFixed(1)+'" y="'+(zy1 - 14).toFixed(1)+'" width="'+(zx2 - zx1 + 28).toFixed(1)+'" height="'+(zy2 - zy1 + 28).toFixed(1)+'" rx="8"/>';
+    h += '<text class="plot-zoomtxt" x="'+(zx1 - 10).toFixed(1)+'" y="'+(zy1 - 22).toFixed(1)+'">Centre, shown larger below</text>';
+  }
+  h += '<text class="plot-title" x="'+pad+'" y="'+(pad - 36)+'">'+esc(title)+'</text>';
+  pts.filter(function(x){ return x.kind === "p"; }).forEach(function(x){
+    h += '<g class="pt eat" data-go="'+x.id+'" tabindex="0" role="button"><title>'+esc(x.o.n)+'</title><circle cx="'+x.x.toFixed(1)+'" cy="'+x.y.toFixed(1)+'" r="7"/></g>';
+  });
+  // label placement: try right, left, above, below; pick the spot that overlaps least with dots and placed labels
+  var boxes = pts.map(function(x){ return {x1:x.x - 10, y1:x.y - 10, x2:x.x + 10, y2:x.y + 10}; });
+  if (showYou) boxes.push({x1:X(you) - 12, y1:Y(you) - 12, x2:X(you) + 60, y2:Y(you) + 12});
+  function overlap(a, b){ return a.x1 < b.x2 && a.x2 > b.x1 && a.y1 < b.y2 && a.y2 > b.y1; }
+  function area(a, b){ return Math.max(0, Math.min(a.x2, b.x2) - Math.max(a.x1, b.x1)) * Math.max(0, Math.min(a.y2, b.y2) - Math.max(a.y1, b.y1)); }
+  function inZoom(x){ return zoomBox && x.g[0] >= zoomBox.minLat && x.g[0] <= zoomBox.maxLat && x.g[1] >= zoomBox.minLng && x.g[1] <= zoomBox.maxLng; }
+  var labelFood = pts.length <= (narrow ? 20 : 26);
+  var sights = pts.filter(function(x){ return (x.kind === "s" && !inZoom(x)) || (labelFood && x.kind === "p"); }).sort(function(a, b){ return (a.kind === "p") - (b.kind === "p") || a.y - b.y; });
+  sights.forEach(function(x){
+    var label = x.o.n.length > 28 ? x.o.n.slice(0, 26) + "…" : x.o.n;
+    var cw = x.kind === "s" ? (narrow ? 12.5 : 10.5) : (narrow ? 10 : 8.6);
+    var tw = label.length * cw + 8, th = narrow ? 26 : 22;
+    var cands = [
+      {x: x.x + 14, y: x.y + 6, anchor: "start", box: {x1: x.x + 12, y1: x.y - 11, x2: x.x + 12 + tw, y2: x.y + 11}},
+      {x: x.x - 14, y: x.y + 6, anchor: "end", box: {x1: x.x - 12 - tw, y1: x.y - 11, x2: x.x - 12, y2: x.y + 11}},
+      {x: x.x, y: x.y - 16, anchor: "middle", box: {x1: x.x - tw / 2, y1: x.y - 16 - th + 4, x2: x.x + tw / 2, y2: x.y - 12}},
+      {x: x.x, y: x.y + 28, anchor: "middle", box: {x1: x.x - tw / 2, y1: x.y + 12, x2: x.x + tw / 2, y2: x.y + 12 + th}}
+    ];
+    var best = null, bs = Infinity;
+    cands.forEach(function(c, ci){
+      var sc = ci * 2; // small preference for right, then left
+      if (c.box.x1 < 6 || c.box.x2 > W - 6 || c.box.y1 < pad - 30 || c.box.y2 > H - 44) sc += 5000;
+      boxes.forEach(function(bx){ if (overlap(c.box, bx)) sc += 100 + area(c.box, bx); });
+      if (sc < bs) { bs = sc; best = c; }
+    });
+    // if every spot collides badly, push the label down below in a stack and draw a leader
+    x.lab = best; x.leader = bs >= 100;
+    if (x.leader) {
+      var ty = x.y, tries = 0;
+      while (tries++ < 30) {
+        var bx2 = {x1: best.anchor === "end" ? best.box.x1 : x.x + 12, y1: ty - 11, x2: (best.anchor === "end" ? best.box.x2 : x.x + 12 + tw), y2: ty + 11};
+        if (bx2.y2 < H - 40 && !boxes.some(function(bb){ return overlap(bx2, bb); })) { x.lab = {x: best.anchor === "end" ? x.x - 14 : x.x + 14, y: ty + 6, anchor: best.anchor === "end" ? "end" : "start", box: bx2}; break; }
+        ty += 12;
+      }
+    }
+    boxes.push(x.lab.box);
+  });
+  pts.filter(function(x){ return x.kind === "s" && sights.indexOf(x) < 0; }).forEach(function(x){
+    h += '<g class="pt sight" data-go="'+x.id+'" tabindex="0" role="button"><title>'+esc(x.o.n)+'</title><circle cx="'+x.x.toFixed(1)+'" cy="'+x.y.toFixed(1)+'" r="9"/></g>';
+  });
+  sights.forEach(function(x){
+    var label = x.o.n.length > 28 ? x.o.n.slice(0, 26) + "…" : x.o.n;
+    if (x.kind === "p") {
+      if (x.leader && Math.abs(x.lab.y - 6 - x.y) > 14) h += '<line class="plot-leader" x1="'+x.x.toFixed(1)+'" y1="'+x.y.toFixed(1)+'" x2="'+(x.lab.anchor === "end" ? x.lab.x + 4 : x.lab.x - 4).toFixed(1)+'" y2="'+(x.lab.y - 6).toFixed(1)+'"/>';
+      h += '<text class="eatlab" x="'+x.lab.x.toFixed(1)+'" y="'+x.lab.y.toFixed(1)+'" text-anchor="'+x.lab.anchor+'" data-go="'+x.id+'">'+esc(label)+'</text>'; return; }
+    h += '<g class="pt sight" data-go="'+x.id+'" tabindex="0" role="button"><title>'+esc(x.o.n)+'</title>';
+    if (x.leader && Math.abs(x.lab.y - 6 - x.y) > 14) h += '<line class="plot-leader" x1="'+x.x.toFixed(1)+'" y1="'+x.y.toFixed(1)+'" x2="'+(x.lab.anchor === "end" ? x.lab.x + 4 : x.lab.x - 4).toFixed(1)+'" y2="'+(x.lab.y - 6).toFixed(1)+'"/>';
+    h += '<circle cx="'+x.x.toFixed(1)+'" cy="'+x.y.toFixed(1)+'" r="9"/>'
+      + '<text x="'+x.lab.x.toFixed(1)+'" y="'+x.lab.y.toFixed(1)+'" text-anchor="'+x.lab.anchor+'">'+esc(label)+'</text></g>';
+  });
+  if (showYou) h += '<g class="you"><circle class="you-ring" cx="'+X(you).toFixed(1)+'" cy="'+Y(you).toFixed(1)+'" r="18"/><circle cx="'+X(you).toFixed(1)+'" cy="'+Y(you).toFixed(1)+'" r="8"/><text x="'+(X(you) + 14).toFixed(1)+'" y="'+(Y(you) - 12).toFixed(1)+'">You</text></g>';
+  var bx = pad, by = H - 26;
+  h += '<g class="plot-scale"><line x1="'+bx+'" y1="'+by+'" x2="'+(bx + barW).toFixed(1)+'" y2="'+by+'"/><line x1="'+bx+'" y1="'+(by-6)+'" x2="'+bx+'" y2="'+(by+6)+'"/><line x1="'+(bx + barW).toFixed(1)+'" y1="'+(by-6)+'" x2="'+(bx + barW).toFixed(1)+'" y2="'+(by+6)+'"/>'
+    + '<text x="'+(bx + barW / 2).toFixed(1)+'" y="'+(by - 10)+'" text-anchor="middle">'+(barM >= 1000 ? (barM / 1000) + " km" : barM + " m")+'</text></g>';
+  h += '<g class="plot-key"><circle class="k-s" cx="'+(W - pad - 190)+'" cy="'+by+'" r="8"/><text x="'+(W - pad - 176)+'" y="'+(by + 5)+'">Sight</text>'
+    + '<circle class="k-p" cx="'+(W - pad - 100)+'" cy="'+by+'" r="7"/><text x="'+(W - pad - 86)+'" y="'+(by + 5)+'">Food</text></g>';
+  h += '<text class="plot-north" x="'+(W - pad)+'" y="'+(pad - 36)+'" text-anchor="end">N ↑</text>';
+  return h + '</svg>';
+}
+function isNarrow(){ return window.innerWidth < 600; }
+var wasNarrow = isNarrow();
+window.addEventListener("resize", function(){ if (isNarrow() !== wasNarrow) { wasNarrow = isNarrow(); if (state.view === "city") render(); } });
+function cityMap(id){
+  var pts = cityPts(id);
+  if (pts.length < 2) return "";
+  var bb = bbox(pts), diag = distM([bb.minLat, bb.minLng], [bb.maxLat, bb.maxLng]);
+  if (diag < 5500) return plot(pts, CITY_NAMES[id] + ", all stops");
+  // find the densest spot and zoom on everything within 1.8 km of it
+  var centre = null, bestN = -1;
+  pts.forEach(function(a){ var n = pts.filter(function(b){ return distM(a.g, b.g) < 1200; }).length; if (n > bestN) { bestN = n; centre = a; } });
+  var inner = pts.filter(function(b){ return distM(centre.g, b.g) < 1800; });
+  if (inner.length < 5 || inner.length > pts.length - 2) return plot(pts, CITY_NAMES[id] + ", all stops");
+  var zb = bbox(inner);
+  return plot(pts.map(function(x){ return {o:x.o, g:x.g, kind:x.kind, id:x.id}; }), CITY_NAMES[id] + ", all stops", zb)
+    + plot(inner.map(function(x){ return {o:x.o, g:x.g, kind:x.kind, id:x.id}; }), CITY_NAMES[id] + " centre, " + inner.length + " stops");
+}
+
+// Nearest stops to your position, across every city
+function nearPanel(){
+  if (state.posErr) return '<div class="nearbox"><p class="label">Near me</p><p class="meta">'+esc(state.posErr)+'</p></div>';
+  if (!state.pos) return "";
+  var all = [];
+  SIGHTS.forEach(function(s){ if (geo(s)) all.push({o:s, kind:"Sight", d:stopDist(s), id:"s-"+s.id}); });
+  P.forEach(function(p, i){ if (geo(p)) all.push({o:p, kind:typeName(p.t), d:stopDist(p), id:"p-"+i}); });
+  all.sort(function(a, b){ return a.d - b.d; });
+  var top = all.slice(0, 6), far = top[0].d > 30000;
+  var h = '<div class="nearbox"><p class="label">Nearest to you'+(state.posTime ? ' · read at '+state.posTime : '')+'</p>';
+  if (far) h += '<p class="meta">You are '+fmtDist(top[0].d)+' from the nearest stop on this list, so this is the closest city rather than a walking list.</p>';
+  h += '<ol class="nearlist">' + top.map(function(x){
+    return '<li><button type="button" class="nearname" data-go="'+x.id+'">'+esc(x.o.n)+'</button><span class="nearkind">'+esc(x.kind)+' · '+esc(CITY_NAMES[x.o.c])+'</span>'
+      + '<span class="neard">'+fmtDist(x.d)+(x.d < 4000 ? ' · '+walkMins(x.d)+' min' : '')+'</span>'
+      + '<a class="map nav" href="'+navUrl(x.o)+'" target="_blank" rel="noopener">Navigate</a></li>';
+  }).join("") + '</ol>';
+  h += '<p class="meta small">Distances are straight lines from the phone\'s position, so the walk is usually a little longer. Tap Near me again to refresh.</p></div>';
+  return h;
+}
+function locate(){
+  var btn = document.querySelector("[data-near]");
+  if (!navigator.geolocation) { state.posErr = "This browser cannot read your location."; render(); return; }
+  if (btn) { btn.textContent = "◎ Finding you…"; btn.disabled = true; }
+  navigator.geolocation.getCurrentPosition(function(pos){
+    state.pos = [pos.coords.latitude, pos.coords.longitude]; state.posErr = "";
+    var t = new Date(); state.posTime = (t.getHours() < 10 ? "0" : "") + t.getHours() + ":" + (t.getMinutes() < 10 ? "0" : "") + t.getMinutes();
+    // switch to the city of the nearest stop
+    var best = null, bd = Infinity;
+    P.concat(SIGHTS).forEach(function(o){ var d = stopDist(o); if (d < bd) { bd = d; best = o; } });
+    if (best && bd < 60000) state.city = best.c;
+    state.view = "city";
+    Array.prototype.forEach.call(document.getElementById("viewChips").children, function(c){ c.setAttribute("aria-pressed", String(c.getAttribute("data-v") === "city")); });
+    Array.prototype.forEach.call(document.getElementById("cityChips").children, function(c){ c.setAttribute("aria-pressed", String(c.getAttribute("data-v") === state.city)); });
+    if (btn) { btn.textContent = "◎ Near me"; btn.disabled = false; btn.setAttribute("aria-pressed", "true"); }
+    render(); toTop();
+  }, function(err){
+    state.posErr = err.code === 1 ? "Location is blocked for this page. Allow it in the browser's site settings, then tap Near me again." : "Could not read your location. Try again outside or with location turned on.";
+    if (btn) { btn.textContent = "◎ Near me"; btn.disabled = false; }
+    render();
+  }, {enableHighAccuracy: true, timeout: 15000, maximumAge: 60000});
+}
+function goTo(id){
+  var el = document.getElementById(id); if (!el) return;
+  el.scrollIntoView({behavior: "smooth", block: "center"});
+  el.classList.remove("flash"); void el.offsetWidth; el.classList.add("flash");
+}
+
+// Tea-house background music, generated in the browser so nothing is downloaded.
+// Plucked koto (string model) plays short phrases over a quiet broken-chord pattern and bass,
+// a breathy bamboo flute answers, and a bamboo water knock and a wind chime sound now and then.
+var Music = (function(){
+  var ctx = null, master = null, wet = null, analyser = null, timer = null, on = false;
+  var E = 0.4;                 // one eighth note in seconds (about 75 beats a minute)
+  var nextBar = 0, bar = 0, mi = 3, cache = {};
+  // Miyako-bushi scale on D: D, E flat, G, A, B flat
+  var U = [293.66, 311.13, 392.00, 440.00, 466.16, 587.33, 622.25, 783.99]; // melody register
+  var BASS = {D: 73.42, G: 98.00, A: 110.00, B: 116.54};
+  var CHORD = {D: [146.83, 220.00, 293.66], G: [196.00, 233.08, 293.66], A: [220.00, 293.66, 311.13], B: [233.08, 293.66, 392.00]};
+  var ROOTS = ["D", "D", "G", "A", "D", "B", "A", "D"];
+  var MOTIFS = [
+    [[0,0],[2,1],[3,-1],[4,-1],[6,0]],
+    [[0,2],[1,-1],[2,-1],[4,1],[6,-2]],
+    [[0,0],[1,1],[2,1],[3,1],[4,-1],[6,-1]],
+    [[0,1],[2,0],[2.5,-1],[3,-1],[4,0],[6,1]],
+    [[0,0],[0.5,0],[1,0],[1.5,0],[2,1],[4,-1],[6,-1]],
+    [[0,-1],[1,1],[2,1],[4,-2],[5,1],[6,1]],
+    [[0,0],[3,2],[4,-1],[5,-1],[6,-1]],
+    [[0,3],[2,-1],[3,-1],[4,-1],[6,2]]
+  ];
+  function rnd(n){ return Math.floor(Math.random() * n); }
+  function impulse(seconds){
+    var len = Math.floor(ctx.sampleRate * seconds), buf = ctx.createBuffer(2, len, ctx.sampleRate);
+    for (var ch = 0; ch < 2; ch++) { var d = buf.getChannelData(ch); for (var i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 3); }
+    return buf;
+  }
+  // Karplus-Strong plucked string, rendered once per pitch and cached
+  function stringBuf(freq){
+    var key = Math.round(freq * 10);
+    if (cache[key]) return cache[key];
+    var sr = ctx.sampleRate, n = Math.max(2, Math.round(sr / freq - 0.5)), len = Math.floor(sr * (freq < 130 ? 4.5 : 3.2));
+    var buf = ctx.createBuffer(1, len, sr), y = buf.getChannelData(0), i, prev = 0;
+    for (i = 0; i < n; i++) { var r = Math.random() * 2 - 1; prev = 0.55 * r + 0.45 * prev; y[i] = prev; }   // slightly mellowed pluck
+    var damp = freq > 500 ? 0.9992 : freq > 250 ? 0.9978 : 0.9965;
+    for (i = n + 1; i < len; i++) y[i] = damp * 0.5 * (y[i - n] + y[i - n - 1]);
+    var fade = Math.floor(sr * 0.25);
+    for (i = 0; i < fade; i++) y[len - 1 - i] *= i / fade;
+    cache[key] = buf; return buf;
+  }
+  function koto(freq, t, vol, bend){
+    var s = ctx.createBufferSource(), g = ctx.createGain();
+    s.buffer = stringBuf(freq);
+    if (bend) { s.playbackRate.setValueAtTime(0.955, t); s.playbackRate.linearRampToValueAtTime(1, t + 0.11); }
+    g.gain.value = vol;
+    s.connect(g); g.connect(master); g.connect(wet); s.start(t);
+  }
+  function flute(freq, t, dur, vol){
+    var o = ctx.createOscillator(), o2 = ctx.createOscillator(), g = ctx.createGain(), g2 = ctx.createGain();
+    var v = ctx.createOscillator(), vg = ctx.createGain();
+    o.type = "sine"; o2.type = "sine"; g2.gain.value = 0.18;
+    o.frequency.setValueAtTime(freq * 0.94, t); o.frequency.exponentialRampToValueAtTime(freq, t + 0.2);
+    o2.frequency.setValueAtTime(freq * 1.88, t); o2.frequency.exponentialRampToValueAtTime(freq * 2, t + 0.2);
+    o.frequency.setValueAtTime(freq, t + dur - 0.25); o.frequency.exponentialRampToValueAtTime(freq * 0.97, t + dur);
+    v.frequency.value = 5.2; vg.gain.setValueAtTime(0, t); vg.gain.linearRampToValueAtTime(freq * 0.011, t + Math.min(1.1, dur * 0.6));
+    v.connect(vg); vg.connect(o.frequency);
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + 0.22);
+    g.gain.setValueAtTime(vol, t + dur - 0.35); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    // breath
+    var nb = ctx.createBufferSource(), nbuf = ctx.createBuffer(1, Math.floor(ctx.sampleRate * dur), ctx.sampleRate), nd = nbuf.getChannelData(0);
+    for (var i = 0; i < nd.length; i++) nd[i] = Math.random() * 2 - 1;
+    var bp = ctx.createBiquadFilter(), ng = ctx.createGain();
+    nb.buffer = nbuf; bp.type = "bandpass"; bp.frequency.value = freq * 2.5; bp.Q.value = 1.2;
+    ng.gain.setValueAtTime(vol * 0.5, t); ng.gain.exponentialRampToValueAtTime(vol * 0.1, t + 0.5); ng.gain.linearRampToValueAtTime(0.0001, t + dur);
+    nb.connect(bp); bp.connect(ng); ng.connect(g);
+    o.connect(g); o2.connect(g2); g2.connect(g); g.connect(master); g.connect(wet);
+    o.start(t); o2.start(t); v.start(t); nb.start(t); o.stop(t + dur + 0.05); o2.stop(t + dur + 0.05); v.stop(t + dur + 0.05);
+  }
+  function knock(t){ // bamboo water knock
+    var o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = "triangle"; o.frequency.setValueAtTime(420, t); o.frequency.exponentialRampToValueAtTime(190, t + 0.09);
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.16, t + 0.004); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.22);
+    o.connect(g); g.connect(master); g.connect(wet); o.start(t); o.stop(t + 0.3);
+  }
+  function chime(t){
+    [2093.0, 3135.96].forEach(function(f, i){
+      var o = ctx.createOscillator(), g = ctx.createGain();
+      o.type = "sine"; o.frequency.value = f;
+      g.gain.setValueAtTime(0.0001, t + i * 0.07); g.gain.exponentialRampToValueAtTime(0.018, t + i * 0.07 + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t + i * 0.07 + 2.4);
+      o.connect(g); g.connect(wet); g.connect(master); o.start(t); o.stop(t + 2.7);
+    });
+  }
+  function clampIdx(i){ if (i < 0) return -i; if (i > U.length - 1) return 2 * (U.length - 1) - i; return i; }
+  function playBar(t){
+    var root = ROOTS[bar % 8], sect = Math.floor(bar / 4) % 6, lead = (sect === 2 || sect === 5) ? "flute" : "koto", phraseEnd = bar % 4 === 3, k;
+    // bass
+    koto(BASS[root], t, 0.30);
+    if (Math.random() < 0.6) koto(BASS[root] * 1.5 > 120 ? BASS[root] : BASS[root] * 1.5, t + 4 * E, 0.16);
+    // broken-chord pattern, quieter under the flute
+    var ch = CHORD[root], pat = [1, 2, 3, 5, 6, 7];
+    for (k = 0; k < pat.length; k++) {
+      if (Math.random() < (lead === "flute" ? 0.5 : 0.28)) continue;
+      koto(ch[(k + (bar % 2)) % 3], t + pat[k] * E, lead === "flute" ? 0.07 : 0.085);
+    }
+    if (lead === "koto") {
+      var m = MOTIFS[rnd(MOTIFS.length)];
+      for (k = 0; k < m.length; k++) {
+        mi = clampIdx(mi + m[k][1]);
+        var last = k === m.length - 1;
+        if (phraseEnd && last) mi = [0, 3, 5][rnd(3)];           // rest on D or A at the end of a phrase
+        var when = t + m[k][0] * E;
+        if (Math.random() < 0.16 && mi > 0) koto(U[mi - 1], when - 0.07, 0.10);   // grace note
+        koto(U[mi], when, 0.22 + Math.random() * 0.06, Math.random() < 0.18);
+        if (last && Math.random() < 0.35 && mi >= 5) koto(U[mi - 5], when + 0.03, 0.12);  // octave below
+      }
+      if (phraseEnd && Math.random() < 0.5) { // brushed run down to close the phrase
+        for (k = 0; k < 5; k++) koto(U[Math.max(0, 7 - k)], t + 7 * E + k * 0.075, 0.09);
+      }
+    } else {
+      var a = [3, 5, 2, 4, 6][rnd(5)], b = phraseEnd ? [0, 3, 5][rnd(3)] : clampIdx(a + [-1, 1, -2][rnd(3)]);
+      flute(U[a], t + 0.5 * E, 4.2 * E, 0.085);
+      flute(U[b], t + 5 * E, 2.8 * E, 0.07);
+      mi = b;
+    }
+    if (bar % 7 === 6) knock(t + 6 * E);
+    if (Math.random() < 0.1) chime(t + (2 + rnd(5)) * E);
+    bar++;
+  }
+  function schedule(){
+    if (!on) return;
+    while (nextBar < ctx.currentTime + 0.5) { playBar(nextBar); nextBar += 8 * E; }
+  }
+  function setup(){
+    var AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return false;
+    ctx = new AC();
+    master = ctx.createGain(); master.gain.value = 0;
+    analyser = ctx.createAnalyser(); analyser.fftSize = 2048;
+    var comp = ctx.createDynamicsCompressor(); comp.threshold.value = -14; comp.ratio.value = 4;
+    master.connect(comp); comp.connect(analyser); analyser.connect(ctx.destination);
+    var conv = ctx.createConvolver(); conv.buffer = impulse(2.6);
+    wet = ctx.createGain(); wet.gain.value = 0.32; wet.connect(conv); conv.connect(master);
+    return true;
+  }
+  function start(){
+    if (!ctx && !setup()) return false;
+    ctx.resume();
+    on = true; nextBar = ctx.currentTime + 0.25;
+    master.gain.cancelScheduledValues(ctx.currentTime);
+    master.gain.setValueAtTime(Math.max(master.gain.value, 0.0001), ctx.currentTime);
+    master.gain.linearRampToValueAtTime(1.0, ctx.currentTime + 1.5);
+    clearInterval(timer); timer = setInterval(schedule, 150); schedule();
+    return true;
+  }
+  function stop(){
+    if (!ctx) return;
+    on = false; clearInterval(timer);
+    master.gain.cancelScheduledValues(ctx.currentTime);
+    master.gain.setValueAtTime(master.gain.value, ctx.currentTime);
+    master.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.8);
+    setTimeout(function(){ if (!on && ctx) ctx.suspend(); }, 1000);
+  }
+  function level(){
+    if (!analyser) return 0;
+    var d = new Float32Array(analyser.fftSize), p = 0; analyser.getFloatTimeDomainData(d);
+    for (var i = 0; i < d.length; i++) p = Math.max(p, Math.abs(d[i]));
+    return p;
+  }
+  return { toggle: function(){ if (on) { stop(); return false; } return start(); }, isOn: function(){ return on; }, level: level };
+})();
+
+var VIEWS = [{id:"city", name:"By city"}, {id:"days", name:"Suggested day"}];
+var CITY_SUB = {tokyo:"17 to 21 Feb and 1 to 3 Mar", kanazawa:"21 to 23 Feb", kyoto:"23 Feb to 1 Mar", osaka:"Day trip option, Fri 26 Feb", nara:"Day trip option, Fri 26 Feb"};
+var CITY_NOTE = {tokyo:"Based around Ginza and Tsukiji, then near Tokyo Station on the way home.", kanazawa:"Two nights beside Omicho Market. Closing days decide which oden house you eat at each night.", kyoto:"Six nights near Nishiki Market. The longest stay and the easiest walking of the trip.", osaka:"The stronger food day of the two day-trip options, about 30 minutes from Kyoto.", nara:"The gentler walk of the two day-trip options, about 45 minutes from Kyoto."};
+var CITY_LIST = ["tokyo","kanazawa","kyoto","osaka","nara"].map(function(id){ return {id:id, name:CITY_NAMES[id]}; });
+var CITY_ART = {tokyo:"tokyo", kanazawa:"kenrokuen", kyoto:"kyoto", osaka:"osaka", nara:"nara"};
+var state = {view:"city", city:"tokyo", type:"all", q:"", pos:null, posErr:"", posTime:""};
+var PN = {}, SI = {};
+P.forEach(function(p){ PN[p.n] = p; });
+SIGHTS.forEach(function(s){ SI[s.id] = s; });
+
+function esc(s){ return String(s).replace(/[&<>"]/g, function(ch){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch]; }); }
+function mapUrl(q){ return "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(q); }
+function typeName(t){ for (var i=0;i<TYPES.length;i++) if (TYPES[i].id===t) return TYPES[i].name; return ""; }
+function artThumb(k){ return TB + ART[k][0] + "_" + ART[k][2] + ".webp"; }
+function artFull(k){ return A + ART[k][0] + "_" + ART[k][1] + ".png"; }
+function artImg(k, alt){ return '<img data-opt referrerpolicy="no-referrer" alt="'+esc(alt)+'" src="'+artThumb(k)+'" data-full="'+artFull(k)+'">'; }
+function photoUrl(f, w){ return "https://commons.wikimedia.org/wiki/Special:FilePath/" + encodeURIComponent(f) + "?width=" + (w || 960); }
+function filePage(f){ return "https://commons.wikimedia.org/wiki/File:" + encodeURIComponent(f.replace(/ /g, "_")); }
+function credit(o, what){ return '<p class="credit">'+what+': <a href="'+filePage(o.f)+'" target="_blank" rel="noopener">'+esc(o.by)+'</a>, '+esc(o.lic)+'</p>'; }
+
+function chips(el, items, key, withAll, cb){
+  var all = (withAll ? [{id:"all", name:"All"}] : []).concat(items);
+  el.innerHTML = all.map(function(it){
+    return '<button type="button" class="chip" data-v="'+it.id+'" aria-pressed="'+(state[key]===it.id)+'">'+esc(it.name)+'</button>';
+  }).join("");
+  el.onclick = function(e){
+    var b = e.target.closest("button"); if (!b) return;
+    state[key] = b.getAttribute("data-v");
+    Array.prototype.forEach.call(el.children, function(c){ c.setAttribute("aria-pressed", String(c===b)); });
+    (cb || render)();
+    if (key === "view" || key === "city") toTop();
+  };
+}
+
+function toTop(){ window.scrollTo(0, document.querySelector(".bar").offsetTop - 4); }
+function refLink(r){
+  var kind = r.slice(0,1), key = r.slice(2), o = kind === "p" ? PN[key] : SI[key];
+  if (!o) return "";
+  return '<span class="refpair"><a class="ref" href="'+pinUrl(o)+'" target="_blank" rel="noopener">'+esc(o.n)+' · pin</a><a class="ref go" href="'+navUrl(o)+'" target="_blank" rel="noopener">go →</a></span>';
+}
+function tile(id){
+  var s = SI[id];
+  return '<div class="tile"><img data-opt referrerpolicy="no-referrer" loading="lazy" alt="'+esc(s.n)+'" src="'+photoUrl(s.f)+'">'
+    + '<div class="tile-in"><h4>'+esc(s.n)+'<span class="jp" lang="ja">'+esc(s.j)+'</span></h4>'
+    + '<p class="carry">'+esc(s.t)+'. '+esc(s.w)+'</p>'+fromYou(s)+credit(s, "Photo")
+    + '<span class="links">'+navLinks(s)+'</span></div></div>';
+}
+function comboHtml(c){
+  var cls = c.k === "Food-led" ? "food" : c.k === "Walk-led" ? "walk" : "easy";
+  var ru = routeUrl(c.steps);
+  var h = '<div class="combo"><div class="combo-top"><span class="tag '+cls+'">'+esc(c.k)+'</span><h3>'+esc(c.name)+'</h3>'
+    + (ru ? '<a class="map nav route" href="'+ru+'" target="_blank" rel="noopener">Open as a route</a>' : '') + '</div><ol class="steps">';
+  c.steps.forEach(function(st){
+    var refs = st[2].map(refLink).join("");
+    h += '<li><span class="t">'+esc(st[0])+'</span><div><p>'+esc(st[1])+'</p>'+(refs ? '<div class="refs">'+refs+'</div>' : '')+'</div></li>';
+  });
+  return h + '</ol></div>';
+}
+function dayHtml(d, i){
+  var h = '<article class="day" id="day-'+i+'"><div class="day-art">'+artImg(d.art, "Woodblock-style artwork for "+d.title)
+    + '<div class="day-head"><p class="day-date">'+esc(d.w+" "+d.d+" "+d.m+" · "+CITY_NAMES[d.c])+'</p><h2>'+esc(d.title)+'</h2></div></div><div class="day-body">';
+  h += '<p class="sum">'+esc(d.sum)+'</p>';
+  if (d.sights.length) h += '<div><p class="label">What to see</p><div class="tiles">'+d.sights.map(tile).join("")+'</div></div>';
+  h += '<div><p class="label">'+(d.combos.length > 1 ? "Two ways to run the day" : "The plan")+'</p><div class="combos">'+d.combos.map(comboHtml).join("")+'</div></div>';
+  if (d.room) h += '<p class="roomline">'+esc(d.room)+'</p>';
+  if (d.art2) h += '<figure class="art2">'+artImg(d.art2, "Woodblock-style artwork")+'</figure>';
+  return h + '</div></article>';
+}
+function sightCard(s){
+  return '<article class="sight" id="s-'+esc(s.id)+'"><img data-opt referrerpolicy="no-referrer" loading="lazy" alt="'+esc(s.n)+'" src="'+photoUrl(s.f)+'">'
+    + '<div class="sight-in"><h3>'+esc(s.n)+'<span class="jp" lang="ja">'+esc(s.j)+'</span></h3><p>'+esc(s.b)+'</p>'
+    + '<p class="meta"><b>Allow:</b> '+esc(s.t)+'</p><p class="meta"><b>With the baby:</b> '+esc(s.w)+'</p>'+fromYou(s)+credit(s, "Photo")
+    + '<span class="links">'+navLinks(s)+'</span></div></article>';
+}
+function dishFig(p){
+  var d = PD[p.n]; if (!d) return "";
+  if (d[0].indexOf("art:") === 0) {
+    return '<figure class="dish">'+artImg(d[0].slice(4), d[2])+'<figcaption>'+esc(d[2])+'. Illustration made with OpenArt, not a photo</figcaption></figure>';
+  }
+  var ph = DISH[d[0]];
+  return '<figure class="dish"><img data-opt referrerpolicy="no-referrer" loading="lazy" alt="'+esc(d[2])+'" src="'+photoUrl(ph[0], 500)+'">'
+    + '<figcaption>'+esc(d[2])+(d[1] ? '. Photographed at this restaurant' : '. Typical example, not this restaurant\'s plate')
+    + '. Photo: <a href="'+filePage(ph[0])+'" target="_blank" rel="noopener">'+esc(ph[1])+'</a>, '+esc(ph[2])+'</figcaption></figure>';
+}
+function card(p){
+  var hi = p.s && parseFloat(p.s) >= 3.5;
+  var h = '<article class="card" id="p-'+P.indexOf(p)+'">'+dishFig(p)+'<div class="card-in"><div class="top"><h3 class="name">'+esc(p.n)+'<span class="jp" lang="ja">'+esc(p.j)+'</span></h3>';
+  if (p.s) h += '<span class="score'+(hi?' hi':'')+'" title="Tabelog score">'+esc(p.s)+'</span>';
+  h += '</div><p class="when">'+esc(p.d)+'</p>'+fromYou(p)+'<p class="order">'+esc(p.o)+'</p>';
+  if (p.p) h += '<p class="meta"><b>Price a head:</b> '+esc(p.p)+'</p>';
+  h += '<p class="meta">'+(p.a?'<b>'+esc(p.a)+'.</b> ':'')+esc(p.m)+'</p>';
+  h += '<p class="meta"><b>Closed:</b> '+esc(p.x)+'</p>';
+  h += '<div class="foot"><span class="tag '+p.t+'">'+esc(typeName(p.t))+'</span><span class="links">';
+  h += navLinks(p);
+  if (p.u) h += '<a class="tb" href="'+p.u+'" target="_blank" rel="noopener">Tabelog</a>';
+  return h + '</span></div></div></article>';
+}
+
+function guardImages(){
+  Array.prototype.forEach.call(document.querySelectorAll("img[data-opt], img[data-art]"), function(img){
+    if (img._g) return; img._g = true;
+    img.addEventListener("error", function(){ (img.closest("figure.dish") || img).hidden = true; });
+    var full = img.getAttribute("data-full");
+    if (full) {
+      var hi = new Image();
+      hi.referrerPolicy = "no-referrer";
+      hi.onload = function(){ img.src = full; img.hidden = false; };
+      hi.src = full;
+    }
+  });
+}
+
+function renderEat(){
+  var q = state.q.trim().toLowerCase();
+  var all = P.filter(function(p){ return p.c === state.city; });
+  var shown = all.filter(function(p){
+    if (state.type!=="all" && p.t!==state.type) return false;
+    if (q && (p.n+" "+p.j+" "+p.d+" "+p.o+" "+p.m+" "+(p.a||"")).toLowerCase().indexOf(q) < 0) return false;
+    return true;
+  });
+  if (state.pos) shown.sort(function(a, b){ return stopDist(a) - stopDist(b); });
+  document.getElementById("eatGrid").innerHTML = shown.length ? shown.map(card).join("") : '<p class="empty">No places match. Clear the search or pick All.</p>';
+  document.getElementById("count").textContent = "Showing " + shown.length + " of " + all.length + " places in " + CITY_NAMES[state.city] + (state.pos ? ", nearest first" : "");
+}
+function cityHtml(id){
+  var rows = SIGHTS.filter(function(s){ return s.c === id; });
+  var days = [];
+  DAYS.forEach(function(d, i){
+    var here = d.c === id || d.sights.some(function(s){ return SI[s].c === id; });
+    if (here) days.push('<button type="button" data-day="'+i+'" aria-label="Open '+esc(d.w+" "+d.d+" "+d.m+", "+d.title)+'">'+esc(d.w)+'<b>'+esc(d.d)+'</b></button>');
+  });
+  var h = '<article class="day cityview"><div class="day-art">'+artImg(CITY_ART[id], "Woodblock-style artwork of "+CITY_NAMES[id])
+    + '<div class="day-head"><p class="day-date">'+esc(CITY_SUB[id])+'</p><h2>'+esc(CITY_NAMES[id])+'</h2></div></div><div class="day-body">';
+  h += '<p class="sum">'+esc(CITY_NOTE[id])+'</p>';
+  h += nearPanel();
+  h += '<div><p class="label">Where everything is. Tap a dot to jump to it</p>'+cityMap(id)+'<p class="meta small">A plotted map of the stops in their true positions, drawn by the app so it works with no signal. Pin and Navigate open the Google Maps app, which uses the offline maps you downloaded.</p></div>';
+  h += '<div><p class="label">Your days here. Tap one for the suggested plan</p><div class="strip">'+days.join("")+'</div></div>';
+  h += '<div><p class="label">What to see · '+rows.length+' sights</p><div class="sights-grid">'+rows.map(sightCard).join("")+'</div></div>';
+  h += '<div><p class="label">Where to eat</p><div class="eatbar"><div class="chips" id="typeChips" role="group" aria-label="Seating"></div>'
+    + '<input id="q" type="search" placeholder="Search by name, dish or day, e.g. udon or Sat 27" aria-label="Search places to eat"><p class="count" id="count"></p></div>'
+    + '<div class="grid" id="eatGrid"></div></div>';
+  return h + '</div></article>';
+}
+function render(){
+  var v = state.view, list = document.getElementById("list");
+  document.getElementById("dayStrip").hidden = v !== "days";
+  document.getElementById("cityChips").hidden = v !== "city";
+  if (v === "days") {
+    list.innerHTML = DAYS.map(dayHtml).join("");
+  } else {
+    list.innerHTML = cityHtml(state.city);
+    chips(document.getElementById("typeChips"), TYPES, "type", true, renderEat);
+    var qEl = document.getElementById("q");
+    qEl.value = state.q;
+    qEl.addEventListener("input", function(e){ state.q = e.target.value; renderEat(); });
+    renderEat();
+  }
+  guardImages();
+}
+function openDay(i){
+  state.view = "days";
+  Array.prototype.forEach.call(document.getElementById("viewChips").children, function(c){ c.setAttribute("aria-pressed", String(c.getAttribute("data-v") === "days")); });
+  render();
+  var el = document.getElementById("day-" + i);
+  if (el) el.scrollIntoView({block: "start"});
+}
+
+var heroImg = document.querySelector(".hero-art");
+heroImg.src = artThumb("fuji"); heroImg.setAttribute("data-full", artFull("fuji"));
+chips(document.getElementById("viewChips"), VIEWS, "view", false);
+chips(document.getElementById("cityChips"), CITY_LIST, "city", false);
+var strip = document.getElementById("dayStrip");
+strip.innerHTML = DAYS.map(function(d, i){ return '<button type="button" data-i="'+i+'" aria-label="'+esc(d.w+" "+d.d+" "+d.m+", "+d.title)+'">'+esc(d.w)+'<b>'+esc(d.d)+'</b></button>'; }).join("");
+strip.onclick = function(e){
+  var b = e.target.closest("button"); if (!b) return;
+  var el = document.getElementById("day-" + b.getAttribute("data-i"));
+  if (el) el.scrollIntoView({behavior: "smooth", block: "start"});
+};
+document.getElementById("list").addEventListener("click", function(e){
+  var b = e.target.closest("button[data-day]"); if (b) { openDay(b.getAttribute("data-day")); return; }
+  var g = e.target.closest("[data-go]"); if (g) goTo(g.getAttribute("data-go"));
+});
+document.getElementById("list").addEventListener("keydown", function(e){
+  if (e.key !== "Enter" && e.key !== " ") return;
+  var g = e.target.closest("[data-go]"); if (g) { e.preventDefault(); goTo(g.getAttribute("data-go")); }
+});
+document.querySelector("[data-near]").addEventListener("click", locate);
+var musicBtns = document.querySelectorAll("[data-music]");
+function showMusic(playing){
+  Array.prototype.forEach.call(musicBtns, function(b){
+    b.setAttribute("aria-pressed", String(!!playing));
+    b.textContent = playing ? "\u266a Mute music" : "\u266a Play music";
+  });
+}
+Array.prototype.forEach.call(musicBtns, function(b){ b.addEventListener("click", function(){ showMusic(Music.toggle()); }); });
+document.addEventListener("visibilitychange", function(){ if (document.hidden && Music.isOn()) { Music.toggle(); showMusic(false); } });
+render();
+</script>
+</body>
+</html>
