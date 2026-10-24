@@ -1172,13 +1172,13 @@ function goTo(id){
 
 // Street map for each city (Leaflet + CARTO basemap). The stops sit on real streets, and "Save for offline"
 // stores the map tiles in the browser so the map keeps working without a signal.
-var TILE_HOST = "https://basemaps.cartocdn.com/";
+var TILE_HOST = "https://a.basemaps.cartocdn.com/";
 function darkMode(){
   var t = document.documentElement.getAttribute("data-theme");
   if (t) return t === "dark";
   return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
 }
-function tileStyle(){ return darkMode() ? "dark_matter" : "voyager"; }
+function tileStyle(){ return darkMode() ? "dark_all" : "rastertiles/voyager"; }
 function tileUrl(style){ return TILE_HOST + style + "/{z}/{x}/{y}.png"; }
 var maps = {};
 function haveLeaflet(){ return typeof L !== "undefined" && L.map; }
@@ -1200,7 +1200,16 @@ function initMaps(){
     var id = el.id.slice(4), pts = cityPts(id);
     if (!pts.length) return;
     var m = L.map(el, {scrollWheelZoom: false, zoomSnap: 0.5, attributionControl: true});
-    L.tileLayer(tileUrl(tileStyle()), {maxZoom: 18, detectRetina: false, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'}).addTo(m);
+    var tl = L.tileLayer(tileUrl(tileStyle()), {maxZoom: 18, detectRetina: false, crossOrigin: true, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'}).addTo(m);
+    var tileErr = 0, tileOk = 0;
+    tl.on("tileload", function(){ tileOk++; });
+    tl.on("tileerror", function(){
+      tileErr++;
+      if (tileErr === 6 && tileOk === 0) {
+        var st = document.getElementById("save-" + id);
+        if (st) st.textContent = navigator.onLine === false ? "No signal and this city's street map is not saved yet. Save it next time you have Wi-Fi." : "The street map pieces are not loading. Check the connection and pull to refresh.";
+      }
+    });
     var bounds = [];
     pts.forEach(function(x){
       var isS = x.kind === "s";
@@ -1230,7 +1239,7 @@ function initMaps(){
 }
 
 // ---- offline tiles ----
-var TILE_CACHE = "japan-tiles-v1", ZOOMS = [12, 13, 14, 15, 16];
+var TILE_CACHE = "japan-tiles-v2", ZOOMS = [12, 13, 14, 15, 16];
 function lng2x(lng, z){ return Math.floor((lng + 180) / 360 * Math.pow(2, z)); }
 function lat2y(lat, z){ var r = lat * Math.PI / 180; return Math.floor((1 - Math.log(Math.tan(r) + 1 / Math.cos(r)) / Math.PI) / 2 * Math.pow(2, z)); }
 function cityTiles(id, style){
@@ -1267,7 +1276,7 @@ function saveCity(id, btn){
       var u = urls[i++];
       return cache.match(u).then(function(hit){
         if (hit) return;
-        return fetch(u, {mode: "no-cors"}).then(function(r){ return cache.put(u, r); }).catch(function(){ failed++; });
+        return fetch(u, {mode: "cors"}).then(function(r){ if (!r.ok) throw new Error(r.status); return cache.put(u, r); }).catch(function(){ failed++; });
       }).then(function(){
         done++;
         if (done % 10 === 0 || done === urls.length) st.textContent = "Saving " + done + " of " + urls.length + " map pieces…";
