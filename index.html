@@ -6,6 +6,11 @@
 <meta name="referrer" content="no-referrer">
 <style>body{margin:0}[hidden]{display:none!important}img{max-width:100%}</style>
 <title>Japan Day by Day</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1a5c4a">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" crossorigin="">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" crossorigin=""></script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Mono:wght@400;500&family=Montserrat:wght@400;500;600;700&display=swap">
@@ -290,6 +295,113 @@ footer p { margin: 0 0 8px; }
 .leaflet-container .popstep a { color: #1a8f4c; }
 .leaf.dark .leaflet-tile-pane { filter: invert(1) hue-rotate(180deg) brightness(.82) contrast(.92) saturate(.6); }
 .leaf .leaflet-tile-pane { filter: saturate(.85); }
+
+/* ---- views with four tabs ---- */
+@media (max-width: 520px) { .viewrow > .label { display: none; } .viewrow .seg { width: 100%; } .viewrow .seg .chip { flex: 1 1 auto; white-space: nowrap; padding: 8px 6px; font-size: 12px; } }
+.chip.on { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.chip[disabled] { opacity: .55; }
+
+/* ---- favourites and been-there ---- */
+.marks { display: inline-flex; gap: 6px; margin: 2px 0; }
+.mark { font: 600 12px/1 var(--body); border: 1px solid var(--line); background: var(--surface); color: var(--muted); border-radius: 999px; padding: 5px 10px; cursor: pointer; }
+.mark.fav { font-size: 15px; padding: 3px 10px; color: #c2477a; }
+.mark[aria-pressed="true"].fav { background: #c2477a; border-color: #c2477a; color: #fff; }
+.mark[aria-pressed="true"].done { background: var(--teal); border-color: var(--teal); color: #fff; }
+.mark:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
+.qrow { display: flex; gap: 8px; align-items: center; }
+.qrow #q { flex: 1; min-width: 0; }
+#favOnly[aria-pressed="true"] { background: #c2477a; border-color: #c2477a; color: #fff; }
+
+/* ---- turn-taking walk ---- */
+.walkbox { border-left: 3px solid #c98a00; background: color-mix(in srgb, #c98a00 8%, transparent); padding: 8px 10px; border-radius: 0 4px 4px 0; display: flex; flex-direction: column; gap: 4px; align-items: flex-start; }
+.walkhead { margin: 0; font-weight: 600; font-size: 13px; }
+.walktxt { margin: 0; font-size: 12.5px; color: var(--muted); }
+
+/* ---- kit and phrases ---- */
+.kit { margin-top: 18px; display: flex; flex-direction: column; gap: 10px; }
+.kit-h { font-family: var(--display); font-weight: 600; font-size: 28px; margin: 18px 0 2px; }
+.kitbox { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 14px; display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
+.kitbox p { margin: 0; }
+.kitbox progress { width: 100%; height: 10px; accent-color: var(--teal); }
+.ph-cat { font-family: var(--mono); font-weight: 500; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin: 14px 0 4px; }
+.staffgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr)); gap: 8px; }
+.staff { text-align: left; background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--teal); border-radius: 4px; padding: 12px; cursor: pointer; display: flex; flex-direction: column; gap: 4px; color: var(--ink); font: inherit; }
+.staff.taxi { border-left-color: #c98a00; }
+.st-ja { font-size: 18px; font-weight: 600; line-height: 1.35; }
+.st-en { font-size: 12.5px; color: var(--muted); }
+.phrases { list-style: none; margin: 0; padding: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; }
+.phrase { display: flex; align-items: stretch; border-top: 1px solid var(--line); }
+.phrase:first-child { border-top: 0; }
+.phrase-main { flex: 1; text-align: left; background: none; border: 0; padding: 10px 12px; cursor: pointer; color: var(--ink); font: inherit; display: grid; grid-template-columns: 1fr; gap: 1px; }
+.ph-en { font-size: 13px; color: var(--muted); }
+.ph-ja { font-size: 17px; font-weight: 600; }
+.ph-ro { font-family: var(--mono); font-size: 12px; color: var(--teal); }
+.ph-say { background: none; border: 0; border-left: 1px solid var(--line); padding: 0 14px; font-size: 18px; cursor: pointer; color: var(--ink); }
+.trans { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+.trans textarea, .hform input, .hform textarea, .bctl input, .bctl select { width: 100%; box-sizing: border-box; font: 15px/1.4 var(--body); padding: 9px 10px; border: 1px solid var(--line); border-radius: 4px; background: var(--bg); color: var(--ink); }
+.trbtns { display: flex; flex-wrap: wrap; gap: 6px; }
+.trbtns a.chip { text-decoration: none; }
+.trout { border-top: 1px solid var(--line); padding-top: 10px; display: flex; flex-direction: column; gap: 6px; }
+.trout p { margin: 0; }
+.tr-res { font-size: 20px; font-weight: 600; line-height: 1.4; }
+
+/* ---- hotels ---- */
+.hotels { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 10px; }
+.hotel { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; }
+.hotel p { margin: 0; }
+.hotel-l { font-family: var(--mono); font-size: 11.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.hotel-n { font-family: var(--display); font-size: 21px; font-weight: 700; }
+.hotel-a { font-size: 13.5px; }
+.hotel-btns { display: flex; flex-wrap: wrap; gap: 6px; }
+.hotel-btns .ref { cursor: pointer; font-family: var(--body); }
+.hform { display: flex; flex-direction: column; gap: 8px; }
+.hform label { display: flex; flex-direction: column; gap: 3px; font-size: 12.5px; color: var(--muted); }
+.hotels-mini { display: flex; flex-direction: column; gap: 8px; }
+.hotelhint { margin: 0; }
+
+/* ---- bookings ---- */
+.blist { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.brow { background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--line); border-radius: 4px; padding: 10px 12px; display: grid; grid-template-columns: 1fr; gap: 8px; }
+@media (min-width: 760px) { .brow { grid-template-columns: 1.2fr 1fr; } }
+.brow.s-tobook { border-left-color: #c98a00; } .brow.s-asked { border-left-color: #1e6fd9; } .brow.s-booked { border-left-color: #1a8f4c; } .brow.s-skip { opacity: .6; }
+.bname { margin: 0; font-weight: 700; }
+.bmain p { margin: 0 0 2px; }
+.bctl { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.bctl input[name="note"], .blinks { grid-column: 1 / -1; }
+.blinks { display: flex; gap: 6px; flex-wrap: wrap; }
+
+/* ---- full-screen card and toast ---- */
+#bigcard { position: fixed; inset: 0; z-index: 2000; background: var(--bg); display: none; align-items: center; justify-content: center; padding: 24px 18px; }
+#bigcard.on { display: flex; }
+.big-in { max-width: 900px; width: 100%; display: flex; flex-direction: column; gap: 16px; text-align: center; }
+.big-ja { font-size: clamp(34px, 9vw, 72px); font-weight: 700; line-height: 1.3; margin: 0; color: var(--ink); word-break: break-word; }
+.big-ro { font-family: var(--mono); font-size: 16px; color: var(--teal); margin: 0; }
+.big-en { font-size: 16px; color: var(--muted); margin: 0; }
+.big-btns { display: flex; justify-content: center; gap: 10px; }
+.big-btns .chip { font-size: 15px; padding: 10px 18px; }
+body.noscroll { overflow: hidden; }
+#toast { position: fixed; left: 50%; bottom: 22px; transform: translate(-50%, 30px); opacity: 0; transition: .25s; z-index: 2100; background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 6px; font-size: 14px; max-width: calc(100% - 32px); pointer-events: none; }
+#toast.on { opacity: 1; transform: translate(-50%, 0); }
+.hero-install { margin-left: auto; margin-right: 8px; }
+
+/* ---- trains and help ---- */
+.trains { display: flex; flex-direction: column; gap: 10px; }
+.train { background: var(--surface); border: 1px solid var(--line); border-left: 4px solid #1e6fd9; border-radius: 4px; padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; }
+.train.inline { background: color-mix(in srgb, #1e6fd9 6%, var(--surface)); }
+.train p { margin: 0; }
+.train-d { font-family: var(--mono); font-size: 11.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.train-t { font-family: var(--display); font-weight: 700; font-size: 22px; margin: 0; line-height: 1.15; }
+.train-time { font-weight: 600; font-size: 13.5px; }
+.train-steps { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 4px; font-size: 14px; }
+.train-x { font-size: 13.5px; }
+.train-x.check { color: #c98a00; }
+.helplist { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; width: 100%; }
+.helplist li { display: flex; justify-content: space-between; align-items: center; gap: 10px; border-top: 1px solid var(--line); padding-top: 8px; }
+.helplist li:first-child { border-top: 0; padding-top: 0; }
+.helplist p { margin: 2px 0 0; }
+.helplist .ref { white-space: nowrap; }
+.kitnav { display: flex; flex-wrap: wrap; gap: 6px; }
+.kitnav .chip { text-decoration: none; }
 </style>
 </head>
 <body>
@@ -297,7 +409,7 @@ footer p { margin: 0 0 8px; }
 <header class="hero">
   <img class="hero-art" data-art="fuji" referrerpolicy="no-referrer" alt="">
   <div class="hero-in">
-    <div class="hero-top"><p class="brand">GBX PS</p><button type="button" class="hero-music" data-music aria-pressed="false">♪ Play music</button></div>
+    <div class="hero-top"><p class="brand">GBX PS</p><button type="button" class="hero-music hero-install" data-install hidden>⤓ Install app</button><button type="button" class="hero-music" data-music aria-pressed="false">♪ Play music</button></div>
     <h1>Japan, day by day</h1>
     <p class="dates">17 Feb to 3 Mar 2027 · Tokyo · Kanazawa · Kyoto</p>
     <p class="lead">Fifteen days of sights and food. Browse a city to see everything there at once, or switch to the suggested plan for each day. Every stop has a Pin and a Navigate button that open the Google Maps app on the exact spot, so they work with the offline maps you downloaded.</p>
@@ -323,7 +435,7 @@ footer p { margin: 0 0 8px; }
   <main id="list"></main>
 
   <footer>
-    <p>Pin opens the stop in the Google Maps app by its exact coordinates and place ID; Navigate asks Maps for walking directions to it; Open as a route strings a whole day plan together in order. All three use the offline maps you downloaded for the pin and the map itself, though Google only gives driving directions without a signal, so for walking use the pin together with the plotted map in each city. Near me uses the phone's GPS, which also works offline. Restaurant hours and scores were read from Tabelog on 11 Oct 2026. Sight opening days are from general knowledge, so recheck them along with closing days in early February.</p>
+    <p>Pin opens the stop in the Google Maps app by its exact coordinates and place ID; Navigate asks Maps for walking directions to it; Open as a route strings a whole day plan together in order. All three use the offline maps you downloaded for the pin and the map itself, though Google only gives driving directions without a signal, so for walking use the pin together with the street map in each city. Near me uses the phone's GPS, which also works offline. Restaurant hours and scores were read from Tabelog on 11 Oct 2026. Sight opening days are from general knowledge, so recheck them along with closing days in early February.</p>
     <p>The step-free layer (lifts, step-free station exits, accessible toilets and baby change) comes from OpenStreetMap volunteers. Japan is well mapped but not perfectly, so trust the signs at the station over the map. In the Google Maps app you can also turn on Settings, Accessibility, Accessible places to see wheelchair icons on places, and choose Options, Wheelchair accessible when planning a train route.</p>
     <p>Woodblock-style artwork was generated with OpenArt. Photographs are from Wikimedia Commons under the licence shown beside each one. Dish photos marked as typical examples show the kind of dish, not that restaurant's own plate. Images load from the web, so they need a connection. The music is generated in your browser and works offline.</p>
   </footer>
@@ -488,7 +600,7 @@ var DAYS = [
    ["13:45","Late seafood lunch together. Lunch service runs to 15:00.",["p:Omicho Shokudo"]],
    ["18:00","Seafood izakaya, booked ahead.",["p:Itaru Honten"]]]}],
  room:"Private-room swap: kaiseki lunch at Kanazawa Chaya, or dinner at Tsubajin. The contemporary art museum is usually closed on Mondays."},
-{d:"23",m:"Feb",w:"Tue",c:"kyoto",art:"kyoto",title:"Train to Kyoto and Nishiki Market",sum:"A public holiday, so reserve train seats early. Bullet train to Tsuruga, a cross-platform change, and you are in Kyoto after lunch.",sights:["nishiki","kamo","shirakawa"],videos:[],
+{d:"23",m:"Feb",w:"Tue",c:"kyoto",art:"kyoto",title:"Train to Kyoto and Nishiki Market",sum:"A public holiday, so reserve train seats early. Bullet train to Tsuruga, down two floors to the Thunderbird (book the 13 or 15 minute connection with the pram), and you are in Kyoto after lunch.",sights:["nishiki","kamo","shirakawa"],videos:[],
  combos:[
   {k:"Food-led",name:"Market and gyoza",steps:[
    ["9:00","Seafood bowl breakfast at a tatami table. Confirm it opens on the holiday.",["p:Yamasan Sushi"]],
@@ -1134,6 +1246,9 @@ function nearPanel(){
       + '<a class="map nav" href="'+navUrl(x.o)+'" target="_blank" rel="noopener">Navigate</a></li>';
   }).join("") + '</ol>';
   h += '<p class="nearstep" id="nearStep">'+nearStepHtml()+'</p>';
+  var hot = HOTEL_SLOTS.map(function(s){ return tripGet("hotel", s.id); }).filter(function(x){ return x && (x.lat || x.a); });
+  if (hot.length) { var best = hot.map(function(x){ return {h:x, d: x.lat ? distM(state.pos, [x.lat, x.lng]) : Infinity}; }).sort(function(a, b){ return a.d - b.d; })[0].h;
+    h += '<p class="nearstep">\u2302 <b>'+esc(best.n || "Your hotel")+'</b>'+(best.lat ? ', '+fmtDist(distM(state.pos, [best.lat, best.lng])) : '')+' <a class="map nav" href="'+hotelNav(best)+'" target="_blank" rel="noopener">Back to hotel</a></p>'; }
   h += '<p class="meta small">Distances are straight lines from the phone\'s position, so the walk is usually a little longer. Tap Near me again to refresh.</p></div>';
   return h;
 }
@@ -1259,10 +1374,10 @@ function getTile(u){
     return fetch(u, {mode: "no-cors"}).then(function(r){ if (r.type !== "opaque" && !r.ok) throw new Error(r.status); return r; });
   });
 }
-function canCache(){ return "caches" in window && location.protocol === "https:"; }
+function canCache(){ return "caches" in window && window.isSecureContext && location.protocol !== "file:"; }
 function updateSaveStatus(){
   if (!canCache()) {
-    Array.prototype.forEach.call(document.querySelectorAll(".savestat"), function(s){ s.textContent = "Offline saving needs the web version (https)."; });
+    Array.prototype.forEach.call(document.querySelectorAll(".savestat"), function(s){ s.textContent = "Offline saving works on the web version (gbxcaillin.github.io/japan)."; });
     Array.prototype.forEach.call(document.querySelectorAll("[data-save]"), function(b){ b.disabled = true; });
     return;
   }
@@ -1304,7 +1419,7 @@ function saveCity(id, btn){
 document.getElementById("list").addEventListener("click", function(e){
   var b = e.target.closest("[data-save]"); if (b) saveCity(b.getAttribute("data-save"), b);
 });
-if ("serviceWorker" in navigator && location.protocol === "https:") {
+if ("serviceWorker" in navigator && window.isSecureContext && location.protocol !== "file:") {
   navigator.serviceWorker.register("sw.js").catch(function(){});
 }
 if (window.matchMedia) {
@@ -1496,6 +1611,601 @@ document.getElementById("list").addEventListener("click", function(e){
   if (r) { var id = r.getAttribute("data-a11yrefresh"); if (maps[id] && maps[id]._a11yLoad) maps[id]._a11yLoad(true); }
 });
 
+// Phrases: [English, Japanese, romaji]. STAFF are the big show-this-to-staff cards.
+var STAFF = [
+  ["Table for two adults and a baby, please.", "大人二人と赤ちゃん一人です。", "Otona futari to akachan hitori desu."],
+  ["Do you have a high chair?", "ベビーチェアはありますか？", "Bebī chea wa arimasu ka?"],
+  ["Can we bring the pram inside?", "ベビーカーのまま入れますか？", "Bebīkā no mama hairemasu ka?"],
+  ["Where is the nursing room?", "授乳室はどこですか？", "Junyūshitsu wa doko desu ka?"],
+  ["Where can I change the baby's nappy?", "おむつ交換台はどこですか？", "Omutsu kōkandai wa doko desu ka?"],
+  ["Where is the lift?", "エレベーターはどこですか？", "Erebētā wa doko desu ka?"],
+  ["Do you have a private room?", "個室はありますか？", "Koshitsu wa arimasu ka?"],
+  ["Could I have some hot water for the baby's milk?", "ミルク用のお湯をいただけますか？", "Miruku-yō no oyu o itadakemasu ka?"],
+  ["Is it OK if we take turns eating? One of us will wait outside with the baby.", "一人ずつ交代で食べてもいいですか？一人は外で赤ちゃんと待ちます。", "Hitori zutsu kōtai de tabete mo ii desu ka? Hitori wa soto de akachan to machimasu."],
+  ["A non-smoking seat, please.", "禁煙席でお願いします。", "Kin'en-seki de onegaishimasu."]
+];
+var PHRASES = [
+  {cat: "Basics", list: [
+    ["Hello", "こんにちは", "Konnichiwa"],
+    ["Good morning", "おはようございます", "Ohayō gozaimasu"],
+    ["Good evening", "こんばんは", "Konbanwa"],
+    ["Thank you very much", "ありがとうございます", "Arigatō gozaimasu"],
+    ["Excuse me / sorry", "すみません", "Sumimasen"],
+    ["Yes", "はい", "Hai"],
+    ["No, thank you", "いいえ、大丈夫です", "Iie, daijōbu desu"],
+    ["Please (when asking for something)", "お願いします", "Onegaishimasu"],
+    ["I don't understand Japanese", "日本語がわかりません", "Nihongo ga wakarimasen"],
+    ["Do you speak English?", "英語を話せますか？", "Eigo o hanasemasu ka?"],
+    ["Could you write it down?", "書いていただけますか？", "Kaite itadakemasu ka?"],
+    ["One moment, please", "少々お待ちください", "Shōshō omachi kudasai"]
+  ]},
+  {cat: "Eating out", list: [
+    ["Two people, please", "二人です", "Futari desu"],
+    ["How long is the wait?", "待ち時間はどのくらいですか？", "Machi-jikan wa dono kurai desu ka?"],
+    ["Is there an English menu?", "英語のメニューはありますか？", "Eigo no menyū wa arimasu ka?"],
+    ["What do you recommend?", "おすすめは何ですか？", "Osusume wa nan desu ka?"],
+    ["This one, please", "これをお願いします", "Kore o onegaishimasu"],
+    ["Water, please", "お水をお願いします", "Omizu o onegaishimasu"],
+    ["Takeaway, please", "持ち帰りでお願いします", "Mochikaeri de onegaishimasu"],
+    ["The bill, please", "お会計をお願いします", "Okaikei o onegaishimasu"],
+    ["Can I pay by card?", "カードで払えますか？", "Kādo de haraemasu ka?"],
+    ["It's delicious!", "とてもおいしいです", "Totemo oishii desu"],
+    ["Thank you for the meal (when leaving)", "ごちそうさまでした", "Gochisōsama deshita"],
+    ["Do you take reservations?", "予約はできますか？", "Yoyaku wa dekimasu ka?"],
+    ["I have a reservation", "予約しています", "Yoyaku shite imasu"]
+  ]},
+  {cat: "Baby", list: [
+    ["Do you have a high chair?", "ベビーチェアはありますか？", "Bebī chea wa arimasu ka?"],
+    ["Where is the nursing room?", "授乳室はどこですか？", "Junyūshitsu wa doko desu ka?"],
+    ["Is it OK to breastfeed here?", "ここで授乳してもいいですか？", "Koko de junyū shite mo ii desu ka?"],
+    ["Where can I buy nappies?", "おむつはどこで買えますか？", "Omutsu wa doko de kaemasu ka?"],
+    ["Baby formula", "粉ミルク", "Kona-miruku"],
+    ["Baby food", "離乳食", "Rinyūshoku"],
+    ["Could you warm this up?", "これを温めていただけますか？", "Kore o atatamete itadakemasu ka?"],
+    ["The baby is asleep", "赤ちゃんが寝ています", "Akachan ga nete imasu"],
+    ["The baby is seven months old", "生後七ヶ月です", "Seigo nana-kagetsu desu"],
+    ["Is there a baby room?", "ベビールームはありますか？", "Bebī rūmu wa arimasu ka?"]
+  ]},
+  {cat: "Getting around with the pram", list: [
+    ["Where is the lift?", "エレベーターはどこですか？", "Erebētā wa doko desu ka?"],
+    ["Is there a lift to the platform?", "ホームへのエレベーターはありますか？", "Hōmu e no erebētā wa arimasu ka?"],
+    ["Is there a step-free route?", "段差のない道はありますか？", "Dansa no nai michi wa arimasu ka?"],
+    ["Which exit has a lift?", "エレベーターがある出口はどこですか？", "Erebētā ga aru deguchi wa doko desu ka?"],
+    ["Where is the accessible toilet?", "多目的トイレはどこですか？", "Tamokuteki toire wa doko desu ka?"],
+    ["Where is the station?", "駅はどこですか？", "Eki wa doko desu ka?"],
+    ["Which platform is it?", "何番線ですか？", "Nanbansen desu ka?"],
+    ["Does this train stop at Kyoto?", "この電車は京都に止まりますか？", "Kono densha wa Kyōto ni tomarimasu ka?"],
+    ["Please take me here (taxi)", "ここまでお願いします", "Koko made onegaishimasu"],
+    ["How much is it?", "いくらですか？", "Ikura desu ka?"],
+    ["Where is the toilet?", "トイレはどこですか？", "Toire wa doko desu ka?"]
+  ]},
+  {cat: "Help", list: [
+    ["Help!", "助けて！", "Tasukete!"],
+    ["Please call an ambulance", "救急車を呼んでください", "Kyūkyūsha o yonde kudasai"],
+    ["The baby has a fever", "赤ちゃんが熱を出しています", "Akachan ga netsu o dashite imasu"],
+    ["Is there a hospital nearby?", "近くに病院はありますか？", "Chikaku ni byōin wa arimasu ka?"],
+    ["Is there a children's doctor (paediatrician)?", "小児科はありますか？", "Shōnika wa arimasu ka?"],
+    ["Where is a pharmacy?", "薬局はどこですか？", "Yakkyoku wa doko desu ka?"],
+    ["I have lost my bag", "かばんをなくしました", "Kaban o nakushimashita"],
+    ["Please call the police", "警察を呼んでください", "Keisatsu o yonde kudasai"]
+  ]}
+];
+
+// Turn-taking walks: a loop from the door of each counter-only restaurant, for whoever is on baby duty.
+// [minutes at pram pace, via points [name, lat, lng], what it is like]
+var WALKS = {
+  "Kitsuneya": [30, [["Tsukiji Hongwanji temple", 35.666486, 139.772284], ["Kachidoki Bridge", 35.662272, 139.774898]], "Past the Indian-style temple to the old drawbridge over the Sumida River. Wide, flat pavements."],
+  "Ginza Kagari": [35, [["Hibiya Park", 35.673612, 139.755877]], "A loop through Hibiya Park: ponds, a fountain and wide paved paths, with toilets inside the park."],
+  "Mugi to Olive": [30, [["Kabukiza theatre", 35.669425, 139.767745], ["Tsukiji Hongwanji temple", 35.666486, 139.772284]], "Ginza side streets to the Kabukiza facade and on to Tsukiji Hongwanji. Flat the whole way."],
+  "Menchirashi": [35, [["Yoyogi Park", 35.670065, 139.694966]], "Into Yoyogi Park, one of Tokyo's biggest, with wide paved paths and lawns. Good for a baby nap in the pram."],
+  "Tamawarai": [30, [["Omotesando avenue", 35.6661, 139.7085], ["Omotesando crossing", 35.6652, 139.7124]], "Up the zelkova-lined Omotesando to the crossing and back. Very wide pavements and plenty of window shopping."],
+  "Ponta Honke": [30, [["Shinobazu Pond", 35.712245, 139.770828]], "Round Shinobazu Pond in Ueno Park: a flat lakeside path with ducks and the Bentendo temple on its island."],
+  "Himitsudo": [25, [["Yanaka Cemetery main avenue", 35.724746, 139.770842]], "Down the quiet tree-lined main avenue of Yanaka Cemetery, a local walking spot. Paving is a little uneven in places."],
+  "Fuunji": [30, [["Shinjuku Central Park", 35.689301, 139.689898]], "Under the skyscrapers to Shinjuku Central Park: a waterfall, lawns and a cafe, with toilets near the falls."],
+  "Iki-iki Tei": [35, [["Oyama Shrine", 36.566073, 136.655425], ["Kanazawa Castle, Ishikawa Gate", 36.565356, 136.661346]], "To Oyama Shrine's garden and across to the castle's Ishikawa Gate. The shrine gate has steps and parts of the castle park are gravel."],
+  "Mori Mori Sushi": [35, [["Oyama Shrine", 36.566073, 136.655425], ["Seseragi-dori canal", 36.564056, 136.652502]], "Via Oyama Shrine to the willow-lined Seseragi canal. The canal street is narrow and busy in parts, so keep to the side with a footpath."],
+  "Daikoku Sushi": [35, [["Seseragi-dori canal", 36.564056, 136.652502], ["Nagamachi samurai district", 36.563752, 136.651015]], "Along the canal into the earthen-walled lanes of the samurai district. Quiet, flat, some stone paving."],
+  "Menya Taiga": [20, [["Tsuzumi Gate, Kanazawa Station", 36.577803, 136.649145]], "A short loop to the station's giant wooden gate and glass dome. Covered, so good if it is snowing."],
+  "Sugari": [20, [["Rokkakudo temple", 35.007713, 135.760256]], "To Rokkakudo, the hexagonal temple with a swan pond, tucked between office blocks. Flat, free, rarely crowded."],
+  "Mizuno": [20, [["Tonbori River Walk", 34.669155, 135.500884]], "Along the canal boardwalk under the Dotonbori billboards and back. Busiest in the evening."],
+  "Yaekatsu": [20, [["Tenshiba lawn, Tennoji Park", 34.648538, 135.511045]], "To Tenshiba, the big lawn at the entrance of Tennoji Park, with cafes, play areas and toilets."],
+  "Sobakiri Momoyozuki": [40, [["Kofukuji temple", 34.683231, 135.831159], ["Nara Park", 34.685047, 135.843012]], "Past Kofukuji's five-storey pagoda into Nara Park with its deer. Mostly paved, some gravel near the temples."]
+};
+function walkUrl(p){
+  var w = WALKS[p.n], g = geo(p); if (!w || !g) return "";
+  var via = w[1].map(function(v){ return v[1] + "," + v[2]; }).join("|");
+  return "https://www.google.com/maps/dir/?api=1&origin=" + g[0] + "," + g[1] + "&destination=" + g[0] + "," + g[1] + "&waypoints=" + encodeURIComponent(via) + "&travelmode=walking";
+}
+function walkHtml(p){
+  var w = WALKS[p.n]; if (!w) return "";
+  return '<div class="walkbox"><p class="walkhead">\u{1F6B6} While one eats: about ' + w[0] + ' min via ' + esc(w[1].map(function(v){ return v[0]; }).join(" and ")) + '</p>'
+    + '<p class="walktxt">' + esc(w[2]) + '</p><a class="ref go" href="' + walkUrl(p) + '" target="_blank" rel="noopener">Open the loop in Maps</a></div>';
+}
+
+// ---------- Your trip data: favourites, visited, bookings, hotels, saved phrases ----------
+// Kept on this phone. "Send to partner" packs it into a link; opening that link merges it into the other phone.
+var TRIP_KEY = "trip-v1", TRIP_SECTIONS = ["fav", "done", "book", "hotel", "mine"];
+function tripNorm(t){ t = t || {}; TRIP_SECTIONS.forEach(function(k){ if (!t[k] || typeof t[k] !== "object") t[k] = {}; }); return t; }
+var TRIP = (function(){ try { return tripNorm(JSON.parse(localStorage.getItem(TRIP_KEY) || "null")); } catch (e) { return tripNorm(null); } })();
+function tripSave(){ try { localStorage.setItem(TRIP_KEY, JSON.stringify(TRIP)); } catch (e) {} }
+function tripGet(s, k){ var e = TRIP[s][k]; return e ? e.v : null; }
+function tripSet(s, k, v){ TRIP[s][k] = {v: v, t: Date.now()}; tripSave(); }
+function tripMerge(other){
+  var n = 0; other = tripNorm(other);
+  TRIP_SECTIONS.forEach(function(s){
+    Object.keys(other[s]).forEach(function(k){
+      var a = TRIP[s][k], b = other[s][k];
+      if (!b || typeof b.t !== "number") return;
+      if (!a || b.t > a.t) { TRIP[s][k] = b; n++; }
+    });
+  });
+  tripSave(); return n;
+}
+function b64u(bytes){ var s = ""; for (var i = 0; i < bytes.length; i++) s += String.fromCharCode(bytes[i]); return btoa(s).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""); }
+function unb64u(str){ str = str.replace(/-/g, "+").replace(/_/g, "/"); while (str.length % 4) str += "="; var s = atob(str), b = new Uint8Array(s.length); for (var i = 0; i < s.length; i++) b[i] = s.charCodeAt(i); return b; }
+function tripEncode(){
+  var bytes = new TextEncoder().encode(JSON.stringify(TRIP));
+  if (window.CompressionStream) return new Response(new Blob([bytes]).stream().pipeThrough(new CompressionStream("deflate-raw"))).arrayBuffer().then(function(ab){ return "z." + b64u(new Uint8Array(ab)); });
+  return Promise.resolve("j." + b64u(bytes));
+}
+function tripDecode(code){
+  var bytes = unb64u(code.slice(2));
+  var p = code.slice(0, 2) === "z." ? new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream("deflate-raw"))).arrayBuffer().then(function(ab){ return new Uint8Array(ab); }) : Promise.resolve(bytes);
+  return p.then(function(b){ return JSON.parse(new TextDecoder().decode(b)); });
+}
+function sendToPartner(){
+  tripEncode().then(function(code){
+    var url = location.origin + location.pathname + "#sync=" + code;
+    try { localStorage.setItem("trip-sent", new Date().toISOString()); } catch (e) {}
+    if (navigator.share) return navigator.share({title: "Japan trip updates", text: "Tap to add my Japan trip updates (bookings, hotels, favourites) to your app:", url: url}).catch(function(){});
+    if (navigator.clipboard) return navigator.clipboard.writeText(url).then(function(){ toast("Link copied. Paste it to your partner in WhatsApp."); });
+    prompt("Copy this link and send it to your partner:", url);
+  });
+}
+function handleSyncLink(){
+  var m = location.hash.match(/^#sync=(.+)$/); if (!m) return;
+  history.replaceState(null, "", location.pathname + location.search);
+  tripDecode(m[1]).then(function(other){
+    var n = tripMerge(other);
+    try { localStorage.setItem("trip-merged", new Date().toISOString()); } catch (e) {}
+    toast(n ? "Added " + n + " update" + (n === 1 ? "" : "s") + " from your partner." : "Already up to date with your partner.");
+    render();
+  }).catch(function(){ toast("That sync link looks damaged. Ask for it to be sent again."); });
+}
+function toast(msg){
+  var t = document.getElementById("toast");
+  if (!t) { t = document.createElement("div"); t.id = "toast"; t.setAttribute("role", "status"); document.body.appendChild(t); }
+  t.textContent = msg; t.classList.add("on");
+  clearTimeout(t._h); t._h = setTimeout(function(){ t.classList.remove("on"); }, 4200);
+}
+function when(iso){ if (!iso) return ""; var d = new Date(iso); return d.getDate() + " " + ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][d.getMonth()] + ", " + (d.getHours() < 10 ? "0" : "") + d.getHours() + ":" + (d.getMinutes() < 10 ? "0" : "") + d.getMinutes(); }
+
+// ---------- favourite and visited marks on cards ----------
+function markBtns(key){
+  var f = !!tripGet("fav", key), d = !!tripGet("done", key);
+  return '<span class="marks"><button type="button" class="mark fav" data-mark="fav" data-key="' + esc(key) + '" aria-pressed="' + f + '" aria-label="Favourite">' + (f ? "♥" : "♡") + '</button>'
+    + '<button type="button" class="mark done" data-mark="done" data-key="' + esc(key) + '" aria-pressed="' + d + '" aria-label="Been there">✓ ' + (d ? "Been" : "Been?") + '</button></span>';
+}
+document.addEventListener("click", function(e){
+  var b = e.target.closest("[data-mark]"); if (!b) return;
+  var s = b.getAttribute("data-mark"), k = b.getAttribute("data-key"), on = !tripGet(s, k);
+  tripSet(s, k, on ? 1 : 0);
+  Array.prototype.forEach.call(document.querySelectorAll('[data-mark="' + s + '"][data-key="' + k.replace(/"/g, '\\"') + '"]'), function(x){
+    x.setAttribute("aria-pressed", String(on));
+    x.textContent = s === "fav" ? (on ? "♥" : "♡") : "✓ " + (on ? "Been" : "Been?");
+  });
+});
+
+// ---------- big show-to-staff overlay and speech ----------
+function jaVoice(){ var v = window.speechSynthesis ? speechSynthesis.getVoices() : []; for (var i = 0; i < v.length; i++) if (/^ja/i.test(v[i].lang)) return v[i]; return null; }
+function speak(text, lang){
+  if (!window.speechSynthesis) { toast("This phone cannot read text aloud."); return; }
+  speechSynthesis.cancel();
+  var u = new SpeechSynthesisUtterance(text); u.lang = lang || "ja-JP"; u.rate = 0.9;
+  if (u.lang === "ja-JP") { var v = jaVoice(); if (v) u.voice = v; }
+  speechSynthesis.speak(u);
+}
+if (window.speechSynthesis) speechSynthesis.getVoices();
+function showBig(ja, en, ro){
+  var o = document.getElementById("bigcard");
+  if (!o) { o = document.createElement("div"); o.id = "bigcard"; o.setAttribute("role", "dialog"); o.setAttribute("aria-modal", "true"); document.body.appendChild(o); }
+  o.innerHTML = '<div class="big-in"><p class="big-ja" lang="ja">' + esc(ja).replace(/\n/g, "<br>") + '</p>' + (ro ? '<p class="big-ro">' + esc(ro) + '</p>' : '') + (en ? '<p class="big-en">' + esc(en) + '</p>' : '')
+    + '<div class="big-btns"><button type="button" class="chip" data-bigspeak>\u{1F50A} Say it</button><button type="button" class="chip" data-bigclose>Close</button></div></div>';
+  o._ja = ja; o.classList.add("on"); document.body.classList.add("noscroll");
+  o.querySelector("[data-bigclose]").focus();
+}
+document.addEventListener("click", function(e){
+  if (e.target.closest("[data-bigclose]") || e.target.id === "bigcard") { var o = document.getElementById("bigcard"); o.classList.remove("on"); document.body.classList.remove("noscroll"); if (window.speechSynthesis) speechSynthesis.cancel(); return; }
+  if (e.target.closest("[data-bigspeak]")) { speak(document.getElementById("bigcard")._ja.replace(/\n/g, "。")); return; }
+  var sb = e.target.closest("[data-show]");
+  if (sb) { var a = JSON.parse(sb.getAttribute("data-show")); showBig(a[1], a[0], a[2]); return; }
+  var sp = e.target.closest("[data-say]");
+  if (sp) { speak(sp.getAttribute("data-say")); }
+});
+document.addEventListener("keydown", function(e){ if (e.key === "Escape") { var o = document.getElementById("bigcard"); if (o && o.classList.contains("on")) o.querySelector("[data-bigclose]").click(); } });
+function phraseRow(ph){
+  return '<li class="phrase"><button type="button" class="phrase-main" data-show="' + esc(JSON.stringify(ph)) + '"><span class="ph-en">' + esc(ph[0]) + '</span><span class="ph-ja" lang="ja">' + esc(ph[1]) + '</span><span class="ph-ro">' + esc(ph[2] || "") + '</span></button>'
+    + '<button type="button" class="ph-say" data-say="' + esc(ph[1]) + '" aria-label="Say it aloud">\u{1F50A}</button></li>';
+}
+
+// ---------- hotels ----------
+var HOTEL_SLOTS = [
+  {id: "tokyo1", c: "tokyo", label: "Tokyo, first stay", dates: "17 to 21 Feb", from: "2027-02-17", to: "2027-02-21"},
+  {id: "kanazawa", c: "kanazawa", label: "Kanazawa", dates: "21 to 23 Feb", from: "2027-02-21", to: "2027-02-23"},
+  {id: "kyoto", c: "kyoto", label: "Kyoto", dates: "23 Feb to 1 Mar", from: "2027-02-23", to: "2027-03-01"},
+  {id: "tokyo2", c: "tokyo", label: "Tokyo, last nights", dates: "1 to 3 Mar", from: "2027-03-01", to: "2027-03-03"}
+];
+function hotelNav(h){
+  if (h.lat) return coordNav([h.lat, h.lng]);
+  return "https://www.google.com/maps/dir/?api=1&destination=" + encodeURIComponent(h.a || h.n) + "&travelmode=walking";
+}
+function hotelTaxi(h){ return ["Please take us to this address.", (h.n ? h.n + "\n" : "") + (h.a || "") + "\nこの住所までお願いします。", "Kono jūsho made onegaishimasu."]; }
+function hotelCard(slot, compact){
+  var h = tripGet("hotel", slot.id);
+  if (!h || !(h.n || h.a)) {
+    return '<div class="hotel empty"><p class="hotel-l">' + esc(slot.label) + ' · ' + esc(slot.dates) + '</p>' + (compact ? '<p class="meta small">No hotel added yet. Add it in Trip kit.</p>'
+      : '<div class="hotel-btns"><button type="button" class="ref" data-hoteledit="' + slot.id + '">+ Add hotel</button></div><div class="hotel-form" id="hf-' + slot.id + '" hidden>' + hotelForm(slot, {}) + '</div>') + '</div>';
+  }
+  return '<div class="hotel"><p class="hotel-l">' + esc(slot.label) + ' · ' + esc(slot.dates) + '</p><p class="hotel-n">' + esc(h.n || "Hotel") + '</p>'
+    + (h.a ? '<p class="hotel-a" lang="ja">' + esc(h.a) + '</p>' : '')
+    + '<div class="hotel-btns"><a class="ref go" href="' + hotelNav(h) + '" target="_blank" rel="noopener">⌂ Back to hotel</a>'
+    + '<button type="button" class="ref" data-show="' + esc(JSON.stringify(hotelTaxi(h))) + '">Taxi card</button>'
+    + (h.ph ? '<a class="ref" href="tel:' + esc(h.ph.replace(/[^\d+]/g, "")) + '">Call</a>' : '')
+    + (compact ? '' : '<button type="button" class="ref" data-hoteledit="' + slot.id + '">Edit</button>') + '</div>'
+    + (h.note && !compact ? '<p class="meta small">' + esc(h.note) + '</p>' : '')
+    + (!compact ? '<div class="hotel-form" id="hf-' + slot.id + '" hidden>' + hotelForm(slot, h) + '</div>' : '') + '</div>';
+}
+function hotelForm(slot, h){
+  return '<form class="hform" data-hotel="' + slot.id + '">'
+    + '<label>Hotel name<input name="n" value="' + esc(h.n || "") + '" placeholder="e.g. Hotel Ginza Tsukiji"></label>'
+    + '<label>Address, in Japanese if you have it<textarea name="a" rows="2" placeholder="Copy from the booking confirmation">' + esc(h.a || "") + '</textarea></label>'
+    + '<label>Phone<input name="ph" value="' + esc(h.ph || "") + '" inputmode="tel" placeholder="03-1234-5678"></label>'
+    + '<label>Notes (booking number, check-in time)<input name="note" value="' + esc(h.note || "") + '"></label>'
+    + '<p class="meta small">' + (h.lat ? 'Exact location saved.' : 'Tip: when you arrive, tap "Save my location here" so Back to hotel is exact.') + '</p>'
+    + '<div class="hotel-btns"><button type="submit" class="chip on">Save hotel</button><button type="button" class="chip" data-hotelloc="' + slot.id + '">◎ Save my location here</button></div></form>';
+}
+document.addEventListener("submit", function(e){
+  var f = e.target.closest("[data-hotel]"); if (!f) return;
+  e.preventDefault();
+  var id = f.getAttribute("data-hotel"), old = tripGet("hotel", id) || {}, h = {lat: old.lat, lng: old.lng};
+  ["n", "a", "ph", "note"].forEach(function(k){ h[k] = f.elements[k].value.trim(); });
+  tripSet("hotel", id, h); toast("Hotel saved. Send to partner to share it."); render();
+});
+document.addEventListener("click", function(e){
+  var ed = e.target.closest("[data-hoteledit]");
+  if (ed) { var fm = document.getElementById("hf-" + ed.getAttribute("data-hoteledit")); fm.hidden = !fm.hidden; return; }
+  var lc = e.target.closest("[data-hotelloc]");
+  if (lc) {
+    var id = lc.getAttribute("data-hotelloc");
+    if (!navigator.geolocation) return toast("This phone cannot read its location.");
+    lc.textContent = "◎ Reading location…";
+    navigator.geolocation.getCurrentPosition(function(p){
+      var f = lc.closest("form"), old = tripGet("hotel", id) || {}, h = {};
+      ["n", "a", "ph", "note"].forEach(function(k){ h[k] = f ? f.elements[k].value.trim() : old[k]; });
+      h.lat = +p.coords.latitude.toFixed(6); h.lng = +p.coords.longitude.toFixed(6);
+      tripSet("hotel", id, h); toast("Location saved for this hotel."); render();
+    }, function(){ lc.textContent = "◎ Save my location here"; toast("Could not read your location. Allow location for this page and try again."); }, {enableHighAccuracy: true, timeout: 15000});
+  }
+});
+function hotelsForCity(id){ return HOTEL_SLOTS.filter(function(s){ return s.c === id; }); }
+function cityHotelHtml(id){
+  var slots = hotelsForCity(id); if (!slots.length) return "";
+  var set = slots.filter(function(s){ var h = tripGet("hotel", s.id); return h && (h.n || h.a); });
+  if (!set.length) return '<p class="meta small hotelhint">⌂ Add your ' + esc(CITY_NAMES[id]) + ' hotel in Trip kit to get a Back to hotel button and a taxi card here.</p>';
+  return '<div class="hotels-mini">' + set.map(function(s){ return hotelCard(s, true); }).join("") + '</div>';
+}
+
+// ---------- bookings ----------
+var BOOK_STATES = [["", "Not decided"], ["tobook", "To book"], ["asked", "Requested"], ["booked", "Booked"], ["skip", "Skip"]];
+function bookable(){ return P.filter(function(p){ return p.t === "room" || /\bbook|reserv/i.test(p.m || ""); }); }
+function phoneOf(p){ var m = (p.m || "").match(/0\d{1,4}-\d{2,4}-\d{3,4}/); return m ? m[0] : ""; }
+function bookRow(p){
+  var b = tripGet("book", p.n) || {}, ph = phoneOf(p);
+  return '<li class="brow s-' + (b.s || "none") + '"><div class="bmain"><p class="bname">' + esc(p.n) + ' <span class="jp" lang="ja">' + esc(p.j) + '</span></p>'
+    + '<p class="meta small">' + esc(CITY_NAMES[p.c]) + ' · planned ' + esc(p.d) + ' · ' + esc(typeName(p.t)) + '</p><p class="meta small">' + esc(p.m) + '</p></div>'
+    + '<div class="bctl" data-book="' + esc(p.n) + '"><select name="s" aria-label="Booking status">' + BOOK_STATES.map(function(s){ return '<option value="' + s[0] + '"' + ((b.s || "") === s[0] ? " selected" : "") + '>' + s[1] + '</option>'; }).join("") + '</select>'
+    + '<input name="w" type="datetime-local" value="' + esc(b.w || "") + '" aria-label="Booked date and time" min="2027-02-17T00:00" max="2027-03-03T23:59">'
+    + '<input name="note" value="' + esc(b.note || "") + '" placeholder="Confirmation, deposit, notes" aria-label="Booking notes">'
+    + '<span class="blinks">' + (ph ? '<a class="ref" href="tel:' + ph.replace(/-/g, "") + '">Call ' + esc(ph) + '</a>' : '') + (p.u ? '<a class="ref" href="' + p.u + '" target="_blank" rel="noopener">Tabelog</a>' : '') + '</span></div></li>';
+}
+document.addEventListener("change", function(e){
+  var c = e.target.closest("[data-book]"); if (!c) return;
+  var name = c.getAttribute("data-book"), b = {s: c.querySelector('[name="s"]').value, w: c.querySelector('[name="w"]').value, note: c.querySelector('[name="note"]').value.trim()};
+  tripSet("book", name, b);
+  c.closest(".brow").className = "brow s-" + (b.s || "none");
+  var sum = document.getElementById("booksum"); if (sum) sum.innerHTML = bookSummary();
+});
+function bookSummary(){
+  var list = bookable(), c = {booked: 0, asked: 0, tobook: 0};
+  list.forEach(function(p){ var b = tripGet("book", p.n); if (b && c[b.s] !== undefined) c[b.s]++; });
+  return '<b>' + c.booked + '</b> booked, <b>' + c.asked + '</b> requested, <b>' + c.tobook + '</b> still to book, out of ' + list.length + ' places that take bookings.';
+}
+
+// ---------- translator ----------
+var TR = {dir: "en-ja", last: null};
+function phraseLookup(text, dir){
+  var t = text.trim().toLowerCase().replace(/[.?!。？！]+$/, ""), all = STAFF.slice();
+  PHRASES.forEach(function(c){ all = all.concat(c.list); });
+  Object.keys(TRIP.mine).forEach(function(k){ var v = TRIP.mine[k].v; if (v) all.push([v.en, v.ja, v.ro || ""]); });
+  for (var i = 0; i < all.length; i++) {
+    var a = all[i], src = (dir === "en-ja" ? a[0] : a[1]).toLowerCase().replace(/[.?!。？！]+$/, "");
+    if (src === t) return {text: dir === "en-ja" ? a[1] : a[0], ro: dir === "en-ja" ? a[2] : "", via: "from the phrase list, works offline"};
+  }
+  return null;
+}
+function translateText(text, dir){
+  var from = dir.slice(0, 2), to = dir.slice(3), hit = phraseLookup(text, dir);
+  if (hit) return Promise.resolve(hit);
+  function online(){
+    if (navigator.onLine === false) return Promise.reject(new Error("offline"));
+    return fetch("https://api.mymemory.translated.net/get?q=" + encodeURIComponent(text) + "&langpair=" + from + "|" + to)
+      .then(function(r){ return r.json(); })
+      .then(function(d){ if (!d || +d.responseStatus !== 200 || !d.responseData || !d.responseData.translatedText) throw new Error("bad"); return {text: d.responseData.translatedText, via: "online translation (MyMemory)"}; });
+  }
+  function timeout(p, ms){ return Promise.race([p, new Promise(function(_, rej){ setTimeout(function(){ rej(new Error("slow")); }, ms); })]); }
+  if (window.Translator && Translator.availability) {
+    // use the phone's own translator only when its Japanese model is already downloaded
+    return timeout(Translator.availability({sourceLanguage: from, targetLanguage: to}), 3000).then(function(a){
+      if (a !== "available") throw new Error("na");
+      return timeout(Translator.create({sourceLanguage: from, targetLanguage: to}).then(function(t){ return t.translate(text); }), 8000).then(function(r){ return {text: r, via: "translated on this phone, works offline"}; });
+    }).catch(function(){ return online(); });
+  }
+  return online();
+}
+function gtUrl(text, dir){ return "https://translate.google.com/?sl=" + dir.slice(0, 2) + "&tl=" + dir.slice(3) + "&text=" + encodeURIComponent(text) + "&op=translate"; }
+function translatorHtml(){
+  return '<div class="trans"><div class="chips seg" id="trDir">'
+    + '<button type="button" class="chip" data-trdir="en-ja" aria-pressed="' + (TR.dir === "en-ja") + '">English → Japanese</button>'
+    + '<button type="button" class="chip" data-trdir="ja-en" aria-pressed="' + (TR.dir === "ja-en") + '">Japanese → English</button></div>'
+    + '<textarea id="trIn" rows="3" placeholder="' + (TR.dir === "en-ja" ? "Type or say something in English" : "日本語を入力、または話す (type or say Japanese)") + '" aria-label="Text to translate"></textarea>'
+    + '<div class="trbtns"><button type="button" class="chip on" id="trGo">Translate</button>' + ((window.SpeechRecognition || window.webkitSpeechRecognition) ? '<button type="button" class="chip" id="trMic">\u{1F3A4} Speak</button>' : '') + '</div>'
+    + '<div id="trOut" class="trout" hidden></div><p class="meta small" id="trNote">Exact phrases from the list work offline. Anything else needs a signal, unless this phone can translate on its own. For menus and signs, the Google Translate app\'s camera mode with the offline Japanese pack is best.</p></div>';
+}
+function showTrResult(r, text){
+  var out = document.getElementById("trOut"), ja = TR.dir === "en-ja" ? r.text : text, en = TR.dir === "en-ja" ? text : r.text;
+  TR.last = {en: en, ja: ja, ro: r.ro || ""};
+  out.hidden = false;
+  out.innerHTML = '<p class="tr-res" lang="' + TR.dir.slice(3) + '">' + esc(r.text) + '</p>' + (r.ro ? '<p class="ph-ro">' + esc(r.ro) + '</p>' : '') + '<p class="meta small">' + esc(r.via) + '</p>'
+    + '<div class="trbtns"><button type="button" class="chip" data-show="' + esc(JSON.stringify([en, ja, r.ro || ""])) + '">Show big</button>'
+    + '<button type="button" class="chip" data-say="' + esc(ja) + '">\u{1F50A} Say the Japanese</button>'
+    + '<button type="button" class="chip" id="trSave">★ Save to my phrases</button>'
+    + '<a class="chip" href="' + gtUrl(text, TR.dir) + '" target="_blank" rel="noopener">Check in Google Translate</a></div>';
+}
+document.addEventListener("click", function(e){
+  var d = e.target.closest("[data-trdir]");
+  if (d) { TR.dir = d.getAttribute("data-trdir"); var keep = document.getElementById("trIn").value; document.getElementById("trWrap").innerHTML = translatorHtml(); document.getElementById("trIn").value = keep; return; }
+  if (e.target.closest("#trGo")) {
+    var inp = document.getElementById("trIn"), text = inp.value.trim(), out = document.getElementById("trOut"); if (!text) { inp.focus(); return; }
+    out.hidden = false; out.innerHTML = '<p class="meta">Translating…</p>';
+    translateText(text, TR.dir).then(function(r){ showTrResult(r, text); }).catch(function(err){
+      out.innerHTML = '<p class="meta">' + (err && err.message === "offline" ? "No signal, and this isn't one of the saved phrases. Try the phrase list below, or the Google Translate app with its offline Japanese pack." : "The translation service did not answer. Try again, or check it in Google Translate.") + '</p><a class="chip" href="' + gtUrl(text, TR.dir) + '" target="_blank" rel="noopener">Open in Google Translate</a>';
+    });
+    return;
+  }
+  if (e.target.closest("#trSave") && TR.last) { tripSet("mine", TR.last.en.slice(0, 80), TR.last); toast("Saved to My phrases."); var mp = document.getElementById("myPhrases"); if (mp) mp.outerHTML = myPhrasesHtml(); return; }
+  var del = e.target.closest("[data-delmine]");
+  if (del) { tripSet("mine", del.getAttribute("data-delmine"), null); var mp2 = document.getElementById("myPhrases"); if (mp2) mp2.outerHTML = myPhrasesHtml(); return; }
+  if (e.target.closest("#trMic")) {
+    var SR = window.SpeechRecognition || window.webkitSpeechRecognition, rec = new SR(), btn = e.target.closest("#trMic");
+    rec.lang = TR.dir === "en-ja" ? "en-AU" : "ja-JP"; rec.interimResults = false;
+    btn.textContent = "\u{1F3A4} Listening…";
+    rec.onresult = function(ev){ document.getElementById("trIn").value = ev.results[0][0].transcript; document.getElementById("trGo").click(); };
+    rec.onend = function(){ btn.textContent = "\u{1F3A4} Speak"; };
+    rec.onerror = function(){ toast("Voice input needs a signal and microphone permission."); };
+    rec.start();
+  }
+});
+function myPhrasesHtml(){
+  var keys = Object.keys(TRIP.mine).filter(function(k){ return TRIP.mine[k].v; });
+  if (!keys.length) return '<div id="myPhrases"></div>';
+  return '<div id="myPhrases"><h3 class="ph-cat">My phrases</h3><ul class="phrases">' + keys.map(function(k){
+    var v = TRIP.mine[k].v;
+    return phraseRow([v.en, v.ja, v.ro || ""]).replace('</li>', '<button type="button" class="ph-say" data-delmine="' + esc(k) + '" aria-label="Remove">✕</button></li>');
+  }).join("") + '</ul></div>';
+}
+
+// ---------- phrases view ----------
+function phrasesHtml(){
+  var taxi = HOTEL_SLOTS.map(function(s){ var h = tripGet("hotel", s.id); return h && h.a ? [s, h] : null; }).filter(Boolean);
+  var h = '<section class="kit"><h2 class="kit-h">Show this to staff</h2><p class="meta">Tap a card to show it full screen, or the speaker to have the phone say it.</p><div class="staffgrid">';
+  h += STAFF.map(function(p){ return '<button type="button" class="staff" data-show="' + esc(JSON.stringify(p)) + '"><span class="st-ja" lang="ja">' + esc(p[1]) + '</span><span class="st-en">' + esc(p[0]) + '</span></button>'; }).join("");
+  h += taxi.map(function(x){ return '<button type="button" class="staff taxi" data-show="' + esc(JSON.stringify(hotelTaxi(x[1]))) + '"><span class="st-ja" lang="ja">この住所までお願いします</span><span class="st-en">Taxi to ' + esc(x[1].n || x[0].label) + '</span></button>'; }).join("");
+  h += '</div>' + (taxi.length ? '' : '<p class="meta small">Add your hotel addresses in Trip kit and taxi cards for them appear here.</p>');
+  h += '<h2 class="kit-h">Translator</h2><div id="trWrap">' + translatorHtml() + '</div>';
+  h += myPhrasesHtml();
+  h += '<h2 class="kit-h">Common phrases</h2>';
+  PHRASES.forEach(function(c){ h += '<h3 class="ph-cat">' + esc(c.cat) + '</h3><ul class="phrases">' + c.list.map(phraseRow).join("") + '</ul>'; });
+  h += '<p class="meta small">Japanese is written as it is said politely. Romaji shows the pronunciation, with a line over long vowels.</p></section>';
+  return h;
+}
+
+// ---------- install and save everything ----------
+var installEvt = null;
+window.addEventListener("beforeinstallprompt", function(e){ e.preventDefault(); installEvt = e; updateInstallUI(); });
+window.addEventListener("appinstalled", function(){ installEvt = null; toast("Installed. Open it from your home screen."); updateInstallUI(); });
+function isInstalled(){ return (window.matchMedia && matchMedia("(display-mode: standalone)").matches) || navigator.standalone === true; }
+function updateInstallUI(){
+  Array.prototype.forEach.call(document.querySelectorAll("[data-install]"), function(b){ b.hidden = !installEvt || isInstalled(); });
+  var s = document.getElementById("installStat"); if (s) s.innerHTML = installText();
+}
+function installText(){
+  if (isInstalled()) return "Installed. You are using the home-screen app.";
+  if (installEvt) return "Tap Install to add it to your home screen. It then opens full screen and works offline.";
+  if (/iphone|ipad/i.test(navigator.userAgent)) return "On iPhone: tap the Share button in Safari, then Add to Home Screen.";
+  return "In Chrome: tap the ⋮ menu, then Add to home screen (or Install app).";
+}
+function installNow(){ if (!installEvt) return; installEvt.prompt(); installEvt.userChoice.then(function(){ installEvt = null; updateInstallUI(); }); }
+document.addEventListener("click", function(e){
+  var j = e.target.closest("[data-jump]");
+  if (j) { e.preventDefault(); var t = document.getElementById(j.getAttribute("data-jump") === "k-help" ? "help" : j.getAttribute("data-jump")); if (t) window.scrollTo(0, t.getBoundingClientRect().top + window.scrollY - document.querySelector(".bar").offsetHeight - 8); }
+});
+document.addEventListener("click", function(e){ if (e.target.closest("[data-install]")) installNow(); if (e.target.closest("#saveAll")) saveEverything(e.target.closest("#saveAll")); if (e.target.closest("#sendPartner")) sendToPartner(); });
+
+function allImageUrls(){
+  var u = {};
+  Object.keys(ART).forEach(function(k){ u[artThumb(k)] = 1; });
+  SIGHTS.forEach(function(s){ u[photoUrl(s.f)] = 1; });
+  P.forEach(function(p){ var d = PD[p.n]; if (d && d[0].indexOf("art:") !== 0 && DISH[d[0]]) u[photoUrl(DISH[d[0]][0], 500)] = 1; });
+  return Object.keys(u);
+}
+function saveEverything(btn){
+  var bar = document.getElementById("saveBar"), st = document.getElementById("saveStat");
+  if (!canCache()) { st.textContent = "Saving for offline works on the web version (gbxcaillin.github.io/japan), not the downloaded file."; return; }
+  var cities = ["tokyo", "kanazawa", "kyoto", "osaka", "nara"], jobs = [];
+  cities.forEach(function(id){ cityTiles(id, tileStyle()).forEach(function(u){ jobs.push({k: "t", u: u}); }); });
+  allImageUrls().forEach(function(u){ jobs.push({k: "i", u: u}); });
+  var total = jobs.length + cities.length, done = 0, failed = 0, i = 0;
+  btn.disabled = true; bar.hidden = false;
+  function tick(){ done++; if (done % 15 === 0 || done === total) { bar.value = done / total; st.textContent = "Saving " + done + " of " + total + " pieces… keep this screen open."; } }
+  if (navigator.storage && navigator.storage.persist) navigator.storage.persist();
+  Promise.all([caches.open(TILE_CACHE), caches.open("japan-runtime-v3")]).then(function(cs){
+    function next(){
+      if (i >= jobs.length) return Promise.resolve();
+      var j = jobs[i++], cache = j.k === "t" ? cs[0] : cs[1];
+      return cache.match(j.u).then(function(hit){
+        if (hit) return;
+        var f = getTile(j.u);
+        return f.then(function(r){ return cache.put(j.u, r); });
+      }).catch(function(){ failed++; }).then(function(){ tick(); return next(); });
+    }
+    var a11y = cities.reduce(function(p, id){ return p.then(function(){ return a11yFetch(id, false).catch(function(){ failed++; }).then(tick); }); }, Promise.resolve());
+    return Promise.all([next(), next(), next(), next(), next(), next(), a11y]);
+  }).then(function(){
+    var stamp = when(new Date().toISOString());
+    try { localStorage.setItem("saved-all", stamp); cities.forEach(function(id){ localStorage.setItem("saved-" + id + "-" + tileStyle(), stamp); }); } catch (e) {}
+    btn.disabled = false;
+    return navigator.storage && navigator.storage.estimate ? navigator.storage.estimate() : null;
+  }).then(function(est){
+    st.textContent = (failed ? "Saved, but " + failed + " pieces did not download. Tap again on Wi-Fi to fill the gaps." : "Everything is saved for offline: street maps for all five cities, step-free data, photos and artwork.")
+      ;
+  }).catch(function(){ btn.disabled = false; st.textContent = "Saving stopped. Check the connection and tap again; it carries on where it left off."; });
+}
+
+// ---------- trip kit view ----------
+function kitHtml(){
+  var h = '<section class="kit"><nav class="kitnav" aria-label="Trip kit sections">'
+    + [["k-help","Help"],["k-hotels","Hotels"],["k-book","Bookings"],["trains","Trains"],["k-off","Offline"],["k-share","Share"]].map(function(x){ return '<a class="chip" href="#' + x[0] + '" data-jump="' + x[0] + '">' + x[1] + '</a>'; }).join("") + '</nav>';
+  h += '<h2 class="kit-h" id="k-off">App and offline</h2><div class="kitbox"><p id="installStat">' + installText() + '</p><button type="button" class="chip on" data-install hidden>⤓ Install app</button>'
+    + '<p>Save everything once on Wi-Fi before you fly: street maps for all five cities, step-free data, photos and artwork. Roughly 40 to 60 MB.</p>'
+    + '<button type="button" class="chip on" id="saveAll">⤓ Save everything for offline</button><progress id="saveBar" max="1" value="0" hidden></progress>'
+    + '<p class="meta small" id="saveStat">' + (function(){ try { var s = localStorage.getItem("saved-all"); return s ? "Last saved " + esc(s) + ". Tap again any time to top up." : ""; } catch (e) { return ""; } })() + '</p></div>';
+  h += '<h2 class="kit-h" id="k-share">Share with your partner</h2><div class="kitbox"><p>Hotels, bookings, favourites, places you have been and saved phrases live on this phone. Send them as a link (WhatsApp works well); opening it on the other phone merges everything, keeping whichever change is newest.</p>'
+    + '<button type="button" class="chip on" id="sendPartner">⇄ Send to partner</button>'
+    + '<p class="meta small">' + (function(){ try { var a = localStorage.getItem("trip-sent"), b = localStorage.getItem("trip-merged"); return (a ? "Last sent " + when(a) + ". " : "") + (b ? "Last received " + when(b) + "." : ""); } catch (e) { return ""; } })() + '</p></div>';
+  h += '<h2 class="kit-h" id="k-hotels">Your hotels</h2><div class="hotels">' + HOTEL_SLOTS.map(function(s){ return hotelCard(s, false); }).join("") + '</div>';
+  h += '<h2 class="kit-h" id="k-book">Bookings</h2><p class="meta" id="booksum">' + bookSummary() + '</p>';
+  ["tokyo", "kanazawa", "kyoto", "osaka", "nara"].forEach(function(c){
+    var list = bookable().filter(function(p){ return p.c === c; }); if (!list.length) return;
+    h += '<h3 class="ph-cat">' + esc(CITY_NAMES[c]) + '</h3><ul class="blist">' + list.map(bookRow).join("") + '</ul>';
+  });
+  if (typeof trainsHtml === "function") h += trainsHtml();
+  if (typeof helpHtml === "function") h += helpHtml();
+  return h + '</section>';
+}
+
+// Train day cards and help card. Facts checked against JR, airport, city and hospital pages in Oct 2026;
+// anything that could not be confirmed is written as something to check on the day.
+var TRAINS = [
+  {date: "17 Feb", w: "Wed", title: "Haneda to Ginza", time: "About 30 to 35 minutes, no change of train",
+   steps: [
+     "From Haneda Terminal 3 the Keikyu station is underground, with lifts down from the arrivals floor.",
+     "Take a Keikyu train marked for Higashi-ginza or Asakusa. It runs straight onto the Toei Asakusa Line, about 30 minutes to Shimbashi, and Higashi-ginza is the next stop.",
+     "At Higashi-ginza, look for the lift signs or switch on the step-free layer in the Tokyo map to see which exit has a lift."],
+   pram: "One train all the way, so the easiest option with a pram. The Monorail route needs two changes.",
+   taxi: "Taxi: metered, about 35 minutes. There is no flat airport fare to Chuo ward; expect over 6,000 yen plus tolls, and 20% more between 22:00 and 05:00.",
+   check: "Which Higashi-ginza exit has the lift. Ask: エレベーターがある出口はどこですか？",
+   src: ["https://www.kotsu.metro.tokyo.jp/eng/guides/airportaccess/", "https://www.taxi-tokyo.or.jp/english/teigaku/qa.html"]},
+  {date: "21 Feb", w: "Sun", title: "Tokyo to Kanazawa, Hokuriku Shinkansen", time: "Kagayaki, 2 hours 28 minutes. All seats reserved",
+   steps: [
+     "Reserve seats in advance; Kagayaki has no unreserved cars.",
+     "Car 7 has the large accessible toilet and the wheelchair space, so seats in car 7 keep you close to both. Car 11 (Green car) also has one.",
+     "Bags: no oversized-bag reservation is needed on this line. Up to two items each, 250 cm total size and 30 kg. Space is first come, first served."],
+   pram: "Prams do not have to be folded. Some trains have an open area for wheelchairs and prams; otherwise keep it at your feet.",
+   check: "The lift route to the shinkansen platforms at Tokyo station. Station staff will walk you to it if asked.",
+   src: ["https://www.westjr.co.jp/global/en/shinkansen/hokuriku-shinkansen/", "https://www.westjr.co.jp/global/en/train/shinkansen/hokuriku-shinkansen/user-friendly-equipment", "https://www.jreast.co.jp/en/multi/luggage-area/"]},
+  {date: "23 Feb", w: "Tue", title: "Kanazawa to Kyoto, change at Tsuruga", time: "About 2 hours: Hokuriku Shinkansen to Tsuruga, then Thunderbird, about 50 minutes",
+   steps: [
+     "23 Feb is a public holiday and both trains are all-reserved. Seats go on sale one month ahead, so book on 23 Jan.",
+     "At Tsuruga the shinkansen arrives on the 3rd floor and the Thunderbird to Kyoto leaves from track 33 on the 1st floor. About 150 m with two escalator rides and a transfer gate.",
+     "With a pram, book the 13 or 15 minute connection the ticket machines offer, not the 8 minute one, and follow the lift signs.",
+     "Put all your paper tickets into the transfer gate together; with four or more tickets, go to the staffed gate."],
+   pram: "Allow the longer connection and ask for the lift: エレベーターはどこですか？",
+   tickets: "Each train needs its own limited express ticket. The Hokuriku One-way Ticket for overseas visitors covers both (6,500 yen per adult when last checked).",
+   check: "Which Thunderbird car has the multipurpose room. Ask the conductor.",
+   src: ["https://www.westjr.co.jp/global/en/howto/tsuruga_change", "https://ekitan.com/en/article/thunderbird", "https://www.kanazawastation.com/traveling-between-kyoto-and-kanazawa/"]},
+  {date: "26 Feb", w: "Fri", title: "Day trip from Kyoto: Osaka or Nara", time: "Under an hour either way",
+   steps: [
+     "Osaka: JR Special Rapid, Kyoto to Osaka in about 29 minutes (580 yen). Or Hankyu from Kyoto-kawaramachi, near Nishiki, to Osaka-umeda in about 43 minutes (410 yen).",
+     "Nara: Kintetsu from Kyoto station. Limited Express about 35 minutes (1,280 yen, reserved) or Express about 45 minutes (760 yen, some need a change at Yamato-Saidaiji). Kintetsu-Nara station is right by the park.",
+     "JR Nara line Miyakoji Rapid is the other option, about 45 minutes (720 yen), but JR Nara station is a longer walk from the park."],
+   pram: "Kintetsu Limited Express to Nara gives you a reserved seat, which helps with a pram on a busy day.",
+   check: "Lifts at each station. Use the step-free layer on the Osaka and Nara maps.",
+   src: ["https://www.japan-guide.com/e/e4107.html", "https://enjoy-osaka-kyoto-kobe.com/article/a/ticket-osaka-to-kyoto/"]},
+  {date: "1 Mar", w: "Mon", title: "Kyoto to Tokyo, Tokaido Shinkansen", time: "Nozomi, about 2 hours 15 minutes",
+   steps: [
+     "Big bags of 160 to 250 cm total size need a 'seat with oversized baggage area' (last row in some cars), booked in advance. Without one there is a 1,000 yen charge.",
+     "Prams are exempt from that rule, but the last-row space is only yours if you book those seats, so book them for the pram. Booking opens one month ahead, on 1 Feb.",
+     "On the N700S trains car 9 has the multipurpose room, used for nursing. Every car's Western-style toilet has a nappy-change table.",
+     "For Mount Fuji, book a window seat E. It appears about 40 to 45 minutes before Tokyo, weather permitting."],
+   pram: "Book the oversized-baggage seats so the pram has a home behind you.",
+   src: ["https://global.jr-central.co.jp/en/info/oversized-baggage/", "https://www.westjr.co.jp/global/en/train/shinkansen/tokaido-sanyo-shinkansen/user-friendly-equipment/"]},
+  {date: "3 Mar", w: "Wed", title: "Ginza to Haneda", time: "About 30 to 35 minutes, no change of train",
+   steps: [
+     "From Higashi-ginza take a Toei Asakusa Line train marked for Haneda Airport. It becomes a Keikyu train and runs to Terminal 3.",
+     "Leave more time than you think: check-in, the pram tag and security all take longer with a baby."],
+   taxi: "Taxi: hail one or ask the hotel. Flat-fare airport taxis from Chuo ward must be booked at least an hour ahead.",
+   src: ["https://www.kotsu.metro.tokyo.jp/eng/guides/airportaccess/", "https://www.taxi-tokyo.or.jp/english/teigaku/qa.html"]}
+];
+var FARE_NOTE = "Baby fares: under-6s ride free on an adult's lap. You only pay a child fare if the baby has a reserved seat of its own.";
+
+function trainCard(t, inline){
+  return '<div class="train' + (inline ? ' inline' : '') + '"><p class="train-d">' + esc(t.w + " " + t.date) + '</p><h3 class="train-t">\u{1F685} ' + esc(t.title) + '</h3><p class="train-time">' + esc(t.time) + '</p>'
+    + '<ol class="train-steps">' + t.steps.map(function(s){ return '<li>' + esc(s) + '</li>'; }).join("") + '</ol>'
+    + (t.pram ? '<p class="train-x"><b>Pram:</b> ' + esc(t.pram) + '</p>' : '')
+    + (t.tickets ? '<p class="train-x"><b>Tickets:</b> ' + esc(t.tickets) + '</p>' : '')
+    + (t.taxi ? '<p class="train-x">' + esc(t.taxi) + '</p>' : '')
+    + (t.check ? '<p class="train-x check"><b>Check on the day:</b> ' + esc(t.check) + '</p>' : '')
+    + '<p class="credit">Sources: ' + t.src.map(function(u, i){ return '<a href="' + u + '" target="_blank" rel="noopener">' + (i + 1) + '</a>'; }).join(" ") + '</p></div>';
+}
+function trainsHtml(){
+  return '<h2 class="kit-h" id="trains">Train days</h2><p class="meta">' + esc(FARE_NOTE) + '</p><div class="trains">' + TRAINS.map(function(t){ return trainCard(t, false); }).join("") + '</div>';
+}
+function trainFor(d){ for (var i = 0; i < TRAINS.length; i++) if (TRAINS[i].date === d.d + " " + d.m) return TRAINS[i]; return null; }
+
+var HELP_NUMBERS = [
+  ["119", "Ambulance or fire", "Free, 24 hours. In Kyoto, 119 can add an English interpreter to the call."],
+  ["110", "Police", "Free, 24 hours."],
+  ["050-3816-2787", "Japan Visitor Hotline (JNTO)", "24 hours, every day, in English. Good first call if you are unsure what to do."],
+  ["03-6233-9266", "AMDA International Medical Information Center", "Finds English-speaking doctors. Weekdays 10:00 to 16:00."],
+  ["03-5285-8181", "Tokyo medical information line (Himawari)", "English, every day 9:00 to 20:00. Finds clinics and paediatricians in Tokyo."]
+];
+var HELP_KIDS = [
+  ["tokyo", "03-5285-8898", "Tokyo #8000 children's line: weekday evenings 18:00 to 08:00, all day weekends and holidays."],
+  ["kanazawa", "076-238-0099", "Ishikawa #8000 children's line: 24 hours."],
+  ["kyoto", "075-661-5596", "Kyoto #8000 children's line: every night 19:00 to 08:00, from 15:00 on Saturdays."]
+];
+var HOSPITALS = [
+  {c: "tokyo", n: "St. Luke's International Hospital", j: "聖路加国際病院", a: "9-1 Akashicho, Chuo-ku", ph: "03-3541-5151", g: [35.66744, 139.776707], note: "English-speaking, with paediatrics. The emergency department is open 24 hours. A short walk from Tsukiji."},
+  {c: "kanazawa", n: "Kanazawa University Hospital", j: "金沢大学附属病院", a: "13-1 Takaramachi", ph: "076-265-2000", g: [36.557219, 136.673061], note: "The main hospital, about 2.5 km from Omicho. Without a referral there is an extra 11,000 yen fee. Kanazawa city arranges phone interpreting: 076-220-2075."},
+  {c: "kyoto", n: "Kyoto City Hospital", j: "京都市立病院", a: "1-2 Mibu Higashi Takada-cho, Nakagyo-ku", ph: "075-311-5311", g: [34.996921, 135.735075], note: "Accepts children's emergencies at any time. English interpreting is limited, so call the visitor hotline if needed."},
+  {c: "kyoto", n: "Takeda Hospital", j: "武田病院", a: "Shiokoji, Shimogyo-ku, near Kyoto Station", ph: "075-361-1351", g: [34.98688, 135.755867], note: "24-hour emergency department with remote interpreting around the clock."}
+];
+function telLink(n){ return '<a class="ref go" href="tel:' + n.replace(/[^\d+]/g, "") + '">Call ' + esc(n) + '</a>'; }
+function helpHtml(){
+  var h = '<h2 class="kit-h" id="help">Help</h2><div class="kitbox help"><ul class="helplist">';
+  h += HELP_NUMBERS.map(function(x){ return '<li><div><b>' + esc(x[1]) + '</b><p class="meta small">' + esc(x[2]) + '</p></div>' + telLink(x[0]) + '</li>'; }).join("");
+  h += '</ul><p class="meta small">Children\'s medical advice (#8000) is in Japanese, so ask hotel staff to call for you. Dial #8000 from a Japanese phone, or these numbers from any phone:</p><ul class="helplist">';
+  h += HELP_KIDS.map(function(x){ return '<li><div><b>' + esc(CITY_NAMES[x[0]]) + '</b><p class="meta small">' + esc(x[2]) + '</p></div>' + telLink(x[1]) + '</li>'; }).join("");
+  h += '</ul></div><h3 class="ph-cat">Hospitals near your bases</h3><div class="hotels">';
+  h += HOSPITALS.map(function(o){
+    var near = HOTEL_SLOTS.filter(function(s){ return s.c === o.c; }).map(function(s){ var ht = tripGet("hotel", s.id); return ht && ht.lat ? fmtDist(distM([ht.lat, ht.lng], o.g)) + " from your " + s.label + " hotel" : ""; }).filter(Boolean).join(", ");
+    return '<div class="hotel"><p class="hotel-l">' + esc(CITY_NAMES[o.c]) + '</p><p class="hotel-n">' + esc(o.n) + '</p><p class="hotel-a"><span lang="ja">' + esc(o.j) + '</span> · ' + esc(o.a) + '</p><p class="meta small">' + esc(o.note) + (near ? ' <b>' + esc(near) + '.</b>' : '') + '</p>'
+      + '<div class="hotel-btns">' + telLink(o.ph) + '<a class="ref" href="' + coordNav(o.g) + '" target="_blank" rel="noopener">Navigate</a><button type="button" class="ref" data-show="' + esc(JSON.stringify(["Please take us to this hospital.", o.j + "\nこの病院までお願いします。", "Kono byōin made onegaishimasu."])) + '">Taxi card</button></div></div>';
+  }).join("");
+  h += '</div><p class="meta small">Bring your passport and travel insurance details; visitors pay in full on the day and claim it back. Numbers and hours were checked in October 2026, so recheck before you fly.</p>';
+  return h;
+}
+
 // Tea-house background music, generated in the browser so nothing is downloaded.
 // Plucked koto (string model) plays short phrases over a quiet broken-chord pattern and bass,
 // a breathy bamboo flute answers, and a bamboo water knock and a wind chime sound now and then.
@@ -1658,12 +2368,12 @@ var Music = (function(){
   return { toggle: function(){ if (on) { stop(); return false; } return start(); }, isOn: function(){ return on; }, level: level };
 })();
 
-var VIEWS = [{id:"city", name:"By city"}, {id:"days", name:"Suggested day"}];
+var VIEWS = [{id:"city", name:"By city"}, {id:"days", name:"Suggested day"}, {id:"phrases", name:"Phrases"}, {id:"kit", name:"Trip kit"}];
 var CITY_SUB = {tokyo:"17 to 21 Feb and 1 to 3 Mar", kanazawa:"21 to 23 Feb", kyoto:"23 Feb to 1 Mar", osaka:"Day trip option, Fri 26 Feb", nara:"Day trip option, Fri 26 Feb"};
 var CITY_NOTE = {tokyo:"Based around Ginza and Tsukiji, then near Tokyo Station on the way home.", kanazawa:"Two nights beside Omicho Market. Closing days decide which oden house you eat at each night.", kyoto:"Six nights near Nishiki Market. The longest stay and the easiest walking of the trip.", osaka:"The stronger food day of the two day-trip options, about 30 minutes from Kyoto.", nara:"The gentler walk of the two day-trip options, about 45 minutes from Kyoto."};
 var CITY_LIST = ["tokyo","kanazawa","kyoto","osaka","nara"].map(function(id){ return {id:id, name:CITY_NAMES[id]}; });
 var CITY_ART = {tokyo:"tokyo", kanazawa:"kenrokuen", kyoto:"kyoto", osaka:"osaka", nara:"nara"};
-var state = {view:"city", city:"tokyo", type:"all", q:"", pos:null, posErr:"", posTime:""};
+var state = {view:"city", city:"tokyo", type:"all", q:"", pos:null, posErr:"", posTime:"", favOnly:false};
 var PN = {}, SI = {};
 P.forEach(function(p){ PN[p.n] = p; });
 SIGHTS.forEach(function(s){ SI[s.id] = s; });
@@ -1692,7 +2402,7 @@ function chips(el, items, key, withAll, cb){
   };
 }
 
-function toTop(){ window.scrollTo(0, document.querySelector(".bar").offsetTop - 4); }
+function toTop(){ window.scrollTo(0, document.querySelector(".wrap").offsetTop - 4); }
 function refLink(r){
   var kind = r.slice(0,1), key = r.slice(2), o = kind === "p" ? PN[key] : SI[key];
   if (!o) return "";
@@ -1720,6 +2430,7 @@ function dayHtml(d, i){
   var h = '<article class="day" id="day-'+i+'"><div class="day-art">'+artImg(d.art, "Woodblock-style artwork for "+d.title)
     + '<div class="day-head"><p class="day-date">'+esc(d.w+" "+d.d+" "+d.m+" · "+CITY_NAMES[d.c])+'</p><h2>'+esc(d.title)+'</h2></div></div><div class="day-body">';
   h += '<p class="sum">'+esc(d.sum)+'</p>';
+  var tr = trainFor(d); if (tr) h += trainCard(tr, true);
   if (d.sights.length) h += '<div><p class="label">What to see</p><div class="tiles">'+d.sights.map(tile).join("")+'</div></div>';
   h += '<div><p class="label">'+(d.combos.length > 1 ? "Two ways to run the day" : "The plan")+'</p><div class="combos">'+d.combos.map(comboHtml).join("")+'</div></div>';
   if (d.room) h += '<p class="roomline">'+esc(d.room)+'</p>';
@@ -1728,7 +2439,7 @@ function dayHtml(d, i){
 }
 function sightCard(s){
   return '<article class="sight" id="s-'+esc(s.id)+'"><img data-opt referrerpolicy="no-referrer" loading="lazy" alt="'+esc(s.n)+'" src="'+photoUrl(s.f)+'">'
-    + '<div class="sight-in"><h3>'+esc(s.n)+'<span class="jp" lang="ja">'+esc(s.j)+'</span></h3><p>'+esc(s.b)+'</p>'
+    + '<div class="sight-in"><h3>'+esc(s.n)+'<span class="jp" lang="ja">'+esc(s.j)+'</span></h3>'+markBtns("s:"+s.id)+'<p>'+esc(s.b)+'</p>'
     + '<p class="meta"><b>Allow:</b> '+esc(s.t)+'</p><p class="meta"><b>With the baby:</b> '+esc(s.w)+'</p>'+fromYou(s)+credit(s, "Photo")
     + '<span class="links">'+navLinks(s)+'</span></div></article>';
 }
@@ -1746,10 +2457,11 @@ function card(p){
   var hi = p.s && parseFloat(p.s) >= 3.5;
   var h = '<article class="card" id="p-'+P.indexOf(p)+'">'+dishFig(p)+'<div class="card-in"><div class="top"><h3 class="name">'+esc(p.n)+'<span class="jp" lang="ja">'+esc(p.j)+'</span></h3>';
   if (p.s) h += '<span class="score'+(hi?' hi':'')+'" title="Tabelog score">'+esc(p.s)+'</span>';
-  h += '</div><p class="when">'+esc(p.d)+'</p>'+fromYou(p)+'<p class="order">'+esc(p.o)+'</p>';
+  h += '</div>'+markBtns("p:"+p.n)+'<p class="when">'+esc(p.d)+'</p>'+fromYou(p)+'<p class="order">'+esc(p.o)+'</p>';
   if (p.p) h += '<p class="meta"><b>Price a head:</b> '+esc(p.p)+'</p>';
   h += '<p class="meta">'+(p.a?'<b>'+esc(p.a)+'.</b> ':'')+esc(p.m)+'</p>';
   h += '<p class="meta"><b>Closed:</b> '+esc(p.x)+'</p>';
+  h += walkHtml(p);
   h += '<div class="foot"><span class="tag '+p.t+'">'+esc(typeName(p.t))+'</span><span class="links">';
   h += navLinks(p);
   if (p.u) h += '<a class="tb" href="'+p.u+'" target="_blank" rel="noopener">Tabelog</a>';
@@ -1775,6 +2487,7 @@ function renderEat(){
   var all = P.filter(function(p){ return p.c === state.city; });
   var shown = all.filter(function(p){
     if (state.type!=="all" && p.t!==state.type) return false;
+    if (state.favOnly && !tripGet("fav", "p:"+p.n)) return false;
     if (q && (p.n+" "+p.j+" "+p.d+" "+p.o+" "+p.m+" "+(p.a||"")).toLowerCase().indexOf(q) < 0) return false;
     return true;
   });
@@ -1792,12 +2505,13 @@ function cityHtml(id){
   var h = '<article class="day cityview"><div class="day-art">'+artImg(CITY_ART[id], "Woodblock-style artwork of "+CITY_NAMES[id])
     + '<div class="day-head"><p class="day-date">'+esc(CITY_SUB[id])+'</p><h2>'+esc(CITY_NAMES[id])+'</h2></div></div><div class="day-body">';
   h += '<p class="sum">'+esc(CITY_NOTE[id])+'</p>';
+  h += cityHotelHtml(id);
   h += nearPanel();
   h += '<div><p class="label">Where everything is. Tap a dot for details, Pin or Navigate</p>'+mapBlock(id)+'<p class="meta small">Light dots are sights, dark dots are food. Save the map while you have Wi-Fi and it keeps working with no signal, like your Google offline maps. Pin and Navigate open the Google Maps app.</p></div>';
   h += '<div><p class="label">Your days here. Tap one for the suggested plan</p><div class="strip">'+days.join("")+'</div></div>';
   h += '<div><p class="label">What to see · '+rows.length+' sights</p><div class="sights-grid">'+rows.map(sightCard).join("")+'</div></div>';
   h += '<div><p class="label">Where to eat</p><div class="eatbar"><div class="chips" id="typeChips" role="group" aria-label="Seating"></div>'
-    + '<input id="q" type="search" placeholder="Search by name, dish or day, e.g. udon or Sat 27" aria-label="Search places to eat"><p class="count" id="count"></p></div>'
+    + '<div class="qrow"><input id="q" type="search" placeholder="Search by name, dish or day, e.g. udon or Sat 27" aria-label="Search places to eat"><button type="button" class="chip" id="favOnly" aria-pressed="'+state.favOnly+'">\u2665 Favourites</button></div><p class="count" id="count"></p></div>'
     + '<div class="grid" id="eatGrid"></div></div>';
   return h + '</div></article>';
 }
@@ -1807,6 +2521,11 @@ function render(){
   document.getElementById("cityChips").hidden = v !== "city";
   if (v === "days") {
     list.innerHTML = DAYS.map(dayHtml).join("");
+  } else if (v === "phrases") {
+    list.innerHTML = phrasesHtml();
+  } else if (v === "kit") {
+    list.innerHTML = kitHtml();
+    updateInstallUI();
   } else {
     list.innerHTML = cityHtml(state.city);
     chips(document.getElementById("typeChips"), TYPES, "type", true, renderEat);
@@ -1814,6 +2533,7 @@ function render(){
     qEl.value = state.q;
     qEl.addEventListener("input", function(e){ state.q = e.target.value; renderEat(); });
     renderEat();
+    document.getElementById("favOnly").onclick = function(){ state.favOnly = !state.favOnly; this.setAttribute("aria-pressed", String(state.favOnly)); renderEat(); };
     initMaps();
   }
   guardImages();
@@ -1855,6 +2575,7 @@ function showMusic(playing){
 }
 Array.prototype.forEach.call(musicBtns, function(b){ b.addEventListener("click", function(){ showMusic(Music.toggle()); }); });
 document.addEventListener("visibilitychange", function(){ if (document.hidden && Music.isOn()) { Music.toggle(); showMusic(false); } });
+handleSyncLink();
 render();
 </script>
 </body>

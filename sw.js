@@ -1,7 +1,7 @@
 // Service worker: keeps the app, its fonts and the map library available offline,
 // and serves saved map tiles from the browser cache when there is no signal.
-var SHELL = "japan-shell-v3", TILES = "japan-tiles-v3", RUNTIME = "japan-runtime-v3";
-var SHELL_URLS = ["./", "./index.html",
+var SHELL = "japan-shell-v4", TILES = "japan-tiles-v3", RUNTIME = "japan-runtime-v3";
+var SHELL_URLS = ["./", "./index.html", "./manifest.json", "./icon-192.png", "./icon-512.png", "./icon-maskable-512.png", "./apple-touch-icon.png",
   "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css",
   "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"];
 self.addEventListener("install", function(e){
