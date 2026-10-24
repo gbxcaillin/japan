@@ -288,6 +288,8 @@ footer p { margin: 0 0 8px; }
 .leaflet-container a.ref { color: var(--accent); }
 .leaflet-container a.ref.go { color: #fff; }
 .leaflet-container .popstep a { color: #1a8f4c; }
+.leaf.dark .leaflet-tile-pane { filter: invert(1) hue-rotate(180deg) brightness(.82) contrast(.92) saturate(.6); }
+.leaf .leaflet-tile-pane { filter: saturate(.85); }
 </style>
 </head>
 <body>
@@ -1170,15 +1172,15 @@ function goTo(id){
   el.classList.remove("flash"); void el.offsetWidth; el.classList.add("flash");
 }
 
-// Street map for each city (Leaflet + CARTO basemap). The stops sit on real streets, and "Save for offline"
+// Street map for each city (Leaflet + GSI, the Geospatial Information Authority of Japan's free base map). The stops sit on real streets, and "Save for offline"
 // stores the map tiles in the browser so the map keeps working without a signal.
-var TILE_HOST = "https://a.basemaps.cartocdn.com/";
+var TILE_HOST = "https://cyberjapandata.gsi.go.jp/xyz/";
 function darkMode(){
   var t = document.documentElement.getAttribute("data-theme");
   if (t) return t === "dark";
   return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
 }
-function tileStyle(){ return darkMode() ? "dark_all" : "rastertiles/voyager"; }
+function tileStyle(){ return "pale"; } // one tile set; dark mode is a colour filter in CSS
 function tileUrl(style){ return TILE_HOST + style + "/{z}/{x}/{y}.png"; }
 var maps = {};
 function haveLeaflet(){ return typeof L !== "undefined" && L.map; }
@@ -1200,7 +1202,8 @@ function initMaps(){
     var id = el.id.slice(4), pts = cityPts(id);
     if (!pts.length) return;
     var m = L.map(el, {scrollWheelZoom: false, zoomSnap: 0.5, attributionControl: true});
-    var tl = L.tileLayer(tileUrl(tileStyle()), {maxZoom: 18, detectRetina: false, crossOrigin: true, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'}).addTo(m);
+    el.classList.toggle("dark", darkMode());
+    var tl = L.tileLayer(tileUrl(tileStyle()), {maxZoom: 18, minZoom: 5, detectRetina: false, attribution: '<a href="https://maps.gsi.go.jp/development/ichiran.html" target="_blank" rel="noopener">\u56fd\u571f\u5730\u7406\u9662 GSI Japan</a>'}).addTo(m);
     var tileErr = 0, tileOk = 0;
     tl.on("tileload", function(){ tileOk++; });
     tl.on("tileerror", function(){
@@ -1239,7 +1242,7 @@ function initMaps(){
 }
 
 // ---- offline tiles ----
-var TILE_CACHE = "japan-tiles-v2", ZOOMS = [12, 13, 14, 15, 16];
+var TILE_CACHE = "japan-tiles-v3", ZOOMS = [12, 13, 14, 15, 16];
 function lng2x(lng, z){ return Math.floor((lng + 180) / 360 * Math.pow(2, z)); }
 function lat2y(lat, z){ var r = lat * Math.PI / 180; return Math.floor((1 - Math.log(Math.tan(r) + 1 / Math.cos(r)) / Math.PI) / 2 * Math.pow(2, z)); }
 function cityTiles(id, style){
@@ -1249,6 +1252,12 @@ function cityTiles(id, style){
     for (var x = x1; x <= x2; x++) for (var y = y1; y <= y2; y++) urls.push(TILE_HOST + style + "/" + z + "/" + x + "/" + y + ".png");
   });
   return urls;
+}
+// read a tile so it can be stored: a normal read when the server allows it, otherwise an opaque copy
+function getTile(u){
+  return fetch(u, {mode: "cors"}).then(function(r){ if (!r.ok) throw new Error(r.status); return r; }, function(){
+    return fetch(u, {mode: "no-cors"}).then(function(r){ if (r.type !== "opaque" && !r.ok) throw new Error(r.status); return r; });
+  });
 }
 function canCache(){ return "caches" in window && location.protocol === "https:"; }
 function updateSaveStatus(){
@@ -1276,7 +1285,7 @@ function saveCity(id, btn){
       var u = urls[i++];
       return cache.match(u).then(function(hit){
         if (hit) return;
-        return fetch(u, {mode: "cors"}).then(function(r){ if (!r.ok) throw new Error(r.status); return cache.put(u, r); }).catch(function(){ failed++; });
+        return getTile(u).then(function(r){ return cache.put(u, r); }).catch(function(){ failed++; });
       }).then(function(){
         done++;
         if (done % 10 === 0 || done === urls.length) st.textContent = "Saving " + done + " of " + urls.length + " map pieces…";
@@ -1288,7 +1297,7 @@ function saveCity(id, btn){
   }).then(function(){
     var t = new Date(), when = t.getDate() + " " + ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][t.getMonth()];
     try { localStorage.setItem("saved-" + id + "-" + style, when); } catch (e) {}
-    st.textContent = failed ? "Saved with " + failed + " pieces missing. Tap again on Wi-Fi to fill the gaps." : "Saved. This city's map now works offline (" + (darkMode() ? "dark" : "light") + " style).";
+    st.textContent = failed ? "Saved with " + failed + " pieces missing. Tap again on Wi-Fi to fill the gaps." : "Saved. This city's street map now works offline, down to street level.";
     btn.disabled = false;
   }).catch(function(){ st.textContent = "Could not save. Check the connection and try again."; btn.disabled = false; });
 }

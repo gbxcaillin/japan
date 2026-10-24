@@ -1,6 +1,6 @@
 // Service worker: keeps the app, its fonts and the map library available offline,
 // and serves saved map tiles from the browser cache when there is no signal.
-var SHELL = "japan-shell-v2", TILES = "japan-tiles-v2", RUNTIME = "japan-runtime-v2";
+var SHELL = "japan-shell-v3", TILES = "japan-tiles-v3", RUNTIME = "japan-runtime-v3";
 var SHELL_URLS = ["./", "./index.html",
   "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css",
   "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"];
@@ -17,11 +17,12 @@ self.addEventListener("fetch", function(e){
   if (req.method !== "GET") return;
   var url = req.url;
   // map tiles: saved copy first, then network, saving what comes back
-  if (url.indexOf("basemaps.cartocdn.com/") >= 0) {
+  if (url.indexOf("cyberjapandata.gsi.go.jp/xyz/") >= 0) {
     e.respondWith(caches.open(TILES).then(function(c){
       return c.match(url).then(function(hit){
         if (hit) return hit;
-        return fetch(req).then(function(r){ if (r && r.ok) c.put(url, r.clone()); return r; });
+        // a readable copy is checked before storing; if the server does not allow that, pass the tile through unsaved
+        return fetch(url, {mode: "cors"}).then(function(r){ if (r.ok) c.put(url, r.clone()); return r; }, function(){ return fetch(req); });
       });
     }));
     return;
