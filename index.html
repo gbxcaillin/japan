@@ -257,6 +257,37 @@ footer p { margin: 0 0 8px; }
 .leaflet-control-attribution { background: color-mix(in srgb, var(--surface) 85%, transparent) !important; color: var(--muted) !important; font-size: 10px !important; }
 .leaflet-control-attribution a { color: var(--muted) !important; }
 .leaflet-bar a { background: var(--surface) !important; color: var(--ink) !important; border-color: var(--line) !important; }
+
+/* ---- step-free layer ---- */
+.a11ybar { display: flex; flex-direction: column; gap: 6px; margin-bottom: 8px; }
+.a11ybar .label { margin: 0; }
+.a11ychip { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; padding: 5px 10px 5px 6px; }
+.a11ychip i { font-style: normal; font-size: 11px; font-weight: 700; min-width: 20px; height: 20px; border-radius: 3px; display: inline-flex; align-items: center; justify-content: center; color: #fff; padding: 0 3px; }
+.a11ychip[aria-pressed="false"] { opacity: .55; }
+.a11ychip[aria-pressed="true"] { background: var(--surface); color: var(--ink); border-color: var(--ink); }
+.a11y-lift i, .a11y-ic.a11y-lift span { background: #1e6fd9; }
+.a11y-exit i, .a11y-ic.a11y-exit.a11y-ok span { background: #1a8f4c; }
+.a11y-ic.a11y-exit.a11y-part span { background: #c98a00; }
+.a11y-bad i, .a11y-ic.a11y-exit.a11y-no span { background: #7a7f7c; }
+.a11y-wc i, .a11y-ic.a11y-wc span { background: #6b3fa0; }
+.a11y-baby i, .a11y-ic.a11y-baby span { background: #c2477a; }
+.a11y-ic { background: none; border: 0; }
+.a11y-ic span { display: inline-flex; align-items: center; justify-content: center; min-width: 24px; height: 24px; padding: 0 4px; border-radius: 5px; border: 2px solid #fff; color: #fff; font: 700 12px/1 var(--body); box-shadow: 0 1px 3px rgba(0,0,0,.35); white-space: nowrap; }
+.a11y-ic.a11y-exit span { border-radius: 50%; font-size: 14px; }
+.a11y-ic.a11y-exit.a11y-no span { min-width: 18px; height: 18px; font-size: 10px; opacity: .8; }
+.a11ystat { margin: 0; font-size: 12.5px; color: var(--muted); }
+.linkbtn { background: none; border: 0; padding: 0; color: var(--teal); font: inherit; font-weight: 600; text-decoration: underline; cursor: pointer; }
+.a11y-tag { display: inline-block; font-size: 11.5px; font-weight: 700; padding: 1px 6px; border-radius: 3px; color: #fff; }
+.a11y-tag.a11y-ok { background: #1a8f4c; } .a11y-tag.a11y-part { background: #c98a00; } .a11y-tag.a11y-no { background: #7a7f7c; } .a11y-tag.a11y-unk { background: #55605b; }
+.popsrc { font-size: 10.5px; color: var(--muted); }
+.popstep { font-size: 12.5px; color: #1a8f4c; font-weight: 600; }
+.popstep a { color: inherit; }
+.nearstep { margin: 8px 0 0; font-size: 13px; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.nearstep:empty { display: none; }
+.nearstep a.nav { font-size: 12px; font-weight: 600; text-decoration: none; padding: 5px 9px; border-radius: 3px; background: var(--teal); color: #fff; }
+.leaflet-container a.ref { color: var(--accent); }
+.leaflet-container a.ref.go { color: #fff; }
+.leaflet-container .popstep a { color: #1a8f4c; }
 </style>
 </head>
 <body>
@@ -291,6 +322,7 @@ footer p { margin: 0 0 8px; }
 
   <footer>
     <p>Pin opens the stop in the Google Maps app by its exact coordinates and place ID; Navigate asks Maps for walking directions to it; Open as a route strings a whole day plan together in order. All three use the offline maps you downloaded for the pin and the map itself, though Google only gives driving directions without a signal, so for walking use the pin together with the plotted map in each city. Near me uses the phone's GPS, which also works offline. Restaurant hours and scores were read from Tabelog on 11 Oct 2026. Sight opening days are from general knowledge, so recheck them along with closing days in early February.</p>
+    <p>The step-free layer (lifts, step-free station exits, accessible toilets and baby change) comes from OpenStreetMap volunteers. Japan is well mapped but not perfectly, so trust the signs at the station over the map. In the Google Maps app you can also turn on Settings, Accessibility, Accessible places to see wheelchair icons on places, and choose Options, Wheelchair accessible when planning a train route.</p>
     <p>Woodblock-style artwork was generated with OpenArt. Photographs are from Wikimedia Commons under the licence shown beside each one. Dish photos marked as typical examples show the kind of dish, not that restaurant's own plate. Images load from the web, so they need a connection. The music is generated in your browser and works offline.</p>
   </footer>
 </div>
@@ -1099,8 +1131,16 @@ function nearPanel(){
       + '<span class="neard">'+fmtDist(x.d)+(x.d < 4000 ? ' · '+walkMins(x.d)+' min' : '')+'</span>'
       + '<a class="map nav" href="'+navUrl(x.o)+'" target="_blank" rel="noopener">Navigate</a></li>';
   }).join("") + '</ol>';
+  h += '<p class="nearstep" id="nearStep">'+nearStepHtml()+'</p>';
   h += '<p class="meta small">Distances are straight lines from the phone\'s position, so the walk is usually a little longer. Tap Near me again to refresh.</p></div>';
   return h;
+}
+function nearStepHtml(){
+  if (!state.pos || typeof nearestStepFree === "undefined") return "";
+  var n = nearestStepFree(state.pos);
+  if (!n || n.d > 3000) return "";
+  var label = n.r[2] === "lift" ? "Lift" + (n.r[4] ? " · " + n.r[4] : "") : (n.r[4] || "Step-free exit");
+  return '\u267F Nearest lift or step-free exit: <b>'+esc(label)+'</b>, '+fmtDist(n.d)+' <a class="map nav" href="'+coordNav([n.r[0], n.r[1]])+'" target="_blank" rel="noopener">Navigate</a>';
 }
 function locate(){
   var btn = document.querySelector("[data-near]");
@@ -1145,12 +1185,12 @@ function haveLeaflet(){ return typeof L !== "undefined" && L.map; }
 
 function mapBlock(id){
   if (!haveLeaflet()) return cityMap(id);
-  return '<div class="leaf" id="map-'+id+'" aria-label="Street map of stops in '+esc(CITY_NAMES[id])+'"></div>'
+  return a11yControls(id) + '<div class="leaf" id="map-'+id+'" aria-label="Street map of stops in '+esc(CITY_NAMES[id])+'"></div>'
     + '<div class="maprow"><button type="button" class="chip save" data-save="'+id+'">⤓ Save this city\'s map for offline</button><span class="savestat" id="save-'+id+'"></span></div>';
 }
 function popupHtml(o, goId){
   return '<div class="pop"><b>'+esc(o.n)+'</b><span class="jp" lang="ja">'+esc(o.j)+'</span>'
-    + '<span class="popmeta">'+esc(o.o || o.t)+'</span>'
+    + '<span class="popmeta">'+esc(o.o || o.t)+'</span>' + (o.w ? '<span class="popmeta"><b>With the baby:</b> '+esc(o.w)+'</span>' : '') + stepFreeLine(geo(o))
     + '<span class="poplinks"><button type="button" class="ref" data-go="'+goId+'">Details</button>'
     + '<a class="ref" href="'+pinUrl(o)+'" target="_blank" rel="noopener">Pin</a><a class="ref go" href="'+navUrl(o)+'" target="_blank" rel="noopener">Navigate</a></span></div>';
 }
@@ -1165,7 +1205,7 @@ function initMaps(){
     pts.forEach(function(x){
       var isS = x.kind === "s";
       var mk = L.circleMarker(x.g, {radius: isS ? 9 : 7, color: "#ffffff", weight: 2, fillColor: isS ? "#2e8b6e" : (darkMode() ? "#5cc2a2" : "#1a5c4a"), fillOpacity: 1}).addTo(m);
-      mk.bindPopup(popupHtml(x.o, x.id), {maxWidth: 260});
+      mk.bindPopup(function(){ return popupHtml(x.o, x.id); }, {maxWidth: 260});
       if (isS) mk.bindTooltip(x.o.n, {permanent: true, direction: "right", offset: [10, 0], className: "sightlab"});
       bounds.push(x.g);
     });
@@ -1184,6 +1224,7 @@ function initMaps(){
     m.on("zoomend", labels); labels();
     maps[id] = m;
     if (navigator.onLine === false) el.classList.add("offline");
+    a11yAttach(id, m);
   });
   updateSaveStatus();
 }
@@ -1217,6 +1258,7 @@ function saveCity(id, btn){
   if (!canCache()) return;
   var style = tileStyle(), urls = cityTiles(id, style), st = document.getElementById("save-" + id), done = 0, failed = 0;
   btn.disabled = true;
+  if (maps[id] && maps[id]._a11yLoad) maps[id]._a11yLoad(true);
   st.textContent = "Saving 0 of " + urls.length + " map pieces…";
   caches.open(TILE_CACHE).then(function(cache){
     var i = 0;
@@ -1251,6 +1293,190 @@ if (window.matchMedia) {
   var mq = window.matchMedia("(prefers-color-scheme: dark)");
   if (mq.addEventListener) mq.addEventListener("change", function(){ if (state.view === "city") render(); });
 }
+
+// Step-free layer: lifts, step-free station exits, accessible toilets and baby change points from OpenStreetMap.
+// The phone asks the OpenStreetMap data service (Overpass) for the areas around our stops, then keeps a copy
+// in the browser so the layer still works offline.
+var A11Y_KEY = "a11y-v1-", A11Y = {}, A11Y_LOADING = {};
+var A11Y_KINDS = [
+  {id:"lift", name:"Lifts", glyph:"⇅"},
+  {id:"exit", name:"Step-free exits", glyph:"♿"},
+  {id:"wc", name:"Accessible toilets", glyph:"WC"},
+  {id:"baby", name:"Baby change", glyph:"B"}
+];
+var OVERPASS = ["https://overpass-api.de/api/interpreter", "https://overpass.kumi.systems/api/interpreter"];
+var A11Y_SHOW = {lift:1, exit:1, wc:1, baby:1, bad:0};
+try { var a11ySaved = JSON.parse(localStorage.getItem("a11y-show") || "null"); if (a11ySaved) A11Y_SHOW = a11ySaved; } catch (e) {}
+
+// group the city's stops into walking areas and ask only for those boxes, padded by about 600 m
+function a11yBoxes(id){
+  var clusters = [];
+  cityPts(id).forEach(function(x){
+    var c = null;
+    for (var i = 0; i < clusters.length; i++) if (distM(clusters[i].c, x.g) < 1500) { c = clusters[i]; break; }
+    if (!c) { c = {c: x.g, pts: []}; clusters.push(c); }
+    c.pts.push(x.g);
+  });
+  return clusters.map(function(c){
+    var la = c.pts.map(function(g){ return g[0]; }), lo = c.pts.map(function(g){ return g[1]; });
+    return [Math.min.apply(null, la) - 0.0055, Math.min.apply(null, lo) - 0.0066, Math.max.apply(null, la) + 0.0055, Math.max.apply(null, lo) + 0.0066].map(function(v){ return v.toFixed(4); }).join(",");
+  });
+}
+function a11yQuery(id){
+  var parts = [];
+  a11yBoxes(id).forEach(function(b){
+    parts.push('node["highway"="elevator"]('+b+');');
+    parts.push('node["railway"="subway_entrance"]('+b+');');
+    parts.push('node["entrance"]["wheelchair"~"yes|limited"]('+b+');');
+    parts.push('nwr["amenity"="toilets"]["wheelchair"~"yes|limited"]('+b+');');
+    parts.push('nwr["changing_table"="yes"]('+b+');');
+  });
+  return '[out:csv(::lat,::lon,highway,railway,entrance,amenity,wheelchair,changing_table,ref,name,level;false;"\\t")][timeout:90];(' + parts.join("") + ');out center;';
+}
+// one row per point: [lat, lng, kind, wheelchair, label, level, baby]
+function a11yParse(text){
+  var rows = [], seen = {};
+  text.split("\n").forEach(function(line){
+    var f = line.split("\t"); if (f.length < 11 || !f[0]) return;
+    var lat = parseFloat(f[0]), lng = parseFloat(f[1]); if (isNaN(lat)) return;
+    var key = lat.toFixed(5) + "," + lng.toFixed(5); if (seen[key]) return; seen[key] = 1;
+    var hw = f[2], rw = f[3], ent = f[4], am = f[5], wc = f[6], ct = f[7], ref = f[8], name = f[9], lvl = f[10];
+    var kind = hw === "elevator" ? "lift" : rw === "subway_entrance" ? "exit" : am === "toilets" ? "wc" : ct === "yes" ? "baby" : ent ? "exit" : "";
+    if (!kind) return;
+    var label = rw === "subway_entrance" ? (ref ? "Exit " + ref : "Station exit") + (name ? " · " + name : "") : (name || ref || "");
+    rows.push([+lat.toFixed(6), +lng.toFixed(6), kind, wc || "", label, lvl || "", ct === "yes" ? 1 : 0]);
+  });
+  return rows;
+}
+function a11yLoadSaved(id){
+  if (A11Y[id]) return A11Y[id];
+  try { var s = JSON.parse(localStorage.getItem(A11Y_KEY + id) || "null"); if (s && s.rows) { A11Y[id] = s; return s; } } catch (e) {}
+  return null;
+}
+function a11yFetch(id, force){
+  if (A11Y_LOADING[id]) return A11Y_LOADING[id];
+  if (!force && a11yLoadSaved(id)) return Promise.resolve(A11Y[id]);
+  var body = "data=" + encodeURIComponent(a11yQuery(id));
+  function attempt(i){
+    var ctl = window.AbortController ? new AbortController() : null, timer = ctl ? setTimeout(function(){ ctl.abort(); }, 60000) : 0;
+    return fetch(OVERPASS[i], {method: "POST", body: body, headers: {"Content-Type": "application/x-www-form-urlencoded"}, signal: ctl ? ctl.signal : undefined})
+      .then(function(r){ clearTimeout(timer); if (!r.ok) throw new Error("HTTP " + r.status); return r.text(); })
+      .catch(function(err){ clearTimeout(timer); if (i + 1 < OVERPASS.length) return attempt(i + 1); throw err; });
+  }
+  A11Y_LOADING[id] = attempt(0).then(function(text){
+    var t = new Date(), d = {t: t.getDate() + " " + ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][t.getMonth()], rows: a11yParse(text)};
+    A11Y[id] = d; delete A11Y_LOADING[id];
+    try { localStorage.setItem(A11Y_KEY + id, JSON.stringify(d)); } catch (e) {}
+    return d;
+  }, function(err){ delete A11Y_LOADING[id]; throw err; });
+  return A11Y_LOADING[id];
+}
+
+function a11yStatus(wc){
+  if (wc === "yes") return {t: "Step-free", c: "ok"};
+  if (wc === "limited") return {t: "Partly step-free", c: "part"};
+  if (wc === "no") return {t: "Stairs only", c: "no"};
+  return {t: "Access not recorded", c: "unk"};
+}
+function a11yVisible(r){
+  var s = A11Y_SHOW;
+  if (r[2] === "exit") { if (r[3] === "yes" || r[3] === "limited") return !!s.exit; if (r[3] === "no") return !!s.bad; return false; }
+  if (r[2] === "wc") return !!s.wc || (r[6] && s.baby);
+  return !!s[r[2]];
+}
+function a11yIcon(r){
+  var k = r[2], st = a11yStatus(r[3]).c, g = k === "lift" ? "⇅" : k === "exit" ? (st === "no" ? "✕" : "♿") : k === "wc" ? (r[6] ? "WC·B" : "WC") : "B";
+  return L.divIcon({className: "a11y-ic a11y-" + k + " a11y-" + st, html: "<span>" + g + "</span>", iconSize: null, iconAnchor: [12, 12], popupAnchor: [0, -10]});
+}
+function coordPin(g){ return "https://www.google.com/maps/search/?api=1&query=" + g[0] + "," + g[1]; }
+function coordNav(g){ return "https://www.google.com/maps/dir/?api=1&destination=" + g[0] + "," + g[1] + "&travelmode=walking"; }
+function a11yPopup(r){
+  var st = a11yStatus(r[3]), k = r[2];
+  var title = k === "lift" ? "Lift" + (r[4] ? " · " + r[4] : "") : k === "exit" ? (r[4] || "Step-free entrance") : k === "wc" ? "Accessible toilet" + (r[4] ? " · " + r[4] : "") : "Baby change" + (r[4] ? " · " + r[4] : "");
+  var lines = [];
+  if (k === "exit" || k === "wc") lines.push('<span class="a11y-tag a11y-' + st.c + '">' + st.t + '</span>');
+  if (r[6]) lines.push("Baby change table");
+  if (r[5]) lines.push("Level " + esc(r[5]));
+  return '<div class="pop"><b>' + esc(title) + '</b>' + (lines.length ? '<span class="popmeta">' + lines.join(" · ") + '</span>' : '')
+    + '<span class="poplinks"><a class="ref" href="' + coordPin([r[0], r[1]]) + '" target="_blank" rel="noopener">Pin</a><a class="ref go" href="' + coordNav([r[0], r[1]]) + '" target="_blank" rel="noopener">Navigate</a></span>'
+    + '<span class="popsrc">OpenStreetMap data, check signs on site</span></div>';
+}
+// nearest lift or step-free exit to a point, from whatever city data is loaded
+function nearestStepFree(g){
+  var best = null, bd = Infinity;
+  Object.keys(A11Y).forEach(function(id){
+    A11Y[id].rows.forEach(function(r){
+      if (!(r[2] === "lift" || (r[2] === "exit" && (r[3] === "yes" || r[3] === "limited")))) return;
+      var d = distM(g, [r[0], r[1]]); if (d < bd) { bd = d; best = r; }
+    });
+  });
+  return best ? {r: best, d: bd} : null;
+}
+function stepFreeLine(g){
+  var n = nearestStepFree(g);
+  if (!n || n.d > 1500) return "";
+  var what = n.r[2] === "lift" ? "lift" : "step-free exit";
+  return '<span class="popstep">♿ Nearest ' + what + ': ' + fmtDist(n.d) + ' <a href="' + coordNav([n.r[0], n.r[1]]) + '" target="_blank" rel="noopener">go</a></span>';
+}
+
+function a11yControls(id){
+  return '<div class="a11ybar" id="a11ybar-' + id + '"><span class="label">Step-free layer</span><div class="chips">'
+    + A11Y_KINDS.map(function(k){ return '<button type="button" class="chip a11ychip a11y-' + k.id + '" data-a11y="' + k.id + '" aria-pressed="' + !!A11Y_SHOW[k.id] + '"><i>' + k.glyph + '</i>' + k.name + '</button>'; }).join("")
+    + '<button type="button" class="chip a11ychip a11y-bad" data-a11y="bad" aria-pressed="' + !!A11Y_SHOW.bad + '"><i>✕</i>Stairs-only exits</button>'
+    + '</div><p class="a11ystat" id="a11ystat-' + id + '"></p></div>';
+}
+function a11yAttach(id, m){
+  var layer = L.layerGroup(), stat = document.getElementById("a11ystat-" + id), el = m.getContainer();
+  function draw(){
+    layer.clearLayers();
+    var d = A11Y[id]; if (!d) return;
+    var n = 0;
+    d.rows.forEach(function(r){
+      if (!a11yVisible(r)) return; n++;
+      L.marker([r[0], r[1]], {icon: a11yIcon(r), keyboard: false, zIndexOffset: r[2] === "exit" ? 200 : 0}).bindPopup(a11yPopup(r), {maxWidth: 240}).addTo(layer);
+    });
+    status(n);
+  }
+  function status(n){
+    if (!stat) return;
+    var d = A11Y[id];
+    if (!d) return;
+    var counts = {lift:0, exit:0, wc:0, baby:0};
+    d.rows.forEach(function(r){ if (r[2] === "exit" && !(r[3] === "yes" || r[3] === "limited")) return; counts[r[2]]++; if (r[2] === "wc" && r[6]) counts.baby++; });
+    stat.innerHTML = counts.lift + " lifts, " + counts.exit + " step-free exits, " + counts.wc + " accessible toilets and " + counts.baby + " baby change spots around your stops. Saved " + esc(d.t) + " for offline. "
+      + (m.getZoom() < 14 ? "<b>Zoom in to see them.</b> " : "") + '<button type="button" class="linkbtn" data-a11yrefresh="' + id + '">Refresh</button>';
+  }
+  function zoomCheck(){
+    if (m.getZoom() >= 14) { if (!m.hasLayer(layer)) layer.addTo(m); } else if (m.hasLayer(layer)) m.removeLayer(layer);
+    el.classList.toggle("zoomlabels", m.getZoom() >= 16);
+    if (A11Y[id]) status();
+  }
+  m.on("zoomend", zoomCheck);
+  maps[id]._a11yDraw = draw;
+  function load(force){
+    if (stat) stat.textContent = "Loading step-free data from OpenStreetMap…";
+    a11yFetch(id, force).then(function(){ draw(); zoomCheck(); var ns = document.getElementById("nearStep"); if (ns) ns.innerHTML = nearStepHtml(); }).catch(function(){
+      if (!stat) return;
+      stat.innerHTML = (navigator.onLine === false ? "No signal, and this city's step-free data has not been saved yet. Open this map once on Wi-Fi to save it." : "Could not reach the OpenStreetMap data service. ")
+        + ' <button type="button" class="linkbtn" data-a11yrefresh="' + id + '">Try again</button>';
+    });
+  }
+  maps[id]._a11yLoad = load;
+  if (a11yLoadSaved(id)) { draw(); zoomCheck(); } else load(false);
+}
+document.getElementById("list").addEventListener("click", function(e){
+  var c = e.target.closest("[data-a11y]");
+  if (c) {
+    var k = c.getAttribute("data-a11y");
+    A11Y_SHOW[k] = A11Y_SHOW[k] ? 0 : 1;
+    c.setAttribute("aria-pressed", String(!!A11Y_SHOW[k]));
+    try { localStorage.setItem("a11y-show", JSON.stringify(A11Y_SHOW)); } catch (err) {}
+    Object.keys(maps).forEach(function(id){ if (maps[id]._a11yDraw) maps[id]._a11yDraw(); });
+    return;
+  }
+  var r = e.target.closest("[data-a11yrefresh]");
+  if (r) { var id = r.getAttribute("data-a11yrefresh"); if (maps[id] && maps[id]._a11yLoad) maps[id]._a11yLoad(true); }
+});
 
 // Tea-house background music, generated in the browser so nothing is downloaded.
 // Plucked koto (string model) plays short phrases over a quiet broken-chord pattern and bass,
