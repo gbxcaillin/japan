@@ -6,6 +6,8 @@
 <meta name="referrer" content="no-referrer">
 <style>body{margin:0}[hidden]{display:none!important}img{max-width:100%}</style>
 <title>Japan Day by Day</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" crossorigin="">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" crossorigin=""></script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Mono:wght@400;500&family=Montserrat:wght@400;500;600;700&display=swap">
 <style>
 /* Layout: a Void Black masthead carrying the woodblock artwork, then one scanning column of place cards grouped by city under a sticky filter bar. GBX PS palette and type. */
@@ -230,6 +232,31 @@ footer p { margin: 0 0 8px; }
 .plot.narrow .eatlab { font-size: 17px; }
 .refpair { display: inline-flex; gap: 4px; }
 .ref.go { background: var(--teal); color: #fff; border-color: var(--teal); }
+
+/* ---- street map ---- */
+.leaf { width: 100%; height: 440px; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); z-index: 0; }
+@media (min-width: 700px) { .leaf { height: 540px; } }
+.leaf.offline { filter: saturate(.8); }
+.maprow { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 8px 0 6px; }
+.chip.save { font-family: var(--mono); font-weight: 500; font-size: 12px; }
+.savestat { font-size: 12.5px; color: var(--muted); }
+.leaflet-container { font-family: var(--body); }
+.leaflet-tooltip.sightlab { background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 3px; font-size: 12px; font-weight: 600; padding: 2px 6px; box-shadow: none; }
+.leaflet-tooltip.sightlab::before { display: none; }
+.leaflet-tooltip.youlab { background: #1e6fd9; color: #fff; border: 0; font-weight: 700; font-size: 12px; }
+.leaflet-tooltip.youlab::before { border-top-color: #1e6fd9; }
+.leaf.nolabels .leaflet-tooltip.sightlab { display: none; }
+.leaflet-popup-content-wrapper, .leaflet-popup-tip { background: var(--surface); color: var(--ink); }
+.leaflet-popup-content { margin: 12px 14px; }
+.pop { display: flex; flex-direction: column; gap: 4px; }
+.pop b { font-family: var(--display); font-size: 19px; line-height: 1.1; }
+.pop .jp { display: block; font-size: 12px; color: var(--muted); }
+.popmeta { font-size: 12.5px; }
+.poplinks { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 4px; }
+.poplinks .ref { cursor: pointer; font-family: var(--body); }
+.leaflet-control-attribution { background: color-mix(in srgb, var(--surface) 85%, transparent) !important; color: var(--muted) !important; font-size: 10px !important; }
+.leaflet-control-attribution a { color: var(--muted) !important; }
+.leaflet-bar a { background: var(--surface) !important; color: var(--ink) !important; border-color: var(--line) !important; }
 </style>
 </head>
 <body>
@@ -1103,6 +1130,128 @@ function goTo(id){
   el.classList.remove("flash"); void el.offsetWidth; el.classList.add("flash");
 }
 
+// Street map for each city (Leaflet + CARTO basemap). The stops sit on real streets, and "Save for offline"
+// stores the map tiles in the browser so the map keeps working without a signal.
+var TILE_HOST = "https://basemaps.cartocdn.com/";
+function darkMode(){
+  var t = document.documentElement.getAttribute("data-theme");
+  if (t) return t === "dark";
+  return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+}
+function tileStyle(){ return darkMode() ? "dark_matter" : "voyager"; }
+function tileUrl(style){ return TILE_HOST + style + "/{z}/{x}/{y}.png"; }
+var maps = {};
+function haveLeaflet(){ return typeof L !== "undefined" && L.map; }
+
+function mapBlock(id){
+  if (!haveLeaflet()) return cityMap(id);
+  return '<div class="leaf" id="map-'+id+'" aria-label="Street map of stops in '+esc(CITY_NAMES[id])+'"></div>'
+    + '<div class="maprow"><button type="button" class="chip save" data-save="'+id+'">⤓ Save this city\'s map for offline</button><span class="savestat" id="save-'+id+'"></span></div>';
+}
+function popupHtml(o, goId){
+  return '<div class="pop"><b>'+esc(o.n)+'</b><span class="jp" lang="ja">'+esc(o.j)+'</span>'
+    + '<span class="popmeta">'+esc(o.o || o.t)+'</span>'
+    + '<span class="poplinks"><button type="button" class="ref" data-go="'+goId+'">Details</button>'
+    + '<a class="ref" href="'+pinUrl(o)+'" target="_blank" rel="noopener">Pin</a><a class="ref go" href="'+navUrl(o)+'" target="_blank" rel="noopener">Navigate</a></span></div>';
+}
+function initMaps(){
+  if (!haveLeaflet()) return;
+  Array.prototype.forEach.call(document.querySelectorAll(".leaf"), function(el){
+    var id = el.id.slice(4), pts = cityPts(id);
+    if (!pts.length) return;
+    var m = L.map(el, {scrollWheelZoom: false, zoomSnap: 0.5, attributionControl: true});
+    L.tileLayer(tileUrl(tileStyle()), {maxZoom: 18, detectRetina: false, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'}).addTo(m);
+    var bounds = [];
+    pts.forEach(function(x){
+      var isS = x.kind === "s";
+      var mk = L.circleMarker(x.g, {radius: isS ? 9 : 7, color: "#ffffff", weight: 2, fillColor: isS ? "#2e8b6e" : (darkMode() ? "#5cc2a2" : "#1a5c4a"), fillOpacity: 1}).addTo(m);
+      mk.bindPopup(popupHtml(x.o, x.id), {maxWidth: 260});
+      if (isS) mk.bindTooltip(x.o.n, {permanent: true, direction: "right", offset: [10, 0], className: "sightlab"});
+      bounds.push(x.g);
+    });
+    if (state.pos && pts.some(function(x){ return distM(state.pos, x.g) < 6000; })) {
+      L.circleMarker(state.pos, {radius: 9, color: "#fff", weight: 2.5, fillColor: "#1e6fd9", fillOpacity: 1}).addTo(m).bindTooltip("You", {permanent: true, direction: "top", className: "youlab"});
+      L.circle(state.pos, {radius: 120, color: "#1e6fd9", weight: 1, fillColor: "#1e6fd9", fillOpacity: .15}).addTo(m);
+      bounds.push(state.pos);
+    }
+    m.fitBounds(bounds, {padding: [28, 28]});
+    m.on("popupopen", function(e){
+      var b = e.popup.getElement().querySelector("[data-go]");
+      if (b) b.onclick = function(){ m.closePopup(); goTo(b.getAttribute("data-go")); };
+    });
+    // hide the permanent labels when zoomed out so they don't pile up
+    function labels(){ el.classList.toggle("nolabels", m.getZoom() < 13.5); }
+    m.on("zoomend", labels); labels();
+    maps[id] = m;
+    if (navigator.onLine === false) el.classList.add("offline");
+  });
+  updateSaveStatus();
+}
+
+// ---- offline tiles ----
+var TILE_CACHE = "japan-tiles-v1", ZOOMS = [12, 13, 14, 15, 16];
+function lng2x(lng, z){ return Math.floor((lng + 180) / 360 * Math.pow(2, z)); }
+function lat2y(lat, z){ var r = lat * Math.PI / 180; return Math.floor((1 - Math.log(Math.tan(r) + 1 / Math.cos(r)) / Math.PI) / 2 * Math.pow(2, z)); }
+function cityTiles(id, style){
+  var pts = cityPts(id), bb = bbox(pts), padLat = 0.006, padLng = 0.007, urls = [];
+  ZOOMS.forEach(function(z){
+    var x1 = lng2x(bb.minLng - padLng, z), x2 = lng2x(bb.maxLng + padLng, z), y1 = lat2y(bb.maxLat + padLat, z), y2 = lat2y(bb.minLat - padLat, z);
+    for (var x = x1; x <= x2; x++) for (var y = y1; y <= y2; y++) urls.push(TILE_HOST + style + "/" + z + "/" + x + "/" + y + ".png");
+  });
+  return urls;
+}
+function canCache(){ return "caches" in window && location.protocol === "https:"; }
+function updateSaveStatus(){
+  if (!canCache()) {
+    Array.prototype.forEach.call(document.querySelectorAll(".savestat"), function(s){ s.textContent = "Offline saving needs the web version (https)."; });
+    Array.prototype.forEach.call(document.querySelectorAll("[data-save]"), function(b){ b.disabled = true; });
+    return;
+  }
+  Array.prototype.forEach.call(document.querySelectorAll("[data-save]"), function(b){
+    var id = b.getAttribute("data-save"), st = document.getElementById("save-" + id);
+    var key = "saved-" + id + "-" + tileStyle();
+    try { if (localStorage.getItem(key)) st.textContent = "Saved " + localStorage.getItem(key) + ". Tap to refresh."; } catch (e) {}
+  });
+}
+function saveCity(id, btn){
+  if (!canCache()) return;
+  var style = tileStyle(), urls = cityTiles(id, style), st = document.getElementById("save-" + id), done = 0, failed = 0;
+  btn.disabled = true;
+  st.textContent = "Saving 0 of " + urls.length + " map pieces…";
+  caches.open(TILE_CACHE).then(function(cache){
+    var i = 0;
+    function next(){
+      if (i >= urls.length) return Promise.resolve();
+      var u = urls[i++];
+      return cache.match(u).then(function(hit){
+        if (hit) return;
+        return fetch(u, {mode: "no-cors"}).then(function(r){ return cache.put(u, r); }).catch(function(){ failed++; });
+      }).then(function(){
+        done++;
+        if (done % 10 === 0 || done === urls.length) st.textContent = "Saving " + done + " of " + urls.length + " map pieces…";
+        return next();
+      });
+    }
+    // four at a time
+    return Promise.all([next(), next(), next(), next()]);
+  }).then(function(){
+    var t = new Date(), when = t.getDate() + " " + ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][t.getMonth()];
+    try { localStorage.setItem("saved-" + id + "-" + style, when); } catch (e) {}
+    st.textContent = failed ? "Saved with " + failed + " pieces missing. Tap again on Wi-Fi to fill the gaps." : "Saved. This city's map now works offline (" + (darkMode() ? "dark" : "light") + " style).";
+    btn.disabled = false;
+  }).catch(function(){ st.textContent = "Could not save. Check the connection and try again."; btn.disabled = false; });
+}
+document.getElementById("list").addEventListener("click", function(e){
+  var b = e.target.closest("[data-save]"); if (b) saveCity(b.getAttribute("data-save"), b);
+});
+if ("serviceWorker" in navigator && location.protocol === "https:") {
+  navigator.serviceWorker.register("sw.js").catch(function(){});
+}
+if (window.matchMedia) {
+  var mq = window.matchMedia("(prefers-color-scheme: dark)");
+  if (mq.addEventListener) mq.addEventListener("change", function(){ if (state.view === "city") render(); });
+}
+
 // Tea-house background music, generated in the browser so nothing is downloaded.
 // Plucked koto (string model) plays short phrases over a quiet broken-chord pattern and bass,
 // a breathy bamboo flute answers, and a bamboo water knock and a wind chime sound now and then.
@@ -1400,7 +1549,7 @@ function cityHtml(id){
     + '<div class="day-head"><p class="day-date">'+esc(CITY_SUB[id])+'</p><h2>'+esc(CITY_NAMES[id])+'</h2></div></div><div class="day-body">';
   h += '<p class="sum">'+esc(CITY_NOTE[id])+'</p>';
   h += nearPanel();
-  h += '<div><p class="label">Where everything is. Tap a dot to jump to it</p>'+cityMap(id)+'<p class="meta small">A plotted map of the stops in their true positions, drawn by the app so it works with no signal. Pin and Navigate open the Google Maps app, which uses the offline maps you downloaded.</p></div>';
+  h += '<div><p class="label">Where everything is. Tap a dot for details, Pin or Navigate</p>'+mapBlock(id)+'<p class="meta small">Light dots are sights, dark dots are food. Save the map while you have Wi-Fi and it keeps working with no signal, like your Google offline maps. Pin and Navigate open the Google Maps app.</p></div>';
   h += '<div><p class="label">Your days here. Tap one for the suggested plan</p><div class="strip">'+days.join("")+'</div></div>';
   h += '<div><p class="label">What to see · '+rows.length+' sights</p><div class="sights-grid">'+rows.map(sightCard).join("")+'</div></div>';
   h += '<div><p class="label">Where to eat</p><div class="eatbar"><div class="chips" id="typeChips" role="group" aria-label="Seating"></div>'
@@ -1421,6 +1570,7 @@ function render(){
     qEl.value = state.q;
     qEl.addEventListener("input", function(e){ state.q = e.target.value; renderEat(); });
     renderEat();
+    initMaps();
   }
   guardImages();
 }
